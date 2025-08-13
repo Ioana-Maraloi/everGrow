@@ -3,9 +3,10 @@
   "compilerOptions": {
     "strict": true,
     "paths": {
-      "@/*": [
-        "./*"
-      ]
+      // "@/*": [
+        // "./*"
+      // ]
+       "@hooks/*": ["./app/hooks/*"]
     }
   },
   "include": [

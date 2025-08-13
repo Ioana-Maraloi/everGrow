@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "846009594142",
+    "project_id": "myforest-0704",
+    "storage_bucket": "myforest-0704.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:846009594142:android:81730a5394512f4672590f",
+        "android_client_info": {
+          "package_name": "com.ioanamaraloi.myforest"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "846009594142-l59jpukfagpt567ookm6u2geu1u4i5ak.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDyYkF7AMmCh0T68iZSVyGWKBickRnFitE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "846009594142-l59jpukfagpt567ookm6u2geu1u4i5ak.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
