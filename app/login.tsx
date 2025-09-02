@@ -1,112 +1,146 @@
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Button  } from "react-native";
-import React, {useContext} from "react";
-import { FIREBASE_AUTH, FIREBASE_APP } from "../firebaseConfig";
-import {signInWithEmailAndPassword, createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
-import { AuthContext } from "./utils/authContext";
-import * as AppleAuthentication from 'expo-apple-authentication';
-import { doc, getFirestore, addDoc, setDoc, collection } from 'firebase/firestore';
+import { View, Text, TouchableOpacity } from "react-native"
+import React, {useContext, } from "react"
+import { FIREBASE_AUTH, FIREBASE_APP } from "../firebaseConfig"
+import { AuthContext } from "./utils/authContext"
+import * as AppleAuthentication from 'expo-apple-authentication'
+import { doc, getFirestore, setDoc, collection } from 'firebase/firestore'
+import { Divider, Button, TextInput } from 'react-native-paper';
+import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context'
 
 
-const Separator = () => <View style={styles.separator} />;
+import styles from './utils/styles'
+import { navigate } from "expo-router/build/global-state/routing"
 
-const LoginScreen = () => {
-	const authState = useContext(AuthContext);
-	const [email, setEmail] = React.useState('');
-	const [password, setPassword] = React.useState('');
+
+import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth"
+const auth = getAuth()
+
+
+const androidClientId = "187288304608-ikpu55agkm548m52u01th9j295bvfdbm.apps.googleusercontent.com"
+const iosClientId = "187288304608-au0kbakbn5jc8bqkphqogflvk5erkg9p.apps.googleusercontent.com"
+const webClientId = "187288304608-0t1uj6gslpbr6fpqtoh024vufu7d5nea.apps.googleusercontent.com"
+
+
+
+
+// const Separator = () => <View style={styles.separator} />
+
+export default function LoginScreen ()  {
+	const authState = useContext(AuthContext)
+	const [email, setEmail] = React.useState('')
+	const [password, setPassword] = React.useState('')
 	
-	const db = getFirestore(FIREBASE_APP);
-	const usersCollectionRef = collection(db, 'users');
-
-	
+	const db = getFirestore(FIREBASE_APP)
+	const usersCollectionRef = collection(db, 'users')
+	const handleResetPassword = function () {
+		try {
+			sendPasswordResetEmail(auth, email).then(() => {
+			alert('Password reset email sent!')
+		})
+			
+		}catch(error: any){
+			console.log(error.code)
+			const code = error.code.split("/")[1] 
+			alert(`Reset password failed: ${code}`)
+		}
+		
+	}
 	const handleLogin = async () => {
 		try {
-	  		await signInWithEmailAndPassword(FIREBASE_AUTH, email, password);
-			alert('Login successful!');
-			console.log('Login successful!');
-			authState.email = email;
-			authState.password = password;
-			authState.uid = FIREBASE_AUTH.currentUser?.uid;
-			authState.providerId = FIREBASE_AUTH.currentUser?.providerData[0].providerId
-			authState.displayName = email.split('@')[0]; // Use email prefix as displayName
+	  		await signInWithEmailAndPassword(FIREBASE_AUTH, email.toLowerCase(), password)
+			console.log('Login successful!')
+			authState.email = email.toLowerCase()
+			authState.password = password
+			authState.displayName = email.split('@')[0].toLowerCase() // Use email prefix as displayName
+			
 			const myDoc = {
-				email: email,
-				username: email.split('@')[0], // Use email prefix as username
+				email: email.toLowerCase(),
+				username: email.toLowerCase().split('@')[0].toLowerCase(), // Use email prefix as username
 				uid: FIREBASE_AUTH.currentUser?.uid,
 			}
-			const myDocRef = doc(usersCollectionRef, email.split('@')[0]); // Use email prefix as document ID
-			await setDoc(myDocRef, myDoc);
-			const myDocJSON = myDocRef.toJSON();
+
+			const myDocRef = doc(usersCollectionRef, email.toLowerCase().split('@')[0]) // Use email prefix as document ID
+			await setDoc(myDocRef, myDoc)
+			const myDocJSON = myDocRef.toJSON()
 			if (!myDocJSON.hasOwnProperty("xp")) {
-				authState.xp = 0;
+				authState.xp = 0
 				const updateDoc = {
 					xp: 0,
 				}
-				await setDoc(myDocRef, updateDoc, { merge: true });
+				await setDoc(myDocRef, updateDoc, { merge: true })
 			}
-			authState.logIn();
-	
-	} catch (error: any) {
-		console.log(error.code);
-		const code = error.code.split("/")[1]; 
-		alert(`Login failed: ${code}`);
-	}
-	};
-	const handleSignUp = async () => {
-	try {
-	  	const userCredentials = await createUserWithEmailAndPassword(FIREBASE_AUTH, email, password);
-		await sendEmailVerification(userCredentials.user);
-		alert('check your email for verification');
-		const myDoc = await addDoc(usersCollectionRef, {
-				email: email,
-				username: email.split('@')[0], // Use email prefix as username
-				xp: 0,
-				uid: FIREBASE_AUTH.currentUser?.uid,
-		});
-		const myDocRef = doc(usersCollectionRef, email.split('@')[0]); // Use email prefix as document ID
-		await setDoc(myDocRef, myDoc);
+			authState.logIn(email.toLowerCase(), password)
 
-
-	} catch (error: any) {
-		console.log(error.code); 
-		const code = error.code.split("/")[1]; 
-		alert(`Sign up failed: ${code}`);
+		} catch (error: any) {
+			console.log(error.code)
+			const code = error.code.split("/")[1] 
+			alert(`Login failed: ${code}`)
 	}
-	};
+	}
+
 	return (
-	<View>
-		<Text style={styles.title}>Login Screen</Text>
-		<TextInput
+	<SafeAreaProvider>
+        <SafeAreaView style={[styles.container, { alignItems: "center" }]}>
+				<Text style={styles.title}>Login Screen</Text>
+				<TextInput
+					mode="outlined"
+			label="Email"
+			placeholderTextColor={styles.colors.shadowColor}
+			onChangeText={(text) => setEmail(text)}
+			style={styles.input}
+	  	/>
+				<TextInput
+					mode="outlined"
+			label="Password"
+			placeholderTextColor={styles.colors.shadowColor}
+			onChangeText={(text) => setPassword(text)}
+			secureTextEntry={true}
+			style={styles.input}
+		/>
+		{/* <TextInput
 			placeholder="Email"
-			placeholderTextColor={"gray"}
+			placeholderTextColor={styles.colors.shadowColor}
 			value={email}
 			onChangeText={(text) => setEmail(text)}
 			style={styles.input}
 	  	/>
 	  	<TextInput
 			placeholder="Password"
-			placeholderTextColor={"gray"}
+			placeholderTextColor={styles.colors.shadowColor}
 			value={password}
 			onChangeText={(text) => setPassword(text)}
 			secureTextEntry={true}
 			style={styles.input}
-		/>
+		/> */}
 		<TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-			<Text style={styles.text}>Log in</Text>
+			<Text style={styles.startText}>Log in</Text>
 		</TouchableOpacity>
-		{/* <Button onPress={handleLogin} title="Log in" color={"blue"}></Button> */}
+
+			
+		<TouchableOpacity style={styles.loginButton} onPress ={ function(){
+			navigate("/signUp")	
+		}}>
+			<Text style={styles.startText}>Don&apos;t have an account yet? Sign up</Text>
+		</TouchableOpacity>
 		
-		{/* <Button onPress={handleSignUp} title="Don't have an account yet? Sign up" color={"blue"}></Button> */}
-		<TouchableOpacity style={styles.loginButton} onPress={handleSignUp}>
-			<Text style={styles.text} >Don&apos;t have an account yet? Sign up! </Text>
-		</TouchableOpacity>
-		<Separator>
-		</Separator>
-		<Text style={{ textAlign: 'center', color: 'gray' }}>or</Text>
+			
+		<Button onPress ={ handleResetPassword}>
+			<Text style={styles.forgotPasswordText}>Reset password </Text>
+			</Button>
+
+
+			<View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 10, width: "80%"}}>
+  				<Divider style={{ height: 1, backgroundColor: 'gray', marginVertical: 5,
+					flex: 1 }} />
+  				<Text style={{ marginHorizontal: 10, color: 'gray' }}>or</Text>
+  				<Divider style={{ flex: 1, height: 1, backgroundColor: 'gray' }} />
+			</View>
+			
 		<AppleAuthentication.AppleAuthenticationButton
 			buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
 			buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
 			cornerRadius={5}
-			style={styles.loginButton}
+			style={styles.loginButtonApple}
 			onPress={async () => {
 		  		try {
 					const credential = await AppleAuthentication.signInAsync({
@@ -114,62 +148,21 @@ const LoginScreen = () => {
 						AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
 						AppleAuthentication.AppleAuthenticationScope.EMAIL,
 			  		],
-				});
-				authState.logIn();
+					})
+				console.log(credential)
+				// authState.email = AppleAuthentication.AppleAuthenticationScope.EMAIL
+				authState.logIn(email, password)
 				// signed in
 		  		} catch (error: any) {
 					if (error.code === 'ERR_REQUEST_CANCELED') {
 			  			// handle that the user canceled the sign-in flow
 					} else {
 			  			// handle other errors
-			  			console.error('Apple Sign-In Error:', error);}
+			  			console.error('Apple Sign-In Error:', error)}
 		  		}
 			}}
-		/>
-	</View>	
+		/>				 
+	</SafeAreaView>
+	</SafeAreaProvider>
 	)
 }
-export default LoginScreen
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		justifyContent: 'center',
-		alignItems: 'center',
-  	},
-  	title: {
-		fontSize: 20,
-		marginBottom: 20,
-	  	alignItems: 'center',
-		textAlign: 'center',
-	},
-  	text: {
-		fontWeight:"bold",
-		textAlign:"center",
-	  	fontSize: 24,
-		color: 'white'
-	},
-  	input: {
-		height: 40,
-		width: '80%',
-		borderColor: 'gray',
-		borderWidth: 1,
-		marginBottom: 10,
-		padding: 10,
-		textAlign: 'center',
-		alignSelf: 'center',
-	},
-	loginButton: {
-		borderRadius: 15,
-		flexDirection: "row",
-		margin: 16,
-		padding:24,
-		justifyContent:"center",
-		backgroundColor: 'green',
-		// backgroundColor: 'blue',
-	},
-	separator: {
-		marginVertical: 8,
-		borderBottomColor: '#737373',
-		borderBottomWidth: StyleSheet.hairlineWidth,
-  },
-});
