@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
   	text: {
 		fontWeight:"bold",
 		textAlign:"center",
-			fontSize: 20,
+		fontSize: 20,
 		color: "#003829",
 	},
 	forgotPasswordText: {
@@ -146,19 +146,22 @@ const styles = StyleSheet.create({
 		backgroundColor: "#E7EFC7",
 		marginBottom: 18,
 		borderRadius: 18,
-		// shadowColor: "#000",
-		// shadowOffset:{ width: 0, height: 2 },
-		// shadowOpacity: 0.08,
-		// shadowRadius: 8,
+		borderColor:"pink",
+		shadowColor: "#000",
+		shadowOffset:{ width: 0, height: 2 },
+		shadowOpacity: 0.08,
+		shadowRadius: 8,
 		elevation: 4
 	},
 	cardContent: {
-    	padding: 20,
+		padding: 20,
+		// backgroundColor:"purple"
 	},
   	cardTitle: {
     	fontSize: 20,
     	fontWeight: "bold",
-    	marginBottom: 4,
+		marginBottom: 4,
+		marginTop:4,
     	color: "black",
   	},
   	cardDescription: {
@@ -192,7 +195,76 @@ const styles = StyleSheet.create({
     	borderRadius: 12,
     	paddingHorizontal: 12,
     	paddingVertical: 4,
-  },
+	},
+	moneyDisplay: {
+		backgroundColor: "#fadba9ff",
+		borderRadius: 10,
+		flexDirection: "row",
+    	alignItems: "center",
+    	paddingHorizontal: 10,
+		paddingVertical: 4,
+		marginLeft: 10,
+		marginRight:10
+	},
+	streakText: {
+		marginLeft: 6,
+		marginRight:6,
+ 		color: "#ff9800",
+    	fontWeight: "bold",
+    	fontSize: 14,
+	},
+	 header: {
+		 backgroundColor: '#D1D8BE',
+  	},
+  	headerContent: {
+    	padding: 30,
+    	alignItems: 'center',
+  	},
+  	avatar: {
+    	width: 130,
+    	height: 130,
+    	borderRadius: 63,
+    	borderWidth: 4,
+    	borderColor: 'white',
+    	marginBottom: 10,
+  	},
+  	name: {
+    	fontSize: 22,
+    	color: '#000000',
+    	fontWeight: '600',
+  	},
+  	userInfo: {
+    	fontSize: 16,
+    	color: '#778899',
+    	fontWeight: '600',
+	},
+		cardRow: {
+  flexDirection: "row",
+  justifyContent: "space-between",
+  alignItems: "center",   // 🔑 centrează textul și butoanele pe aceeași linie
+  paddingHorizontal: 20,
+  paddingVertical: 10,    // mai mic decât padding: 20
+},
+
+confirmDelete: {
+  flexDirection: "row",
+  gap: 8,
+},
+
+	// requestInfo: {
+	// 	alignItems: "center",
+	// 	justifyContent:"space-between",
+	// 	flexDirection: "row",
+	// 	height:0,
+	// 	// backgroundColor: "pink",
+	// 	padding:20
+	// },
+	// confirmDelete: {
+	// 			flexDirection:"row",
+	// 	// alignSelf:"flex-end"
+	// 	// alignItems: "flex-end",
+		
+	// }
 })
 
 export default styles

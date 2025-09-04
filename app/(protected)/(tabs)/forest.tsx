@@ -1,11 +1,12 @@
 import { View, Text,Image, ImageBackground, Alert  } from "react-native"
 import { Button, SegmentedButtons } from "react-native-paper"
 import styles from '../../utils/styles'
-import React, { useState } from "react"
+import React, { useState, useContext } from "react"
 import { ScrollView } from "react-native-gesture-handler"
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context'
 import { CountdownCircleTimer } from 'react-native-countdown-circle-timer'
 
+import { AuthContext } from "../../utils/authContext" 
 // https://jennpixel.itch.io/free-flower-pack-12-icons?download
 //https://anokolisa.itch.io/free-pixel-art-asset-pack-topdown-tileset-rpg-16x16-sprites
 const treeModel1Green3 = require("../../../assets/trees/model1/green/Size_03.png")
@@ -85,6 +86,8 @@ export default function ForestScreen() {
 	const [isPlaying, setIsPlaying] = useState(false)
 	const [wasStopped, setWasStopped] = useState(false)
 
+	const authState = useContext(AuthContext)
+	
 	function setDurations(duration: string) {
 		setInitialDuration(duration)
 		setDuration(duration)
@@ -267,10 +270,11 @@ export default function ForestScreen() {
 						isPlaying = {isPlaying}
 						duration={parseInt(duration)}
 						colors={['#004777', '#F7B801', '#A30000', '#A30000']}
-						onComplete={function () {
-							Alert.alert("Congratulations!"," You planted a tree", [
-								{text:"ok",}
-							])
+							onComplete={function () {
+								authState.xp += parseInt(duration)								
+								Alert.alert("Congratulations!"," You planted a tree", [
+									{text:"ok",}
+								])
 						}}
 						colorsTime={[7, 5, 2, 0]}>	
 						{renderTime}

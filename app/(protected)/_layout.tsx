@@ -12,12 +12,27 @@ export default function ProtectedLayout() {
         return null; // or a loading spinner
     } 
     if (!authState.isLoggedIn) {
-        return  <Redirect href="/login" />;
+        return <Redirect href="/login" />;
     }
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>
         <Stack>
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                <Stack.Screen name="friends" options={{
+                    headerShown: true,
+                    headerBackTitle: "Profile",
+                    headerStyle: {
+                        backgroundColor: "#9EBC8A"
+                    }
+                }} />
+                <Stack.Screen name="shop" options={{
+                    headerShown: true,
+                    headerBackTitle: "Profile",
+                    headerStyle: {
+                        backgroundColor: "#9EBC8A"
+                    }
+                }} />
+
             </Stack>
         </GestureHandlerRootView>
 

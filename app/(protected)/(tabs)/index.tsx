@@ -4,7 +4,7 @@ import React, { useState,useRef, useContext, useEffect } from 'react'
 import { AuthContext } from "../../utils/authContext"
 import { View, Text } from 'react-native'
 import styles from '../../utils/styles'
-import { collection, doc, getFirestore, setDoc, getDocs, Timestamp, query, where, onSnapshot, deleteDoc } from 'firebase/firestore'
+import { collection, doc, getFirestore, setDoc, getDocs, Timestamp, query, where, onSnapshot, deleteDoc, updateDoc, increment } from 'firebase/firestore'
 import { ScrollView, Swipeable } from "react-native-gesture-handler"
 // https://www.youtube.com/watch?v=nZwrxeUHtOQ&ab_channel=MissCoding
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -21,13 +21,13 @@ interface Todo {
 export default function TodoScreen() {
 
     const dateToday = new Date().getDate()
-    const monthToday = new Date().getMonth()
+    const monthToday = new Date().getMonth() + 1
     const yearToday = new Date().getFullYear()
 
     const today = new Date(yearToday, monthToday, dateToday)
-
+    const todayString =  dateToday + "-" + monthToday + "-" + yearToday
     
-    const [todo, setTodo] = useState('')
+    const [title, setTitle] = useState('')
     const [description, setDescription] = useState('')
     const authState = useContext(AuthContext)
     const [deadline, setDeadline] = useState(new Date())
@@ -49,17 +49,27 @@ export default function TodoScreen() {
 
     const addTodo = async () => {
         try {
-            console.log("Adding todo:", todo, description, deadline)
-        
+            console.log("Adding todo:", title, description, deadline)
+            // console.log(today)
+            // console.log(dateToday + "-" + monthToday + "-" + yearToday)
+            // console.log(monthToday)
             const docData = {
                 description: description,
                 completed: false,
                 createdAt: new Date().toISOString(),
                 deadline: deadline.toISOString(),
-                title: todo,
+                title: title,
                 priority:priority
             }
-            const todoCollectionRef = doc(db, 'users', username!, 'todos', todo)
+            const statsRef = doc(db, 'users', username!, 'tasks', 'stats')
+            const stats = {
+                tasksCompleted: 0,
+                tasksDeleted: 0,
+                tasksBeingDone: 0,
+            }
+            await setDoc(statsRef, stats, {merge:true})
+
+            const todoCollectionRef = doc(db, 'users', username!, 'tasks', 'stats', todayString, title)
             await setDoc(todoCollectionRef, docData)
             alert("task added succesfully")
         }
@@ -70,7 +80,8 @@ export default function TodoScreen() {
     }
     const fetchTodos = async () => {
         try {
-            const todos = await getDocs(collection(db, "users", authState.displayName, "todos"))
+            const todos = await getDocs(collection(db, "users", authState.displayName, "tasks", "stats", todayString))
+            console.log(todos)
             const items: Todo[] = todos.docs.map(doc => ({
                 ...doc.data()
             })) as Todo[]
@@ -81,7 +92,7 @@ export default function TodoScreen() {
     }
     useEffect(() => {
         try {
-            const q = query(collection(db, "users", authState.displayName, "todos"), where("completed", "==", false));
+            const q = query(collection(db, "users", authState.displayName, "tasks", "stats", todayString), where("completed", "==", false));
             const unsubscribe = onSnapshot(q, (snapshot) => {
                 snapshot.docChanges().forEach((change) => {
                     if (change.type === "added") {
@@ -109,15 +120,26 @@ export default function TodoScreen() {
     }, [authState])
     const handleDeleteAction = async (name:string) => {
         try {
-            await deleteDoc(doc(db, "users", authState.displayName, "todos", name))
+            await deleteDoc(doc(db, "users", authState.displayName, "tasks", "stats", todayString, name))
+            const statsRef = doc(db, 'users', username!, 'tasks', 'stats')
+
+            await updateDoc(statsRef, {
+                tasksDeleted: increment(1),
+                tasksBeingDone: increment(-1)
+            })
         } catch (error: any) {
             console.log(error)
         }
-        
     }
     const handleCompleteAction = async (name:string) => {
         try {
-            await deleteDoc(doc(db, "users", authState.displayName, "todos", name))
+            await deleteDoc(doc(db, "users", authState.displayName, "tasks", "stats", todayString, name))
+            const statsRef = doc(db, 'users', username!, 'tasks', 'stats')
+
+            await updateDoc(statsRef, {
+                tasksCompleted: increment(1),
+                tasksBeingDone: increment(-1)
+            })
         } catch (error: any) {
             console.log(error)
         } 
@@ -133,7 +155,7 @@ export default function TodoScreen() {
         
     }
         const renderLeftActions= () => {
-            return <View style={ styles.swipeActionLeft }>
+            return <View style={ styles.swipeActionLeft}>
             <MaterialCommunityIcons name="trash-can-outline"
                 size={32}
             color={"#fff"}>
@@ -161,9 +183,8 @@ export default function TodoScreen() {
                 </Button>)}
             {displayAddButtons && (
                 <View style={[styles.container, { alignItems: "center" }]}>
-                <TextInput style={styles.input} mode="outlined" label = "title" onChangeText={setTodo}/>
+                <TextInput style={styles.input} mode="outlined" label = "title" onChangeText={setTitle}/>
                 <TextInput style={styles.input} mode="outlined" label="description" onChangeText={setDescription} />
-                {/* <Text>hello {authState.email}</Text> */}
                 
                 <SegmentedButtons style={{
 						alignContent: "center",
@@ -198,7 +219,7 @@ export default function TodoScreen() {
                         onChange={onChange}
                     />
                 )} 
-                <Button onPress={addTodo} style={styles.loginButton} mode = "contained" disabled={!todo || !description || !deadline}>
+                <Button onPress={addTodo} style={styles.loginButton} mode = "contained" disabled={!title || !description || !deadline}>
                 <Text style={styles.startText}>Add Task</Text>
                 </Button>
                 </View>

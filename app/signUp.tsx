@@ -1,7 +1,8 @@
-import { View, Text, TextInput, TouchableOpacity } from "react-native"
+import { View, Text, TouchableOpacity } from "react-native"
 import {createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth"
 import React from "react"
-import myStyles from './utils/styles'
+import {TextInput} from "react-native-paper"
+import styles from './utils/styles'
 import { FIREBASE_AUTH, FIREBASE_APP } from "../firebaseConfig"
 import { doc, getFirestore, setDoc } from 'firebase/firestore'
 
@@ -36,33 +37,36 @@ export default function SignUpScreen() {
 		}
 	}
 	return (
-		<View>
-			<Text style={myStyles.title}>Create an account</Text>
+		<View style={[styles.container, { alignItems: "center" }]}>
+			<Text style={styles.title}>Create an account</Text>
 			<TextInput
-				placeholder="Email"
+				mode="outlined"
+				label="Email"
 				placeholderTextColor={"gray"}
 				value={email}
 				onChangeText={(text) => setEmail(text)}
-				style={myStyles.input}
+				style={styles.input}
 			/>
 			<TextInput
-				placeholder="Password"
+				mode="outlined"
+				label="Password"
 				placeholderTextColor={"gray"}
 				value={password}
 				onChangeText={(text) => setPassword(text)}
 				secureTextEntry={true}
-				style={myStyles.input}
+				style={styles.input}
 			/>
 			<TextInput
-				placeholder="Reconfirm Password"
+				mode="outlined"
+				label="Reconfirm Password"
 				placeholderTextColor={"gray"}
 				value={confirmPassword}
 				onChangeText={(text) => setConfirmPassword(text)}
 				secureTextEntry={true}
-				style={myStyles.input}
+				style={styles.input}
 			/>
-			<TouchableOpacity style={myStyles.loginButton} onPress={handleSignUp}>
-			<Text style={myStyles.text}>Sign Up</Text>
+			<TouchableOpacity style={styles.loginButton} onPress={handleSignUp}>
+			<Text style={styles.text}>Sign Up</Text>
 		</TouchableOpacity>
 		</View>
 	)

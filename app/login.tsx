@@ -15,15 +15,9 @@ import { navigate } from "expo-router/build/global-state/routing"
 import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth"
 const auth = getAuth()
 
-
 const androidClientId = "187288304608-ikpu55agkm548m52u01th9j295bvfdbm.apps.googleusercontent.com"
 const iosClientId = "187288304608-au0kbakbn5jc8bqkphqogflvk5erkg9p.apps.googleusercontent.com"
 const webClientId = "187288304608-0t1uj6gslpbr6fpqtoh024vufu7d5nea.apps.googleusercontent.com"
-
-
-
-
-// const Separator = () => <View style={styles.separator} />
 
 export default function LoginScreen ()  {
 	const authState = useContext(AuthContext)
@@ -49,17 +43,17 @@ export default function LoginScreen ()  {
 		try {
 	  		await signInWithEmailAndPassword(FIREBASE_AUTH, email.toLowerCase(), password)
 			console.log('Login successful!')
-			authState.email = email.toLowerCase()
-			authState.password = password
-			authState.displayName = email.split('@')[0].toLowerCase() // Use email prefix as displayName
+			// authState.email = email.toLowerCase()
+			// authState.password = password
+			// authState.displayName = email.split('@')[0].toLowerCase() // Use email prefix as displayName
 			
 			const myDoc = {
 				email: email.toLowerCase(),
-				username: email.toLowerCase().split('@')[0].toLowerCase(), // Use email prefix as username
+				username: email.toLowerCase().split('@')[0],
 				uid: FIREBASE_AUTH.currentUser?.uid,
 			}
 
-			const myDocRef = doc(usersCollectionRef, email.toLowerCase().split('@')[0]) // Use email prefix as document ID
+			const myDocRef = doc(usersCollectionRef, email.toLowerCase().split('@')[0]) 
 			await setDoc(myDocRef, myDoc)
 			const myDocJSON = myDocRef.toJSON()
 			if (!myDocJSON.hasOwnProperty("xp")) {
@@ -79,7 +73,7 @@ export default function LoginScreen ()  {
 	}
 
 	return (
-	<SafeAreaProvider>
+	<SafeAreaProvider >
         <SafeAreaView style={[styles.container, { alignItems: "center" }]}>
 				<Text style={styles.title}>Login Screen</Text>
 				<TextInput
