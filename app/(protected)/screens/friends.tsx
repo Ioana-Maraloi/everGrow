@@ -1,18 +1,40 @@
-import { View, Text } from "react-native"
+import { View, Text, Modal, Pressable } from "react-native"
 import { Button, TextInput, List, Surface, IconButton } from "react-native-paper"
-import styles from '../utils/styles'
-import { FIREBASE_APP } from "../../firebaseConfig"
-import { collection, doc, getFirestore, setDoc, getDocs, query, where, onSnapshot, deleteDoc, getDoc, addDoc } from 'firebase/firestore'
-import { AuthContext } from "../utils/authContext"
+import styles from '../../utils/styles'
+import { FIREBASE_APP } from "../../../firebaseConfig"
+import { collection, doc, getFirestore, setDoc, getDocs, query, onSnapshot, deleteDoc, getDoc } from 'firebase/firestore'
+import { AuthContext } from "../../utils/authContext"
 import React, {useContext, useState, useEffect } from 'react'
 import { ScrollView } from "react-native-gesture-handler"
 import { MaterialIcons } from "@expo/vector-icons"
+import { ImageBackground } from "expo-image"
+
+// friends
+const makingFriends = require("../../../assets/achievements/friends/makingFriends.png")
+const socialButterfly = require("../../../assets/achievements/friends/socialButterfly.png")
+const treeMendousFriends = require("../../../assets/achievements/friends/treeMendousFriends.png")
 
 interface Friend{
     username: string,
     streak: number,
     xp: number
- }
+}
+ function getBadgePicture(label: string) {
+    if (label === "makingFriends") {
+        return makingFriends
+    }
+    if (label === "socialButterfly") {
+        return socialButterfly
+    }
+    if (label === "tree-mendousFriends") {
+        return treeMendousFriends
+    }
+}
+function formatCamelCase(str: string): string {
+  const withoutPrefix = str.slice(1);
+  const spaced = withoutPrefix.replace(/([A-Z])/g, ' $1').trim();
+  return spaced.charAt(0).toUpperCase() + spaced.slice(1).toLowerCase();
+}
 export default function Friends() {
     const db = getFirestore(FIREBASE_APP)
     const authState = useContext(AuthContext)
@@ -30,6 +52,10 @@ export default function Friends() {
     const [expandedReceived, setExpandedReceived] = useState(false);
     const handlePressReceived = () => setExpandedReceived(!expandedReceived);
     
+
+    const [modalVisible, setModalVisible] = useState(false);
+    const [displayBadge, setDisplayBadge] = useState("ImakingFriends")
+    
     const addingFriend = async (username:string) => {
         try {
             const friendDoc = doc(db, "users", username)
@@ -40,7 +66,6 @@ export default function Friends() {
                     username: username
                 }
                 await setDoc(myFriendRef, friend)
-
                 const myRef = doc(db, "users", username, "friends", "friendRequestsReceived", "requestsReceived", authState.displayName)
                 const me = {
                     username: authState.displayName
@@ -59,7 +84,6 @@ export default function Friends() {
             if (friendList.empty) {
 
             } else {
-                console.log("PRIETENI",friendList.docs)
                 const items: Friend[] = friendList.docs.map(doc => {
                     const data = doc.data()
                     return {
@@ -67,7 +91,60 @@ export default function Friends() {
                     } as Friend
                 })
                 setFriends(items)
-                console.log("LISTA",friends)
+                console.log("LISTA", friends)
+                if (friends.length === 1) {
+                    const badgeFriendDoc = doc(db, "users", authState.displayName, "achievements", "notDone", 'notDoneList', "ImakingFriends")
+                    const badgeMakingFriendsSnap = await getDoc(badgeFriendDoc)
+                    if (badgeMakingFriendsSnap.exists()) {
+                        setModalVisible(true)
+                        authState.xp += 20
+                        setDisplayBadge("ImakingFriends")
+                        await deleteDoc(badgeFriendDoc)
+
+                        const badgeFriendDone = doc(db, "users", authState.displayName, "achievements", "done", 'doneList', "ImakingFriends")
+                        const badgeFriendInfo = {
+                			name: "ImakingFriends",
+			                description: "Add your first friend",
+			                xp: 20,
+                        }
+                        await setDoc(badgeFriendDone, badgeFriendInfo)
+                    }
+                }
+                if (friends.length === 5) {
+                    const badgeFriendDoc = doc(db, "users", authState.displayName, "achievements", "notDone", 'notDoneList', "JsocialButterfly")
+                    const badgeMakingFriendsSnap = await getDoc(badgeFriendDoc)
+                    if (badgeMakingFriendsSnap.exists()) {
+                        setModalVisible(true)
+                        setDisplayBadge("JsocialButterfly")
+                        await deleteDoc(badgeFriendDoc)
+
+                        const badgeFriendDone = doc(db, "users", authState.displayName, "achievements", "done", 'doneList', "JsocialButterfly")
+                        const badgeFriendInfo = {
+                			name: "JsocialButterfly",
+			                description: "Add 5 friends",
+			                xp: 50,
+                        }
+                        await setDoc(badgeFriendDone, badgeFriendInfo)
+                    }
+                }
+                if (friends.length === 10) {
+                    const badgeFriendDoc = doc(db, "users", authState.displayName, "achievements", "notDone", 'notDoneList', "Ktree-mendousFriends")
+                    const badgeMakingFriendsSnap = await getDoc(badgeFriendDoc)
+                    if (badgeMakingFriendsSnap.exists()) {
+                        await deleteDoc(badgeFriendDoc)
+                        setDisplayBadge("Ktree-mendousFriends")
+
+                        const badgeFriendDone = doc(db, "users", authState.displayName, "achievements", "done", 'doneList', "Ktree-mendousFriends")
+                        const badgeFriendInfo = {
+                			name: "Ktree-mendousFriends",
+			                description: "Add 10 friends",
+			                xp: 100,
+                        }
+                        await setDoc(badgeFriendDone, badgeFriendInfo)
+                    }
+                }
+                
+
             }
         } catch (error) {
             console.log(error)
@@ -78,7 +155,6 @@ export default function Friends() {
             const requestsList = await getDocs(collection(db, "users", authState.displayName, "friends", "friendRequestsSend", "requestsSend"))
             if (requestsList.empty) {
                 console.log("FARA CERERI")
-
             } else {
                 const items: Friend[] = requestsList.docs.map(doc => {
                     const data = doc.data()
@@ -113,10 +189,9 @@ export default function Friends() {
             console.log(error)
         }
     }
-     useEffect(() => {
+    useEffect(() => {
             try {
                 const q = query(collection(db, "users", authState.displayName, "friends", "actualFriends", "friendList"))
-                
                 const listenFriends = onSnapshot(q, (snapshot) => {
                     getFriendList()
                 })
@@ -137,14 +212,13 @@ export default function Friends() {
             catch (error) {
                 console.log(error)
             }
-     }, [authState])
+     }, )
     
     const confirmFriendRequest = async (username: string) => {
         try {
             console.log("dece nu merge")
             await deleteDoc(doc(db, "users", authState.displayName, "friends", "friendRequestsReceived", "requestsReceived", username))
             await deleteDoc(doc(db, "users", username, "friends", "friendRequestsSend", "requestsSend", authState.displayName))
-            console.log("friend ???")
 
             const friendDoc = doc(db, "users", username)
             const friendDocSnap = await getDoc(friendDoc)
@@ -159,7 +233,7 @@ export default function Friends() {
                     username: authState.displayName
                 }
                 await setDoc(myRef, me)
-                console.log("friend confirmed")
+                // console.log("friend confirmed")
                 setFriendRequestsRecived((prev) => prev.filter((f) => f.username !== username))
             } 
         } catch (error) {
@@ -171,14 +245,14 @@ export default function Friends() {
             await deleteDoc(doc(db, "users", authState.displayName, "friends", "friendRequestsReceived", "requestsReceived", username))
             await deleteDoc(doc(db, "users", username, "friends", "friendRequestsSend", "requestsSend", authState.displayName))
 
-            console.log("request deleted")
-                setFriendRequestsRecived((prev) => prev.filter((f) => f.username !== username))
+            // console.log("request deleted")
+            setFriendRequestsRecived((prev) => prev.filter((f) => f.username !== username))
 
         } catch (error) {
             console.log(error)
         }
     }
-        const deleteFriendRequestSent = async (username: string) => {
+    const deleteFriendRequestSent = async (username: string) => {
         try {
             await deleteDoc(doc(db, "users", authState.displayName, "friends", "friendRequestsSend", "requestsSend", username))
             await deleteDoc(doc(db, "users", username, "friends", "friendRequestsReceived", "requestsReceived", authState.displayName))
@@ -199,7 +273,10 @@ export default function Friends() {
                     </View>
                     {
                         friends.length === 0 ?
-                            (<Text>No friends yet! Send friend requests to connect</Text>) : (
+                            (
+                                <View style={{ flex: 1, alignItems: "center" }}>
+                                    <Text>No friends yet! Send friend requests to connect</Text>
+                                </View>) : (
                                 friends?.map((friend, key) => (
                                     <View key={key}>
                                         <Surface style={styles.surfaceCard}>
@@ -219,7 +296,10 @@ export default function Friends() {
                                 onPress={handlePressSend}>
                                 {
                                     friendReqestsSend.length === 0 ?
-                                        (<Text>No requests sent</Text>) :
+                                        (
+                                            <View style={{ flex: 1, alignItems: "center" }}>
+                                                <Text>No requests sent</Text>
+                                            </View>) :
                                         (friendReqestsSend?.map((friend, key) => (
                                             <View key={key}>
                                         <Surface style={styles.surfaceCard}>
@@ -248,7 +328,10 @@ export default function Friends() {
                                 expanded={expandedReceived}
                                 onPress={handlePressReceived}>
                                 {friendReqestsReceived.length === 0 ? 
-                                (<Text>No friend requests received</Text>):
+                                    (
+                                        <View style={{ flex: 1, alignItems: "center" }}>
+                                            <Text>No friend requests received</Text>
+                                        </View>) :
                                     (friendReqestsReceived?.map((friend, key) => (
                                     <View key={key}>
                                     <Surface style={styles.surfaceCard}>
@@ -287,9 +370,37 @@ export default function Friends() {
                         </View>  
                     )}
                 </ScrollView>
-                    
-            </View>
-
+                {/* <Button onPress={() => {
+                    setModalVisible(true)
+                }}>
+                    <Text>show modal</Text>
+                </Button> */}
+                
+                
+                <Modal
+                    animationType="slide"
+                    transparent={true}
+                    visible={modalVisible}
+                    onRequestClose={() => {
+                        setModalVisible(!modalVisible);
+                    }}>
+                    <View style={styles.centeredView}>
+                        <View style={styles.modalView}>
+                            <Text style={styles.modalText}>Achievement unlocked!</Text>
+                            <ImageBackground
+                                source={getBadgePicture(displayBadge.slice(1))}
+                                style={{ width: 100, height: 100, justifyContent: 'center', alignItems: 'center', marginRight:10 }}
+                                resizeMode="stretch">
+                            </ImageBackground>  
+                            <Text style = {styles.modalText}>{formatCamelCase(displayBadge)}</Text>
+                        <Pressable
+                            style={[styles.button, styles.buttonClose]}
+                            onPress={() => setModalVisible(!modalVisible)}>
+                            <Text style={styles.textStyle}>Dismiss</Text>
+                        </Pressable>
+                        </View>
+                    </View>
+                </Modal>
+        </View>
         )
-    
 }

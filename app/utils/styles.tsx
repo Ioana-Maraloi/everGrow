@@ -4,7 +4,6 @@ const styles = StyleSheet.create({
 		flex: 1,
 		padding: 16,
 		backgroundColor: '#faf8e7ff',
-		// alignItems: "center",
 		justifyContent:"center"
 	},
 	input: {
@@ -16,26 +15,6 @@ const styles = StyleSheet.create({
 		textAlign: 'center',
 		alignSelf: 'center',
 		backgroundColor: '#E7EFC7',
-
-		// borderRadius: 10,
-		// alignSelf: 'center',
-		// 		padding: 10,
-
-		// // borderWidth: 1,
-		// borderRadius: 20,
-		// // padding: 10,
-		// // justifyContent: 'center',
-		// textAlign: 'center',
-		// // alignItems: 'center',
-		// // fontSize: 12,
-		// backgroundColor: '#9fdfa7ff',
-		// shadowColor: "#000",
-		// shadowOffset:{ width: 0, height: 2 },
-		// shadowOpacity: 0.5,
-		// shadowRadius: 8,
-		//   paddingVertical: 12,        // își păstrează înălțimea dorită
-
-		// elevation: 4
 	},
   	title: {
 		fontSize: 20,
@@ -146,7 +125,6 @@ const styles = StyleSheet.create({
 		backgroundColor: "#E7EFC7",
 		marginBottom: 18,
 		borderRadius: 18,
-		borderColor:"pink",
 		shadowColor: "#000",
 		shadowOffset:{ width: 0, height: 2 },
 		shadowOpacity: 0.08,
@@ -155,7 +133,6 @@ const styles = StyleSheet.create({
 	},
 	cardContent: {
 		padding: 20,
-		// backgroundColor:"purple"
 	},
   	cardTitle: {
     	fontSize: 20,
@@ -238,33 +215,109 @@ const styles = StyleSheet.create({
     	color: '#778899',
     	fontWeight: '600',
 	},
-		cardRow: {
-  flexDirection: "row",
-  justifyContent: "space-between",
-  alignItems: "center",   // 🔑 centrează textul și butoanele pe aceeași linie
-  paddingHorizontal: 20,
-  paddingVertical: 10,    // mai mic decât padding: 20
+	cardRow: {
+  		flexDirection: "row",
+  		justifyContent: "space-between",
+  		alignItems: "center",   // 🔑 centrează textul și butoanele pe aceeași linie
+  		paddingHorizontal: 20,
+  		paddingVertical: 10,    // mai mic decât padding: 20
+},
+	confirmDelete: {
+  		flexDirection: "row",
+  		gap: 8,
+	},
+  	centeredView: {
+    	flex: 1,
+    	justifyContent: 'center',
+	  	alignItems: 'center',
+
+  },
+  modalView: {
+	  margin: 10,
+	  	  width: "70%",
+	height:"25%",
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 15,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+  },
+  buttonOpen: {
+    backgroundColor: '#F194FF',
+  },
+  buttonClose: {
+    backgroundColor: '#2196F3',
+  },
+  textStyle: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: 'center',
+	},
+	shopContainer: {
+	  	flex: 1,
+		// padding: 16,
+		// backgroundColor: '#faf8e7ff',
+		justifyContent: "center",
+		backgroundColor: "#E7EFC7",
+		margin: 18,
+		borderRadius: 18,
+		shadowColor: "#000",
+		shadowOffset:{ width: 0, height: 2 },
+		shadowOpacity: 0.08,
+		shadowRadius: 8,
+		elevation: 4
+	},
+	card: {
+  marginBottom: 16,
+  borderRadius: 12,
+  backgroundColor: '#E7EFC7',
+  elevation: 3,
+  padding: 12,
 },
 
-confirmDelete: {
-  flexDirection: "row",
-  gap: 8,
+cardRowAchievements: {
+  flexDirection: 'row',
+  alignItems: 'center', // aliniaza imaginea și textul pe mijloc vertical
 },
 
-	// requestInfo: {
-	// 	alignItems: "center",
-	// 	justifyContent:"space-between",
-	// 	flexDirection: "row",
-	// 	height:0,
-	// 	// backgroundColor: "pink",
-	// 	padding:20
-	// },
-	// confirmDelete: {
-	// 			flexDirection:"row",
-	// 	// alignSelf:"flex-end"
-	// 	// alignItems: "flex-end",
-		
-	// }
+// cardImage: {
+//   width: 80, // dimensiune fixă
+//   height: 80,
+//   borderRadius: 8,
+//   marginRight: 16, // spațiu între imagine și text
+// },
+
+cardTextAchievements: {
+  flex: 1, // ocupă restul spațiului
+},
+
+cardTitleAchievements: {
+  fontSize: 18,
+  fontWeight: 'bold',
+  marginBottom: 4,
+},
+
+cardDescriptionAchievements: {
+  fontSize: 14,
+  color: '#555',
+},
+
 })
 
 export default styles

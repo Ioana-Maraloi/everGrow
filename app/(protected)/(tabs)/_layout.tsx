@@ -39,16 +39,17 @@ export default function TabsLayout() {
 					<View style={styles.moneyDisplay}>
 						<Text style= {styles.streakText}>{authState.xp} </Text>
 						<MaterialCommunityIcons name = "currency-usd" size={18}
-                        color={"#66ff00ff"}></MaterialCommunityIcons>
+							color={"#66ff00ff"}>
+						</MaterialCommunityIcons>
 					</View>
 				),
 				headerLeft: () => (
 					// https://reactnavigation.org/docs/native-stack-navigator/
 					<View style = {styles.moneyDisplay}>
-						
 						<Text style={styles.streakText}>0</Text>
 						<MaterialCommunityIcons name = "fire" size={18}
-                        color={"#ff9800"}></MaterialCommunityIcons>
+							color={"#ff9800"}>
+						</MaterialCommunityIcons>
 					</View>
 				),
 				title: "forest",

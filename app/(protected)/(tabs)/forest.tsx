@@ -1,14 +1,17 @@
 import { View, Text,Image, ImageBackground, Alert  } from "react-native"
 import { Button, SegmentedButtons } from "react-native-paper"
 import styles from '../../utils/styles'
-import React, { useState, useContext } from "react"
+import React, { useState, useContext, useEffect } from "react"
 import { ScrollView } from "react-native-gesture-handler"
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context'
 import { CountdownCircleTimer } from 'react-native-countdown-circle-timer'
 
+import { FIREBASE_APP } from "../../../firebaseConfig"
+import { collection, doc, getFirestore, setDoc, getDocs, query, onSnapshot, deleteDoc, getDoc } from 'firebase/firestore'
+
 import { AuthContext } from "../../utils/authContext" 
 // https://jennpixel.itch.io/free-flower-pack-12-icons?download
-//https://anokolisa.itch.io/free-pixel-art-asset-pack-topdown-tileset-rpg-16x16-sprites
+// https://anokolisa.itch.io/free-pixel-art-asset-pack-topdown-tileset-rpg-16x16-sprites
 const treeModel1Green3 = require("../../../assets/trees/model1/green/Size_03.png")
 const treeModel1Green4 = require("../../../assets/trees/model1/green/Size_04.png")
 const treeModel1Green5 = require("../../../assets/trees/model1/green/Size_05.png")
@@ -16,7 +19,6 @@ const treeModel1Green5 = require("../../../assets/trees/model1/green/Size_05.png
 const treeModel1LightGreen3 = require("../../../assets/trees/model1/lightGreen/Size_03.png")
 const treeModel1LightGreen4 = require("../../../assets/trees/model1/lightGreen/Size_04.png")
 const treeModel1LightGreen5 = require("../../../assets/trees/model1/lightGreen/Size_05.png")
-
 
 const treeModel1Orange3 = require("../../../assets/trees/model1/orange/Size_03.png")
 const treeModel1Orange4 = require("../../../assets/trees/model1/orange/Size_04.png")
@@ -28,9 +30,11 @@ const treeModel1Yellow5 = require("../../../assets/trees/model1/yellow/Size_05.p
 
 const treeModel1Dead = require("../../../assets/trees/model1/dead/Size_05.png")
 
-
 function getTreePicture(label: string, remainingTime: number, startTime:number) {
 	if (label === "treeModel1Green") {
+		if (remainingTime === -1 && startTime === -1)
+			return treeModel1Green5
+
 		if (startTime - remainingTime < startTime / 3) {
 			return treeModel1Green3
 		}
@@ -40,6 +44,9 @@ function getTreePicture(label: string, remainingTime: number, startTime:number) 
 		return treeModel1Green5
 	}
 	if (label === "treeModel1LightGreen") {
+		if (remainingTime === -1 && startTime === -1)
+			return treeModel1LightGreen5
+
 		if (startTime - remainingTime < startTime / 3) {
 			return treeModel1LightGreen3
 		}
@@ -49,6 +56,9 @@ function getTreePicture(label: string, remainingTime: number, startTime:number) 
 		return treeModel1LightGreen5
 	}
 	if (label === "treeModel1Orange") {
+		if (remainingTime === -1 && startTime === -1)
+			return treeModel1Orange5
+
 		if (startTime - remainingTime < startTime / 3) {
 			return treeModel1Orange3
 		}
@@ -58,6 +68,8 @@ function getTreePicture(label: string, remainingTime: number, startTime:number) 
 		return treeModel1Orange5
 	}
 	if (label === "treeModel1Yellow") {
+		if (remainingTime === -1 && startTime === -1)
+			return treeModel1Yellow5
 		if (startTime - remainingTime < startTime / 3) {
 			return treeModel1Yellow3
 		}
@@ -75,8 +87,11 @@ function getTreePicture(label: string, remainingTime: number, startTime:number) 
 		return treeModel1Green5
 }
 
-
+interface Tree{
+	name:string
+}
 export default function ForestScreen() {
+
 	const [showTree, setShowTree] = useState(false)
 	const [choiceTree, setChoiceTree] = useState("Green")
 	const [showTime, setShowTime] = useState(false)
@@ -86,8 +101,52 @@ export default function ForestScreen() {
 	const [isPlaying, setIsPlaying] = useState(false)
 	const [wasStopped, setWasStopped] = useState(false)
 
-	const authState = useContext(AuthContext)
 	
+	const db = getFirestore(FIREBASE_APP)
+	const authState = useContext(AuthContext)
+	const [treesAvailable, setTreesAvailable] = useState<Tree[]>([])
+	let arr: Tree[] = [
+		{ "name": "treeModel1Green" },
+		{ "name": "treeModel1LightGreen" },
+		{ "name": "treeModel1Orange" },
+		{ "name": "treeModel1Yellow" },
+	]
+	const getTrees = async () => {
+		try {
+			const treesList = await getDocs(collection(db, "users", authState.displayName, "trees", "ownedTrees", 'ownedTreesList'))
+			if (treesList.empty) {
+				console.log("No purchased trees yet")
+			} else {
+				console.log("purchased trees:")
+				const items: Tree[] = treesList.docs.map(doc => {
+					const data = doc.data()
+					return {
+						name: data.name,
+					}as Tree
+				})
+				setTreesAvailable(items)
+				console.log(treesAvailable)
+			}
+		} catch (error) {
+			console.log(error)
+		}
+	}
+	useEffect(() => {
+		try {
+			const q = query(collection(db, "users", authState.displayName, "trees", "ownedTrees", "ownedTreesList"))
+			const listenTrees = onSnapshot(q, (snapshot) => {
+				getTrees()
+			})
+			return () => {
+				listenTrees()
+			}  
+			}
+		catch (error) {
+			console.log(error)
+		}
+		 }, [authState])
+	
+
 	function setDurations(duration: string) {
 		setInitialDuration(duration)
 		setDuration(duration)
@@ -193,37 +252,18 @@ export default function ForestScreen() {
 					}}
 					value={choiceTree}
 					onValueChange={setChoiceTree}
-					buttons={[
-						{
-							value: "treeModel1Green",
-							icon: () => {
-								return <Image source={treeModel1Green5}
-									style={{ width: 90, height: 90, justifyContent: 'center', alignItems: 'center' }}
-									resizeMode="stretch"/>
+						buttons={treesAvailable.map((tree) => (
+							{
+								value: tree.name,
+								icon: () => {
+									return <Image source={getTreePicture(tree.name, -1, -1)}
+										style={{ width: 90, height: 90, justifyContent: "center", alignItems: "center" }}
+										resizeMode="stretch"
+									/>
+								}
+								
+							}))
 							}
-						},
-						{
-							value: "treeModel1LightGreen",
-							icon: () => {
-								return <Image source={treeModel1LightGreen5}
-									style={{ width: 90, height: 90, justifyContent: 'center', alignItems: 'center' }}
-									resizeMode="stretch"/>
-							}},
-						{
-							value: "treeModel1Orange",
-							icon: () => {
-								return <Image source={treeModel1Orange5}
-									style={{ width: 90, height: 90, justifyContent: 'center', alignItems: 'center' }}
-									resizeMode="stretch"/>
-							} },
-						{
-							value: "treeModel1Yellow",
-							icon: () => {
-								return <Image source={treeModel1Yellow5}
-									style={{ width: 90, height: 90, justifyContent: 'center', alignItems: 'center' }}
-									resizeMode="stretch"/>
-							}},
-						]}
 					/>
 					</ScrollView>
 				)}	

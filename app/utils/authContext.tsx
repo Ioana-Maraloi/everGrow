@@ -4,21 +4,19 @@ import { FIREBASE_APP } from "../../firebaseConfig"
 import { useRouter } from 'expo-router'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { getAuth } from "firebase/auth"
-import { doc, getFirestore, setDoc, getDoc, deleteDoc, updateDoc, increment } from 'firebase/firestore'
+import { doc, getFirestore, getDoc, deleteDoc } from 'firebase/firestore'
 const db = getFirestore(FIREBASE_APP)
 
 type AuthState = {
     isLoggedIn: boolean
     isReady: boolean
-    logIn: (email: string, password:string) => void
+    logIn: (email: string, password: string) => void
     logOut: () => void
     deleteAccount: () => void
     email: string
-    // password: string
     photoURL: string
     displayName: string
-    uid: string
-    // providerId: string
+    // uid: string
     xp: number
 }
 
@@ -30,7 +28,7 @@ export const AuthContext = createContext<AuthState>({
     // password: '',
     photoURL: '',
     displayName: '',
-    uid: '',
+    // uid: '',
     // providerId: '',
     logIn: (email : string, password: string) => {},
     logOut: () => { },
@@ -44,7 +42,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
     // const [password, setPassword] = useState('')
     const [photoURL, setPhotoURL] = useState('')
     const [displayName, setDisplayName] = useState('')
-    const [uid, setUid] = useState('')
+    // const [uid, setUid] = useState('')
     // const [providerId, setProviderId] = useState('')
     const [xp, setXp] = useState(0)
     const [isLoggedIn, setIsLoggedIn] = useState(false)
@@ -65,7 +63,6 @@ export function AuthProvider({ children }: PropsWithChildren) {
         const docSnap = await getDoc(docRef)
         if (docSnap.exists()) {
             setIsLoggedIn(true)
-            console.log("CE")
             const data = docSnap.data()
             setXp(data.xp)
             setEmail(data.email)
@@ -73,14 +70,6 @@ export function AuthProvider({ children }: PropsWithChildren) {
             setDisplayName(username)
             router.replace("/(protected)/(tabs)")
         }
-        // setIsLoggedIn(true)
-        // setEmail(email)
-        // setPassword(password)
-        // setXp(xp)
-        // storeAuthState({ isLoggedIn: true })
-        // setDisplayName(username)
-        
-        // router.replace("/(protected)/(tabs)")
     }
 
     const logOut = () => {
@@ -134,7 +123,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
             // password,
             photoURL,
             displayName,
-            uid,
+            // uid,
             // providerId,
             xp,
             logIn,
