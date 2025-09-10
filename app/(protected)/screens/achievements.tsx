@@ -1,6 +1,8 @@
 import { View, Text, FlatList } from "react-native"
 import { Surface } from "react-native-paper"
 import styles from '../../utils/styles'
+import images from "../../utils/images"
+
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context'
 import { AuthContext } from "../../utils/authContext" 
 import React, { useState, useContext, useEffect } from "react"
@@ -9,57 +11,43 @@ import { ImageBackground } from "expo-image"
 import { FIREBASE_APP } from "../../../firebaseConfig"
 import {collection, getFirestore, getDocs, query, onSnapshot} from 'firebase/firestore'
 // https://www.flaticon.com/packs/awards-129?k=1757068106473&log-in=google
-// focus 
-const firstSeed = require("../../../assets/achievements/focus/firstSeed.png")
-const growingTree = require("../../../assets/achievements/focus/growingTree.png")
-const deepRoots = require("../../../assets/achievements/focus/deepRoots.png")
-const forestGuardian = require("../../../assets/achievements/focus/forestGuardian.png")
-// friends
-const makingFriends = require("../../../assets/achievements/friends/makingFriends.png")
-const socialButterfly = require("../../../assets/achievements/friends/socialButterfly.png")
-const treeMendousFriends = require("../../../assets/achievements/friends/treeMendousFriends.png")
-// streak
-const babyStreak = require("../../../assets/achievements/streak/babyStreak.png")
-const discipled = require("../../../assets/achievements/streak/discipled.png")
-const masterOfHabbit = require("../../../assets/achievements/streak/masterOfHabbit.png")
-const legendaryStreak = require("../../../assets/achievements/streak/legendaryStreak.png")
 
 function getBadgePicture(label: string) {
     // focus
     if (label === "firstSeed") {
-        return firstSeed
+        return images.firstSeed
     }
     if (label === "growingTree") {
-        return growingTree
+        return images.growingTree
     }
     if (label === "deepRoots") {
-        return deepRoots
+        return images.deepRoots
     }
     if (label === "forestGuardian") {
-        return forestGuardian
+        return images.forestGuardian
     }
     // friends
     if (label === "makingFriends") {
-        return makingFriends
+        return images.makingFriends
     }
     if (label === "socialButterfly") {
-        return socialButterfly
+        return images.socialButterfly
     }
     if (label === "tree-mendousFriends") {
-        return treeMendousFriends
+        return images.treeMendousFriends
     }
     // streak
     if (label === "babyStreak") {
-        return babyStreak
+        return images.babyStreak
     }
     if (label === "discipled") {
-        return discipled
+        return images.discipled
     }
     if (label === "masterOfHabbit") {
-        return masterOfHabbit
+        return images.masterOfHabbit
     }
     if (label === "legendaryStreak") {
-        return legendaryStreak
+        return images.legendaryStreak
     }
 }
 
@@ -80,61 +68,51 @@ export default function Achievements() {
     const [achievementsCompleted, setAchievementsCompleted] = useState<Achievement[]>([])
     
     const getAchievements = async () => {
-            try {
-                const achievementsList = await getDocs(collection(db, "users", authState.displayName, "achievements", "notDone", 'notDoneList'))
-                if (achievementsList.empty) {
-                    console.log("Nothing to purchase yet")
-                } else {
-                    console.log("not purchased trees:")
-                    const items: Achievement[] = achievementsList.docs.map(doc => {
-                        const data = doc.data()
-                        return {
-                            name: data.name,
-                            description: data.description
-                        }as Achievement
-                    })
-                    setAchievements(items)
-                    console.log(achievements)
-                }
-            } catch (error) {
-                console.log(error)
+        try {
+            const achievementsList = await getDocs(collection(db, "users", authState.displayName, "achievements", "notDone", 'notDoneList'))
+            if (!achievementsList.empty) {
+                const items: Achievement[] = achievementsList.docs.map(doc => {
+                    const data = doc.data()
+                    return {
+                        name: data.name,
+                        description: data.description
+                    }as Achievement
+                })
+                setAchievements(items)
             }
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     const getAchievementsCompleted = async () => {
-            try {
-                const achievementsDoneList = await getDocs(collection(db, "users", authState.displayName, "achievements", "done", 'doneList'))
-                if (achievementsDoneList.empty) {
-                    console.log("Nothing to purchase yet")
-                } else {
-                    console.log("not purchased trees:")
-                    const items: Achievement[] = achievementsDoneList.docs.map(doc => {
-                        const data = doc.data()
-                        return {
-                            name: data.name,
-                            description: data.description
-                        }as Achievement
-                    })
-                    setAchievementsCompleted(items)
-                    console.log(achievementsCompleted)
-                }
-            } catch (error) {
-                console.log(error)
+        try {
+            const achievementsDoneList = await getDocs(collection(db, "users", authState.displayName, "achievements", "done", 'doneList'))
+            if (!achievementsDoneList.empty) {
+                const items: Achievement[] = achievementsDoneList.docs.map(doc => {
+                    const data = doc.data()
+                    return {
+                        name: data.name,
+                        description: data.description
+                    }as Achievement
+                })
+                setAchievementsCompleted(items)
+                console.log(achievementsCompleted)
             }
+        } catch (error) {
+            console.log(error)
+        }
     }
-
-
     useEffect(() => {
         try {
             const q = query(collection(db, "users", authState.displayName, "achievements", "notDone", "notDoneList"))
             const listenAchievements = onSnapshot(q, (snapshot) => {
-                        getAchievements()
+                getAchievements()
             })
             const qCompleted = query(collection(db, "users", authState.displayName, "achievements", "done", "doneList"))
             const listenAchievementsCompleted = onSnapshot(qCompleted, (snapshot) => {
-                        getAchievementsCompleted()
+                getAchievementsCompleted()
             })
-            
             return () => {
                 listenAchievements()
                 listenAchievementsCompleted()
@@ -143,7 +121,7 @@ export default function Achievements() {
         catch (error) {
             console.log(error)
         }
-    }, [authState])
+    })
     return (
         <SafeAreaProvider >
             <SafeAreaView style={styles.container}>

@@ -1,6 +1,8 @@
 import { View, Text, FlatList, Alert } from "react-native"
 import { Button } from "react-native-paper"
 import styles from '../../utils/styles'
+import images from "../../utils/images"
+
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context'
 // import { ScrollView} from "react-native-gesture-handler"
 import { AuthContext } from "../../utils/authContext" 
@@ -10,62 +12,46 @@ import { FIREBASE_APP } from "../../../firebaseConfig"
 import { collection, doc, getFirestore, setDoc, getDocs, query, onSnapshot, deleteDoc } from 'firebase/firestore'
 import { ImageBackground } from "expo-image"
 
-const treeModel2Blue = require("../../../assets/trees/model2/blue/Size_05.png")
-const treeModel2Green = require("../../../assets/trees/model2/green/Size_05.png")
-const treeModel2Turquoise = require("../../../assets/trees/model2/turquoise/Size_05.png")
-const treeModel3Green = require("../../../assets/trees/model3/green/Size_05.png")
-const treeModel3LightGreen = require("../../../assets/trees/model3/lightGreen/Size_05.png")
-const treeModel3Orange = require("../../../assets/trees/model3/orange/Size_05.png")
-const treeModel3Red = require("../../../assets/trees/model3/red/Size_05.png")
-
-
-const redMushroom = require("../../../assets/trees/plants/mushrooms/red.png")
-const blueMushroom = require("../../../assets/trees/plants/mushrooms/blue.png")
-const flower = require("../../../assets/trees/plants/flower/big.png")
-const greenBush = require("../../../assets/trees/plants/green/big.png")
-const orangeBush = require("../../../assets/trees/plants/orange/big.png")
-
-
 function getTreePicture(label: string) {
     // trees
 	if (label === "treeModel2Blue") {
-		return treeModel2Blue
+		return images.treeModel2Blue
 	}
 	if (label === "treeModel2Green") {
-		return treeModel2Green
+		return images.treeModel2Green
 	}
 	if (label === "treeModel2Turquoise") {
-	    return treeModel2Turquoise
+	    return images.treeModel2Turquoise
 	}
 	if (label === "treeModel3Green") {
-		return treeModel3Green
+		return images.treeModel3Green
     }
     if (label === "treeModel3LightGreen") {
-		return treeModel3LightGreen
+		return images.treeModel3LightGreen
 	}
 	if (label === "treeModel3Orange") {
-	    return treeModel3Orange
+	    return images.treeModel3Orange
 	}
 	if (label === "treeModel3Red") {
-		return treeModel3Red
+		return images.treeModel3Red
     }
     // plants
     if (label === "redMushroom") {
-	    return redMushroom
+	    return images.redMushroom
 	}
 	if (label === "blueMushroom") {
-		return blueMushroom
+		return images.blueMushroom
     }
     if (label === "flower") {
-		return flower
+		return images.flower
 	}
 	if (label === "greenBush") {
-	    return greenBush
+	    return images.greenBush
 	}
 	if (label === "orangeBush") {
-		return orangeBush
+		return images.orangeBush
 	}
-	return treeModel2Blue
+	return images.treeModel2Blue
 }
 interface Tree{
     name: string,
@@ -139,7 +125,7 @@ export default function Shop() {
             catch (error) {
                 console.log(error)
             }
-             }, [authState])
+    })
     return (
         <SafeAreaProvider >
             <SafeAreaView style={styles.container}>
@@ -149,8 +135,9 @@ export default function Shop() {
                         <Text>No more trees to buy!</Text>
                     </View>)
                     :
-                    (<FlatList numColumns={2}
-                            data={treesAvailable}
+                    (<FlatList
+                        numColumns={2}
+                        data={treesAvailable}
                         renderItem={({ item }) => 
                             <View style = {styles.shopContainer}>
                                 <Button

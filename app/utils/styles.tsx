@@ -218,9 +218,9 @@ const styles = StyleSheet.create({
 	cardRow: {
   		flexDirection: "row",
   		justifyContent: "space-between",
-  		alignItems: "center",   // 🔑 centrează textul și butoanele pe aceeași linie
+  		alignItems: "center",   
   		paddingHorizontal: 20,
-  		paddingVertical: 10,    // mai mic decât padding: 20
+  		paddingVertical: 10,
 },
 	confirmDelete: {
   		flexDirection: "row",

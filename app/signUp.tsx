@@ -1,13 +1,11 @@
 import { View, Text, TouchableOpacity } from "react-native"
 import {createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth"
-import React from "react"
+import {useState} from "react"
 import {TextInput} from "react-native-paper"
 import styles from './utils/styles'
 import { FIREBASE_AUTH, FIREBASE_APP } from "../firebaseConfig"
 import { doc, getFirestore, setDoc } from 'firebase/firestore'
-// interface Tree{
-// 	name:string
-// }
+
 interface Achievement{
     name: string,
 	description: string,
@@ -81,11 +79,12 @@ let achievements: Achievement[] =
 ] 
 export default function SignUpScreen() {
 	const db = getFirestore(FIREBASE_APP)
-	const [email, setEmail] = React.useState('')
-	const [password, setPassword] = React.useState('')
-	const [confirmPassword, setConfirmPassword] = React.useState('')
+	const [email, setEmail] = useState('')
+	const [password, setPassword] = useState('')
+	const [confirmPassword, setConfirmPassword] = useState('')
 	const handleSignUp = async () => {
 		try {
+			const username = email.toLowerCase().split('@')[0]
 			if (password !== confirmPassword) {
 				alert("Passwords do not match")
 				return
@@ -97,16 +96,23 @@ export default function SignUpScreen() {
 			const userCredentials = await createUserWithEmailAndPassword(FIREBASE_AUTH, email, password)
 			await sendEmailVerification(userCredentials.user)
 			alert("Account created!")
-			await setDoc(doc(db, "users", email.toLowerCase().split('@')[0]), {
+			await setDoc(doc(db, "users",  username), {
 				email: email.toLowerCase(),
-				username: email.toLowerCase().split('@')[0],
+				username:  username,
 				xp: 0,
 				uid: FIREBASE_AUTH.currentUser?.uid,
+				streak: 0,
+
+			})
+			await setDoc(doc(db, "users", username, "trees", "stats"), {
+				treesPlanted: 0,
+				treesDead: 0,
+				totalFocusedTime: 0,
+				streaks: 0 
 			})
 			// adaug copacii disponibili
 			for (let i = 0; i < basicTrees.length; i++) {
-				console.log("adding:" ,basicTrees[i])
-				const treeRef = doc(db, "users", email.toLowerCase().split('@')[0], "trees", "ownedTrees", "ownedTreesList", basicTrees[i])
+				const treeRef = doc(db, "users",  username, "trees", "ownedTrees", "ownedTreesList", basicTrees[i])
 				const treeObj = {
 					name: basicTrees[i],
 				}
@@ -114,8 +120,7 @@ export default function SignUpScreen() {
 			}
 
 			for (let i = 0; i < trees.length; i++) {
-				console.log("adding:" ,trees[i])
-				const treeRef = doc(db, "users", email.toLowerCase().split('@')[0], "trees", "notOwnedTrees", "notOwnedTreesList", trees[i])
+				const treeRef = doc(db, "users",  username, "trees", "notOwnedTrees", "notOwnedTreesList", trees[i])
 				const treeObj = {
 					name: trees[i],
 					price: 200
@@ -123,8 +128,7 @@ export default function SignUpScreen() {
 				await setDoc(treeRef, treeObj)
 			}
 			for (let i = 0; i < plants.length; i++) {
-				console.log("adding:" ,plants[i])
-				const plantRef = doc(db, "users", email.toLowerCase().split('@')[0], "trees", "notOwnedTrees", "notOwnedTreesList", plants[i])
+				const plantRef = doc(db, "users",  username, "trees", "notOwnedTrees", "notOwnedTreesList", plants[i])
 				const plantObj = {
 					name: plants[i],
 					price: 300
@@ -132,8 +136,7 @@ export default function SignUpScreen() {
 				await setDoc(plantRef, plantObj)
 			}
 			for (let i = 0; i < achievements.length; i++) {
-				console.log("adding:" ,achievements[i].name)
-				const achievementRef = doc(db, "users", email.toLowerCase().split('@')[0], "achievements", "notDone", "notDoneList", achievements[i].name)
+				const achievementRef = doc(db, "users",  username, "achievements", "notDone", "notDoneList", achievements[i].name)
 				await setDoc(achievementRef, achievements[i])
 			}
 		} catch (error: any) {

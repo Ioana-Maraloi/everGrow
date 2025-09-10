@@ -8,11 +8,7 @@ import React, {useContext, useState, useEffect } from 'react'
 import { ScrollView } from "react-native-gesture-handler"
 import { MaterialIcons } from "@expo/vector-icons"
 import { ImageBackground } from "expo-image"
-
-// friends
-const makingFriends = require("../../../assets/achievements/friends/makingFriends.png")
-const socialButterfly = require("../../../assets/achievements/friends/socialButterfly.png")
-const treeMendousFriends = require("../../../assets/achievements/friends/treeMendousFriends.png")
+import images from "../../utils/images"
 
 interface Friend{
     username: string,
@@ -21,13 +17,13 @@ interface Friend{
 }
  function getBadgePicture(label: string) {
     if (label === "makingFriends") {
-        return makingFriends
+        return images.makingFriends
     }
     if (label === "socialButterfly") {
-        return socialButterfly
+        return images.socialButterfly
     }
     if (label === "tree-mendousFriends") {
-        return treeMendousFriends
+        return images.treeMendousFriends
     }
 }
 function formatCamelCase(str: string): string {

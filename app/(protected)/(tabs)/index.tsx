@@ -117,7 +117,7 @@ export default function TodoScreen() {
         catch (error) {
             console.log(error)
         }
-    }, [authState])
+    })
     const handleDeleteAction = async (name:string) => {
         try {
             await deleteDoc(doc(db, "users", authState.displayName, "tasks", "stats", todayString, name))

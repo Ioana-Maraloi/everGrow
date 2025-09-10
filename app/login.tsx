@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity } from "react-native"
+import { View, Text, TouchableOpacity, Image } from "react-native"
 import React, {useContext, } from "react"
 import { FIREBASE_AUTH, FIREBASE_APP } from "../firebaseConfig"
 import { AuthContext } from "./utils/authContext"
@@ -6,13 +6,10 @@ import * as AppleAuthentication from 'expo-apple-authentication'
 import { doc, getFirestore, setDoc, collection } from 'firebase/firestore'
 import { Divider, Button, TextInput } from 'react-native-paper';
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context'
-
-
-import styles from './utils/styles'
 import { navigate } from "expo-router/build/global-state/routing"
-
-
 import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth"
+import styles from './utils/styles'
+
 const auth = getAuth()
 
 const androidClientId = "187288304608-ikpu55agkm548m52u01th9j295bvfdbm.apps.googleusercontent.com"
@@ -74,54 +71,37 @@ export default function LoginScreen ()  {
 
 	return (
 	<SafeAreaProvider >
-        <SafeAreaView style={[styles.container, { alignItems: "center" }]}>
-				<Text style={styles.title}>Login Screen</Text>
-				<TextInput
-					mode="outlined"
-			label="Email"
-			placeholderTextColor={styles.colors.shadowColor}
-			onChangeText={(text) => setEmail(text)}
-			style={styles.input}
-	  	/>
-				<TextInput
-					mode="outlined"
-			label="Password"
-			placeholderTextColor={styles.colors.shadowColor}
-			onChangeText={(text) => setPassword(text)}
-			secureTextEntry={true}
-			style={styles.input}
-		/>
-		{/* <TextInput
-			placeholder="Email"
-			placeholderTextColor={styles.colors.shadowColor}
-			value={email}
-			onChangeText={(text) => setEmail(text)}
-			style={styles.input}
-	  	/>
-	  	<TextInput
-			placeholder="Password"
-			placeholderTextColor={styles.colors.shadowColor}
-			value={password}
-			onChangeText={(text) => setPassword(text)}
-			secureTextEntry={true}
-			style={styles.input}
-		/> */}
-		<TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-			<Text style={styles.startText}>Log in</Text>
-		</TouchableOpacity>
-
-			
-		<TouchableOpacity style={styles.loginButton} onPress ={ function(){
-			navigate("/signUp")	
-		}}>
+		<SafeAreaView style={[styles.container, { alignItems: "center" }]}>
+			<Image source={require("../assets/trees/logo.png")}
+				style={{ width: 100, height: 100 }}>
+			</Image>
+			<Text style={styles.title}>Welcome</Text>
+			<TextInput
+				mode="outlined"
+				label="Email"
+				placeholderTextColor={styles.colors.shadowColor}
+				onChangeText={(text) => setEmail(text)}
+				style={styles.input}/>
+			<TextInput
+				mode="outlined"
+				label="Password"
+				placeholderTextColor={styles.colors.shadowColor}
+				onChangeText={(text) => setPassword(text)}
+				secureTextEntry={true}
+				style={styles.input}/>
+			<TouchableOpacity
+					style={styles.loginButton}
+					onPress={handleLogin}>
+				<Text style={styles.startText}>Log in</Text>
+			</TouchableOpacity>
+			<TouchableOpacity
+					style={styles.loginButton}
+					onPress={function () { navigate("/signUp")}}>
 			<Text style={styles.startText}>Don&apos;t have an account yet? Sign up</Text>
-		</TouchableOpacity>
-		
-			
-		<Button onPress ={ handleResetPassword}>
-			<Text style={styles.forgotPasswordText}>Reset password </Text>
+			</TouchableOpacity>
+			<Button onPress ={handleResetPassword}>
+				<Text style={styles.forgotPasswordText}>Reset password</Text>
 			</Button>
-
 
 			<View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 10, width: "80%"}}>
   				<Divider style={{ height: 1, backgroundColor: 'gray', marginVertical: 5,
@@ -156,7 +136,7 @@ export default function LoginScreen ()  {
 		  		}
 			}}
 		/>				 
-	</SafeAreaView>
+		</SafeAreaView>
 	</SafeAreaProvider>
 	)
 }

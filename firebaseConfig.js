@@ -9,7 +9,7 @@ const firebaseConfig = {
   storageBucket: "myforest-0704.firebasestorage.app",
   messagingSenderId: "846009594142",
   appId: "1:846009594142:web:21cca3ca06365b1972590f",
-  measurementId: "G-14084X9SBK"
+  measurementId: "G-14084X9SBK",
 };
 
 export const FIREBASE_APP = initializeApp(firebaseConfig);
