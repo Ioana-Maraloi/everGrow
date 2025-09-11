@@ -9,7 +9,6 @@ import { MaterialCommunityIcons } from "@expo/vector-icons"
 
 export default function TabsLayout() {
 	const authState = useContext(AuthContext)
-	
 	return (
 		<Tabs
 			screenOptions={

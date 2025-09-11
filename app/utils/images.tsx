@@ -19,20 +19,50 @@ export default {
     treeModel1Dead : require("../../assets/trees/model1/dead/Size_05.png"),
     
     // achievements
+    // DONE
     // focus
-    firstSeed: require("../../assets/achievements/focus/firstSeed.png"),
-    growingTree : require("../../assets/achievements/focus/growingTree.png"),
-    deepRoots : require("../../assets/achievements/focus/deepRoots.png"),
-    forestGuardian : require("../../assets/achievements/focus/forestGuardian.png"),
+    firstSeed: require("../../assets/achievements/focusDone/firstSeed.png"),
+    growingTree : require("../../assets/achievements/focusDone/growingTree.png"),
+    deepRoots : require("../../assets/achievements/focusDone/deepRoots.png"),
+    forestGuardian : require("../../assets/achievements/focusDone/forestGuardian.png"),
     // friends
-    makingFriends : require("../../assets/achievements/friends/makingFriends.png"),
-    socialButterfly : require("../../assets/achievements/friends/socialButterfly.png"),
-    treeMendousFriends : require("../../assets/achievements/friends/treeMendousFriends.png"),
+    makingFriends : require("../../assets/achievements/friendsDone/makingFriends.png"),
+    socialButterfly : require("../../assets/achievements/friendsDone/socialButterfly.png"),
+    treeMendousFriends : require("../../assets/achievements/friendsDone/treeMendousFriends.png"),
     // streak
-    babyStreak : require("../../assets/achievements/streak/babyStreak.png"),
-    discipled : require("../../assets/achievements/streak/discipled.png"),
-    masterOfHabbit : require("../../assets/achievements/streak/masterOfHabbit.png"),
-    legendaryStreak: require("../../assets/achievements/streak/legendaryStreak.png"),
+    babyStreak : require("../../assets/achievements/streakDone/babyStreak.png"),
+    discipled : require("../../assets/achievements/streakDone/discipled.png"),
+    masterOfHabbit : require("../../assets/achievements/streakDone/masterOfHabbit.png"),
+    legendaryStreak: require("../../assets/achievements/streakDone/legendaryStreak.png"),
+    
+    // NOT DONE
+    firstSeedNotDone: require("../../assets/achievements/focusNotDone/firstSeed.png"),
+    growingTreeNotDone : require("../../assets/achievements/focusNotDone/growingTree.png"),
+    deepRootsNotDone: require("../../assets/achievements/focusNotDone/deepRoots.png"),
+    forestGuardianNotDone: require("../../assets/achievements/focusNotDone/forestGuardian.png"),
+    // friends
+    makingFriendsNotDone : require("../../assets/achievements/friendsNotDone/makingFriends.png"),
+    socialButterflyNotDone : require("../../assets/achievements/friendsNotDone/socialButterfly.png"),
+    treeMendousFriendsNotDone : require("../../assets/achievements/friendsNotDone/treeMendousFriends.png"),
+    // streak
+    babyStreakNotDone : require("../../assets/achievements/streakNotDone/babyStreak.png"),
+    discipledNotDone : require("../../assets/achievements/streakNotDone/discipled.png"),
+    masterOfHabbitNotDone : require("../../assets/achievements/streakNotDone/masterOfHabbit.png"),
+    legendaryStreakNotDone: require("../../assets/achievements/streakNotDone/legendaryStreak.png"),
+
+    // daily tasks
+    threeHourFocus : require("../../assets/achievements/daily/threeHourFocus.png"),
+    oneHourFocus : require("../../assets/achievements/daily/oneHourFocus.png"),
+    taskBefore12 : require("../../assets/achievements/daily/taskBefore12.png"),
+    taskStreak3 : require("../../assets/achievements/daily/taskStreak3.png"),
+    taskStreak5 : require("../../assets/achievements/daily/taskStreak5.png"),
+    
+    // daily tasks not done
+    threeHourFocusNotDone : require("../../assets/achievements/dailyNotDone/threeHourFocus.png"),
+    oneHourFocusNotDone : require("../../assets/achievements/dailyNotDone/oneHourFocus.png"),
+    taskBefore12NotDone : require("../../assets/achievements/dailyNotDone/taskBefore12.png"),
+    taskStreak3NotDone : require("../../assets/achievements/dailyNotDone/taskStreak3.png"),
+    taskStreak5NotDone : require("../../assets/achievements/dailyNotDone/taskStreak5.png"),
     
     // extra trees
     treeModel2Blue : require("../../assets/trees/model2/blue/Size_05.png"),

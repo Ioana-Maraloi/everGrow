@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
 		marginBlock: 10,
 		borderWidth: 10,
 		justifyContent: "center",
-		backgroundColor: '#5E936C',
+		backgroundColor: '#5e936cff',
 	},
 	startText: {
 		color: 'white',
@@ -113,11 +113,11 @@ const styles = StyleSheet.create({
     	borderColor: "#fff"
 	},
 	box: {
-    	height: 200,
-    	width: 200,
+    	height: "50%",
+    	width: "60%",
     	borderRadius: 5,
     	marginVertical: 40,
-    	backgroundColor: '#489889ff',
+    	backgroundColor: '#5e936cff',
     	alignItems: 'center',
     	justifyContent: 'center',
 	},
@@ -146,6 +146,11 @@ const styles = StyleSheet.create({
     	marginBottom: 16,
     	color: "black",
 	},
+	cardDeadline: {
+		height: 20,
+    	fontSize: 15,
+    	color: "black",
+	},
 	swipeActionLeft: {
 		justifyContent: "center",
 		alignItems: "flex-end",
@@ -166,12 +171,6 @@ const styles = StyleSheet.create({
 		marginBottom: 18,
 		marginTop: 2,
 		paddingRight:16,
-	},
-	frequencyBadge: {
-    	backgroundColor: "#ede7f6",
-    	borderRadius: 12,
-    	paddingHorizontal: 12,
-    	paddingVertical: 4,
 	},
 	moneyDisplay: {
 		backgroundColor: "#fadba9ff",
@@ -233,8 +232,8 @@ const styles = StyleSheet.create({
 
   },
   modalView: {
-	  margin: 10,
-	  	  width: "70%",
+	margin: 10,
+	width: "70%",
 	height:"25%",
     backgroundColor: 'white',
     borderRadius: 20,
@@ -248,6 +247,18 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
+	},
+	modalView2: {
+		width: "50%",
+		height: "25%",
+		backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 15,
+		alignItems: 'center',
+	// flex: 1,
+    	justifyContent: 'center',
+	  	// alignItems: 'center',
+		
   },
   button: {
     borderRadius: 20,
@@ -284,7 +295,7 @@ const styles = StyleSheet.create({
 		elevation: 4
 	},
 	card: {
-  marginBottom: 16,
+  		marginBottom: 16,
   borderRadius: 12,
   backgroundColor: '#E7EFC7',
   elevation: 3,
@@ -293,20 +304,23 @@ const styles = StyleSheet.create({
 
 cardRowAchievements: {
   flexDirection: 'row',
-  alignItems: 'center', // aliniaza imaginea și textul pe mijloc vertical
+  alignItems: 'center', 
 },
-
-// cardImage: {
-//   width: 80, // dimensiune fixă
-//   height: 80,
-//   borderRadius: 8,
-//   marginRight: 16, // spațiu între imagine și text
-// },
 
 cardTextAchievements: {
-  flex: 1, // ocupă restul spațiului
+  flex: 1, 
+	},
+cardRowAchievementsTodo: {
+  flexDirection: 'row',
+//   alignItems: 'center', 
 },
-
+cardTextAchievementsTodo: {
+	flex: 1,
+	textAlign:"right",
+	alignContent: "flex-end",
+	justifyContent:"flex-end"
+	
+},
 cardTitleAchievements: {
   fontSize: 18,
   fontWeight: 'bold',

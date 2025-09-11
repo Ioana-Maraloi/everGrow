@@ -108,7 +108,8 @@ export default function SignUpScreen() {
 				treesPlanted: 0,
 				treesDead: 0,
 				totalFocusedTime: 0,
-				streaks: 0 
+				streaks: 0,
+				treesPlantedToday: 0
 			})
 			// adaug copacii disponibili
 			for (let i = 0; i < basicTrees.length; i++) {

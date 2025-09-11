@@ -4,7 +4,7 @@ import React, { useState,useRef, useContext, useEffect } from 'react'
 import { AuthContext } from "../../utils/authContext"
 import { View, Text } from 'react-native'
 import styles from '../../utils/styles'
-import { collection, doc, getFirestore, setDoc, getDocs, Timestamp, query, where, onSnapshot, deleteDoc, updateDoc, increment } from 'firebase/firestore'
+import { collection, doc,getDoc, getFirestore, setDoc, getDocs, Timestamp, query, where, onSnapshot, deleteDoc, updateDoc, increment } from 'firebase/firestore'
 import { ScrollView, Swipeable } from "react-native-gesture-handler"
 // https://www.youtube.com/watch?v=nZwrxeUHtOQ&ab_channel=MissCoding
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -50,27 +50,100 @@ export default function TodoScreen() {
     const addTodo = async () => {
         try {
             console.log("Adding todo:", title, description, deadline)
-            // console.log(today)
-            // console.log(dateToday + "-" + monthToday + "-" + yearToday)
-            // console.log(monthToday)
+            
+            const statsRef = doc(db, 'users', username!, 'tasks', 'stats')
+            const docSnap = await getDoc(statsRef)
+            // if there is no document at the location
+            // exists = false
+            if (docSnap.exists()) {
+                // var streak = docSnap.data()
+                let lastCheckin = docSnap.data().lastCheckin
+                let streakVal = docSnap.data().streak
+                let lastCheckinDay = lastCheckin.getDate()
+                let lastCheckinMonth = lastCheckin.getMonth() + 1
+                let lastCheckinYear = lastCheckin.getFullYear()
+
+                let today = new Date()
+                let todayDay = today.getDate()
+                let todayMonth = today.getMonth() + 1
+                let todayYear = today.getFullYear()
+
+                if (todayYear === lastCheckinYear) {
+                    if (todayMonth === lastCheckinMonth) {
+                        if (todayDay === lastCheckinDay + 1) {
+                            streakVal++
+                        } else {
+                            streakVal = 0
+                        }
+                    } else if (todayMonth === lastCheckinMonth + 1) {
+                        if (todayDay === 1) {
+                            if (lastCheckinDay === 31) {
+                                if (lastCheckinMonth === 1 || lastCheckinMonth === 3 || lastCheckinMonth === 5 || lastCheckinMonth === 7 || lastCheckinMonth === 8 || lastCheckinMonth === 10) {
+                                    streakVal++
+                                } else {
+                                    streakVal = 0
+                                }
+                            }
+                            else if (lastCheckinDay === 30) {
+                                if (lastCheckinMonth === 4 || lastCheckinMonth === 6 || lastCheckinMonth === 9 || lastCheckinMonth === 11) {
+                                    streakVal++
+                                } else {
+                                    streakVal = 0
+                                }
+                                
+                            } else if (lastCheckinDay === 28) {
+                                if (lastCheckinMonth === 2) {
+                                    streakVal++
+                                } else {
+                                    streakVal = 0
+                                }
+
+                            } else if (lastCheckinDay === 29) {
+                                
+                            } else {
+                                streakVal = 0
+                            }
+                        } else {
+                            streakVal = 0
+                        }
+                    }
+                } else if (todayYear === lastCheckinYear + 1){ 
+                    if (todayDay === 1 && lastCheckinDay === 31) {
+                        streakVal++
+                    } else {
+                        streakVal = 0
+                    }        
+                } else {
+                    streakVal = 0
+                }
+                await updateDoc(statsRef, {
+                    tasksBeingDone: increment(1),
+                    streak: streakVal,
+                    lastCheckin: Timestamp.fromDate(new Date()),
+                })             
+            } else {
+                const stats = {
+                    tasksCompleted: 0,
+                    tasksDeleted: 0,
+                    tasksBeingDone: 1,
+                    lastCheckin: Timestamp.fromDate(new Date()),
+                }
+                await setDoc(statsRef, stats, {merge:true})
+            }
+    
+            
             const docData = {
                 description: description,
                 completed: false,
-                createdAt: new Date().toISOString(),
-                deadline: deadline.toISOString(),
+                createdAt: Timestamp.fromDate(new Date()),
+                deadline: Timestamp.fromDate(deadline),
                 title: title,
-                priority:priority
+                priority: priority
             }
-            const statsRef = doc(db, 'users', username!, 'tasks', 'stats')
-            const stats = {
-                tasksCompleted: 0,
-                tasksDeleted: 0,
-                tasksBeingDone: 0,
-            }
-            await setDoc(statsRef, stats, {merge:true})
 
             const todoCollectionRef = doc(db, 'users', username!, 'tasks', 'stats', todayString, title)
             await setDoc(todoCollectionRef, docData)
+
             alert("task added succesfully")
         }
         catch (error: any) {
@@ -248,19 +321,24 @@ export default function TodoScreen() {
                                 handleCompleteAction(todo.title)
                             swipeableRefs.current[todo.title]?.close( )
                             }}>
-                        <Surface  style = {styles.surfaceCard}>
-                            <View style = {styles.cardContent}>
-                            <Text style = {styles.cardTitle}>{todo.title}</Text>
-                            <Text style= {styles.cardDescription}>{todo.description}</Text> 
-                             {/* <View style={styles.frequencyBadge}>
-                                        if (todo.freqency === )
-                                        <Text style={styles.frequencyText}>
-                        {" "}
-                        {habit.frequency.charAt(0).toUpperCase() +
-                          habit.frequency.slice(1)}
-                      </Text>
-                    </View> */}
+                            
+                        <Surface  style = {styles.card}>
+                            <View style={{
+                                flexDirection: "row",
+                                justifyContent: "space-between",
+                                alignItems: "center",
+                                marginBottom: 4,
+                                }}>
+                                    <Text style = {styles.cardTitle}>{todo.title}</Text>
+                                    <View style = {{alignItems:"center", marginBottom: 4, flexDirection:"row"}}>
+                                        <MaterialCommunityIcons name="calendar-clock"
+                                            size={20}
+                                            color={"#000000ff"}>
+                                        </MaterialCommunityIcons>
+                                        <Text style={styles.cardDeadline}>{todo.deadline.toDate().toLocaleDateString("en-GB")}</Text>
+                                    </View>
                                 </View>
+                                <Text  style = {styles.cardDescription}>{todo.description}</Text>
                         </Surface>
                     </Swipeable>
                 )))}

@@ -156,16 +156,16 @@ export default function Achievements() {
                         renderItem={({ item }) => 
                             <Surface style={styles.card}>
                             <View style={styles.cardRowAchievements}>
-                                    <ImageBackground
+                                <ImageBackground
                                     source={getBadgePicture(item.name.slice(1))}
                                     style={{ width: 70, height: 70, justifyContent: 'center', alignItems: 'center', marginRight:10 }}
                                     resizeMode="stretch">
-                                    </ImageBackground>  
-                                    <View style={styles.cardTextAchievements}>
-                                <Text style = {styles.cardTitleAchievements}>{formatCamelCase(item.name)}</Text>
-                                        <Text style ={styles.cardDescriptionAchievements} >{item.description}</Text>
-                                        </View>
+                                </ImageBackground>  
+                                <View style={styles.cardTextAchievements}>
+                                    <Text style = {styles.cardTitleAchievements}>{formatCamelCase(item.name)}</Text>
+                                    <Text style ={styles.cardDescriptionAchievements} >{item.description}</Text>
                                 </View>
+                            </View>
                         </Surface>
                         }>
                     </FlatList>)

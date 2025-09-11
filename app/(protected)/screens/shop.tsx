@@ -4,7 +4,6 @@ import styles from '../../utils/styles'
 import images from "../../utils/images"
 
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context'
-// import { ScrollView} from "react-native-gesture-handler"
 import { AuthContext } from "../../utils/authContext" 
 import React, { useState, useContext, useEffect } from "react"
 
@@ -127,7 +126,7 @@ export default function Shop() {
             }
     })
     return (
-        <SafeAreaProvider >
+        <SafeAreaProvider>
             <SafeAreaView style={styles.container}>
                 <Text style = {styles.text}>Buy new trees:</Text>
                 {treesAvailable.length === 0 ?
