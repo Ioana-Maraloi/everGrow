@@ -4,8 +4,11 @@ import { FIREBASE_APP } from "../../firebaseConfig"
 import { useRouter } from 'expo-router'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { getAuth } from "firebase/auth"
-import { doc, getFirestore, getDoc, deleteDoc } from 'firebase/firestore'
+import { doc, getFirestore, getDoc, deleteDoc, getDocs , collection} from 'firebase/firestore'
+import { getFunctions, httpsCallable } from "firebase/functions";
+
 const db = getFirestore(FIREBASE_APP)
+const functions = getFunctions();
 
 type AuthState = {
     isLoggedIn: boolean
@@ -77,6 +80,19 @@ export function AuthProvider({ children }: PropsWithChildren) {
         storeAuthState({ isLoggedIn: false })
         router.replace("/login")
     }
+    // function deleteAtPath(path:string) {
+    // const deleteFn = httpsCallable(functions, 'recursiveDelete');
+    // deleteFn({ path: path })
+    //     .then(function(result:any) {
+    //         console.log('Delete success: ' + JSON.stringify(result));
+    //     })
+    //     .catch(function(err:any) {
+    //         console.log('Delete failed, see console,');
+    //         console.warn(err);
+    //     });
+    // }
+
+
     const deleteAccount = async () => {
         try {
             console.log("Deleting account...")
@@ -89,8 +105,57 @@ export function AuthProvider({ children }: PropsWithChildren) {
             }).catch((error) => {
                 console.error("Error deleting account:", error)
             })
-            await deleteDoc(doc(db, "users", displayName))
+            // // achievements
+            // const achievementsDoneSubcollectionSnap = await getDocs(collection(db, "users", displayName, "achievements", "done", "doneList"))
+            // for (const achievementDoc of achievementsDoneSubcollectionSnap.docs) {
+            //     await deleteDoc(achievementDoc.ref)
+            // }
 
+
+            // const achievementsNotDoneSubcollectionSnap = await getDocs(collection(db, "users", displayName, "achievements", "notDone", "notDoneList"))
+            // for (const achievementDoc of achievementsNotDoneSubcollectionSnap.docs) {
+            //     await deleteDoc(achievementDoc.ref)
+            // }
+            // // delete users/username/achievements/done
+            // // and delete users/username/achievements/notDone
+            // const achievementsSnap = await getDocs(collection(db, "users", displayName, "achievements"))
+            // for (const achievementRef of achievementsSnap.docs) {
+            //     await deleteDoc(achievementRef.ref)
+            // }
+            // // trees
+            // // trees/notOwnedTrees
+            // const treesNotOwnedSnap = await getDocs(collection(db, "users", displayName, "trees", "notOwnedTrees", "notOwnedTreesList"))
+            // for (const notOwnedTree of treesNotOwnedSnap.docs) {
+            //     await deleteDoc(notOwnedTree.ref)
+            // }
+            // // trees/ownedTrees
+            // const treesOwnedSnap = await getDocs(collection(db, "users", displayName, "trees", "ownedTrees", "ownedTreesList"))
+            // for (const ownedTree of treesOwnedSnap.docs) {
+            //     await deleteDoc(ownedTree.ref)
+            // }
+            // // trees/treesPlanted
+            // const treesPlantedSnap = await getDocs(collection(db, "users", displayName, "trees", "stats", "treesPlanted"))
+            // for (const treePlanted of treesPlantedSnap.docs) {
+            //     await deleteDoc(treePlanted.ref)
+            // }
+            // // trees/stats
+            // const statsSnap = await getDoc(doc(db, "users", displayName, "trees", "stats"))
+            // await deleteDoc(statsSnap.ref)
+                        
+            // // tasks/stats
+            // const tasksDaysSnap = await getDocs(collection(db, "users", displayName, "tasks", "stats"))
+
+            // for (const subcol of tasksDaysSnap.docs) {
+            //     const subcolRef = collection(db, "users", displayName, "tasks", "stats", subcol.id)
+            //     const docsSnap = await getDocs(subcolRef)
+            //     await Promise.all(docsSnap.docs.map((doc) => deleteDoc(doc.ref)))
+
+            // }        
+
+            // tasks
+            // trees
+            // friends
+            // await deleteDoc(doc(db, "users", displayName))
             // Note: Firebase does not allow deleting an account while the user is logged in.
             // Implement account deletion logic here
             // After deletion, log out the user

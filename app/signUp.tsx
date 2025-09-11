@@ -76,6 +76,23 @@ let achievements: Achievement[] =
 			description: "Add 10 friends",
 			xp: 100,
 		},
+		// hour achievements
+		{
+			name: "LfocusBunny",
+			description: "Focus for 10 hours",
+			xp: 50,
+		}, 
+		{
+			name: "MclockWizzard",
+			description: "Focus for 100 hours",
+			xp:200,
+		},
+		{
+			name: "NconcentrationMaster",
+			description: "Focus for 300 hours",
+			xp: 1000,
+		},
+
 ] 
 export default function SignUpScreen() {
 	const db = getFirestore(FIREBASE_APP)
@@ -109,7 +126,6 @@ export default function SignUpScreen() {
 				treesDead: 0,
 				totalFocusedTime: 0,
 				streaks: 0,
-				treesPlantedToday: 0
 			})
 			// adaug copacii disponibili
 			for (let i = 0; i < basicTrees.length; i++) {

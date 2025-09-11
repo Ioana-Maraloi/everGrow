@@ -71,7 +71,43 @@ function getTreePicture(label: string, remainingTime: number, startTime: number)
 	}
 	return images.treeModel1Green5
 }
-
+function getBadgePicture(label: string) {
+	// focus
+	if (label === "firstSeed") {
+		return images.firstSeed
+	}
+	if (label === "growingTree") {
+		return images.growingTree
+	}
+	if (label === "deepRoots") {
+		return images.deepRoots
+	}
+	if (label === "forestGuardian") {
+		return images.forestGuardian
+	}
+	// streak
+	if (label === "babyStreak") {
+		return images.babyStreak
+	}
+	if (label === "discipled") {
+		return images.discipled
+	}
+	if (label === "masterOfHabbit") {
+		return images.masterOfHabbit
+	}
+	if (label === "legendaryStreak") {
+		return images.legendaryStreak
+	}
+		if (label === "focusBunny") {
+		return images.focusBunny
+	}
+	if (label === "clockWizzard") {
+		return images.clockWizzard
+	}
+	if (label === "concentrationMaster") {
+		return images.concentrationMaster
+	}
+}
 interface Tree {
 	name: string
 }
@@ -90,7 +126,12 @@ export default function ForestScreen() {
 	const [showForest, setShowForest] = useState(false)
 	const [isPlaying, setIsPlaying] = useState(false)
 	const [wasStopped, setWasStopped] = useState(false)
-	const [modalVisible, setModalVisible] = useState(false);
+	const [modalVisible, setModalVisible] = useState(false)
+	const [modalVisibleAchievement, setModalVisibleaAchievement] = useState(false)
+
+
+	const [displayBadge, setDisplayBadge] = useState("AfirstSeed")
+
 
 	const [succesful, setSuccesful] = useState(false)
 	const db = getFirestore(FIREBASE_APP)
@@ -198,6 +239,75 @@ export default function ForestScreen() {
 			}
 			return renderTimeWithLabel(choiceTree)
 		}
+	const checkAchievementUnlocked = async (treesPlanted: number, name: string, count: number) => {
+		try {
+			if (treesPlanted === count) {
+				const badgeDoc = doc(db, "users", authState.displayName, "achievements", "notDone", "notDoneList", name)
+				const badgeSnap = await getDoc(badgeDoc)
+				if (badgeSnap.exists()) {
+
+					setModalVisibleaAchievement(true)
+					setDisplayBadge("AfirstSeed")
+
+					await deleteDoc(badgeDoc)
+					const description = badgeSnap.data().description
+					const xp = badgeSnap.data().xp
+					authState.xp += xp
+
+					const dateToday = new Date().getDate()
+					const monthToday = new Date().getMonth() + 1
+					const yearToday = new Date().getFullYear()
+					const todayString = dateToday + "-" + monthToday + "-" + yearToday
+
+					const badgeDone = doc(db, "users", authState.displayName, "achievements", "done", "doneList", name)
+					const badgeInfo = {
+						name: name,
+						description: description,
+						completedAt: todayString
+					}
+					await setDoc(badgeDone, badgeInfo)
+				}
+			}
+
+		} catch (error) {
+			console.log(error)
+		}
+	}
+		const checkTimeAchievementUnlocked = async (timePlanted: number, name: string, count: number) => {
+		try {
+			if (timePlanted >= count) {
+				const badgeDoc = doc(db, "users", authState.displayName, "achievements", "notDone", "notDoneList", name)
+				const badgeSnap = await getDoc(badgeDoc)
+				if (badgeSnap.exists()) {
+
+					setModalVisibleaAchievement(true)
+					setDisplayBadge("AfirstSeed")
+
+					await deleteDoc(badgeDoc)
+					const description = badgeSnap.data().description
+					const xp = badgeSnap.data().xp
+					authState.xp += xp
+
+					const dateToday = new Date().getDate()
+					const monthToday = new Date().getMonth() + 1
+					const yearToday = new Date().getFullYear()
+					const todayString = dateToday + "-" + monthToday + "-" + yearToday
+
+					const badgeDone = doc(db, "users", authState.displayName, "achievements", "done", "doneList", name)
+					const badgeInfo = {
+						name: name,
+						description: description,
+						completedAt: todayString
+					}
+					await setDoc(badgeDone, badgeInfo)
+				}
+			}
+
+		} catch (error) {
+			console.log(error)
+		}
+	}
+	
 	const completedPlant = async (duration: number, choiceTree: string) => {
 		try {
 			setDurations("60")
@@ -206,32 +316,51 @@ export default function ForestScreen() {
 			authState.xp += duration
 			setIsPlaying(false)
 
-			
-    		const dateToday = new Date().getDate()
-    		const monthToday = new Date().getMonth() + 1
-    		const yearToday = new Date().getFullYear()
-    		const todayString =  dateToday + "-" + monthToday + "-" + yearToday
 
 			const countRef = doc(db, "users", authState.displayName, "trees", "stats")
 			const countSnap = await getDoc(countRef)
 			if (!countSnap.exists()) {
 				return
-			}	
-			const countTrees = countSnap.data().treesPlantedToday
-			const treeRef = doc(db, "users", authState.displayName, "trees", "treesPlanted", todayString, "tree" + countTrees.toString())
+			}
+			const treesPlanted = countSnap.data().treesPlanted
+			const totalFocusedTime = countSnap.data().totalFocusedTime
+			// check achievements for: first tree planted, 5th tree 20th tree and 100th tree
+			checkAchievementUnlocked(treesPlanted, "AfirstSeed", 0)
+			checkAchievementUnlocked(treesPlanted, "BgrowingTree", 4)
+			checkAchievementUnlocked(treesPlanted, "CdeepRoots", 9)
+			checkAchievementUnlocked(treesPlanted, "DforestGuardian", 99)
 
-			const statsRef = doc(db, 'users', authState.displayName, 'trees', 'stats')
-			await updateDoc(statsRef, {
-				totalFocusedTime: increment(duration),
-				treesPlanted: increment(1),
-			})
-			const xpRef = doc(db, "users", authState.displayName)
-			await updateDoc(xpRef, {
-				xp: increment(duration)
-			})
+			checkTimeAchievementUnlocked(totalFocusedTime + duration, "focusBunny", 9)
+			checkTimeAchievementUnlocked(totalFocusedTime + duration, "clockWizzard", 99)
+			checkTimeAchievementUnlocked(totalFocusedTime+ duration, "concentrationMaster", 299)
+
+			// receive achievement for 
+			await updateDoc(countRef,
+				{
+					treesPlanted: increment(1),
+					totalFocusedTime: increment(duration)
+
+				}
+			)
+			// const treeRef = doc(db, "users", authState.displayName, "trees", "treesPlanted", todayString, "tree" + countTrees.toString())
+
+			// const statsRef = doc(db, 'users', authState.displayName, 'trees', 'stats')
+			// await updateDoc(statsRef, {
+			// 	totalFocusedTime: increment(duration),
+			// 	treesPlanted: increment(1),
+			// })
+			// const xpRef = doc(db, "users", authState.displayName)
+			// await updateDoc(xpRef, {
+			// 	xp: increment(duration)
+			// })
 		} catch (error) {
 			console.log(error)
 		}
+	}
+	function formatCamelCase(str: string): string {
+		const withoutPrefix = str.slice(1);
+		const spaced = withoutPrefix.replace(/([A-Z])/g, ' $1').trim();
+		return spaced.charAt(0).toUpperCase() + spaced.slice(1).toLowerCase();
 	}
 	return (
 		<SafeAreaProvider>
@@ -245,12 +374,12 @@ export default function ForestScreen() {
 								alignContent: "center", alignSelf: "center",
 								transform: [{ rotateX: '60deg' }, { rotateZ: '40deg' }],
 							},
-							]}>
+						]}>
 						</View>
-						<Button onPress={() => {
+						<Button icon={"pine-tree"} onPress={() => {
 							setShowForest(false)
 						}}>
-							<Text>Plant another tree to today`s forest</Text>
+							<Text>Plant another tree to today&apos;s forest</Text>
 						</Button>
 					</View>
 				)}
@@ -261,9 +390,9 @@ export default function ForestScreen() {
 						{!isPlaying && (
 							<View>
 								<Button>
-									<Text onPress={() => { setShowForest(true) }}>Show today`s forest!</Text>
+									<Text onPress={() => { setShowForest(true) }}>Show today&apos;s forest!</Text>
 								</Button>
-							
+
 								<Button style={styles.loginButton} onPress={() => {
 									if (showTreesOptionssOptions)
 										setshowTreesOptionssOptions(false)
@@ -381,7 +510,7 @@ export default function ForestScreen() {
 						)}
 					</ScrollView>
 				}
-
+				{/* modal for when a tree is succesfully planted */}
 				<Modal
 					animationType="slide"
 					transparent={true}
@@ -429,7 +558,32 @@ export default function ForestScreen() {
 						</View>)}
 					</View>
 				</Modal>
-				
+				{/* modal for displaying a congratulations message for achieving an award */}
+				<Modal
+					animationType="slide"
+					transparent={true}
+					visible={modalVisibleAchievement}
+					onRequestClose={() => {
+						setModalVisible(!modalVisibleAchievement);
+					}}>
+					<View style={styles.centeredView}>
+						<View style={styles.modalView}>
+							<Text style={styles.modalText}>Achievement unlocked!</Text>
+							<ImageBackground
+								source={getBadgePicture(displayBadge.slice(1))}
+								style={{ width: 100, height: 100, justifyContent: 'center', alignItems: 'center', marginRight: 10 }}
+								resizeMode="stretch">
+							</ImageBackground>
+							<Text style={styles.modalText}>{formatCamelCase(displayBadge)}</Text>
+							<Pressable
+								style={[styles.button, styles.buttonClose]}
+								onPress={() => setModalVisible(!modalVisibleAchievement)}>
+								<Text style={styles.textStyle}>Dismiss</Text>
+							</Pressable>
+						</View>
+					</View>
+				</Modal>
+
 			</SafeAreaView>
 		</SafeAreaProvider>
 	)

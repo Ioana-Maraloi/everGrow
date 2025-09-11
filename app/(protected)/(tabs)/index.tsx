@@ -238,7 +238,7 @@ export default function TodoScreen() {
     return (
         <SafeAreaProvider >
         <SafeAreaView style={styles.container}>
-            {!displayAddButtons && (<Button onPress={() => {
+            {!displayAddButtons && (<Button icon = {"note-edit-outline"} onPress={() => {
                     if (displayAddButtons)
                         setDisplayAddButtons(false)
                     else
@@ -246,7 +246,8 @@ export default function TodoScreen() {
                     }}>
                     <Text>Add Task for Today!</Text>
                 </Button>)}
-                {displayAddButtons && (<Button onPress={() => {
+                {displayAddButtons && (<Button icon={"order-bool-descending-variant"}
+                    onPress={() => {
                     if (displayAddButtons)
                         setDisplayAddButtons(false)
                     else

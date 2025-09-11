@@ -7,7 +7,7 @@ import {
 	TouchableOpacity,
 } from "react-native"
 import { Button, Avatar, TextInput } from "react-native-paper"
-import { useContext, useState, useEffect } from "react"
+import { useContext, useState } from "react"
 import { AuthContext } from "../../utils/authContext"
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context"
 import styles from "../../utils/styles"
@@ -17,8 +17,8 @@ import { useRouter } from "expo-router"
 import { MaterialCommunityIcons } from "@expo/vector-icons"
 // import { FIREBASE_APP } from "../../../firebaseConfig"
 // import { collection, doc, getFirestore, setDoc, getDocs, query, where, onSnapshot, deleteDoc, getDoc, addDoc } from 'firebase/firestore'
-import { launchImageLibrary } from "react-native-image-picker"
-import { getStorage, ref } from "firebase/storage"
+// import { launchImageLibrary } from "react-native-image-picker"
+// import { getStorage, ref } from "firebase/storage"
 import { FIREBASE_APP } from "../../../firebaseConfig"
 import { collection, doc, getDoc, getFirestore, setDoc, getDocs, Timestamp, query, where, onSnapshot, deleteDoc, updateDoc, increment } from 'firebase/firestore'
 import { ImageBackground } from "expo-image"
@@ -229,7 +229,6 @@ export default function ProfileScreen() {
 									source={getOneHourFocusPicture()}
 									style={{ width: 50, height: 50, justifyContent: 'center', alignItems: 'center', marginRight: 10 }}
 									resizeMode="stretch"></ImageBackground>
-								{/* <Text>BUTTON1</Text> */}
 							</Button>
 							<Button onPress={() => {
 								setPictureDisplayModal("threeHourFocus")
@@ -239,7 +238,6 @@ export default function ProfileScreen() {
 									source={getThreeHoursFocusPicture()}
 									style={{ width: 50, height: 50, justifyContent: 'center', alignItems: 'center', marginRight: 10 }}
 									resizeMode="stretch"></ImageBackground>
-								{/* <Text>BUTTON1</Text> */}
 							</Button>
 							<Button onPress={() => {
 								setPictureDisplayModal("taskStreak3")
@@ -249,7 +247,6 @@ export default function ProfileScreen() {
 									source={getThreeTasksDonePicture()}
 									style={{ width: 50, height: 50, justifyContent: 'center', alignItems: 'center', marginRight: 10 }}
 									resizeMode="stretch"></ImageBackground>
-								{/* <Text>BUTTON1</Text> */}
 							</Button>
 							<Button onPress={() => {
 								setPictureDisplayModal("taskStreak5")
@@ -259,7 +256,6 @@ export default function ProfileScreen() {
 									source={getFiveTasksDonePicture()}
 									style={{ width: 50, height: 50, justifyContent: 'center', alignItems: 'center', marginRight: 10 }}
 									resizeMode="stretch"></ImageBackground>
-								{/* <Text>BUTTON1</Text> */}
 							</Button>
 							<Button onPress={() => {
 								setPictureDisplayModal("taskBefore12")
@@ -269,7 +265,6 @@ export default function ProfileScreen() {
 									source={getTaskBefore12DonePicture()}
 									style={{ width: 50, height: 50, justifyContent: 'center', alignItems: 'center', marginRight: 10 }}
 									resizeMode="stretch"></ImageBackground>
-								{/* <Text>BUTTON1</Text> */}
 							</Button>
 						</View>
 					</View>
@@ -339,28 +334,28 @@ export default function ProfileScreen() {
 				<Button icon={"logout"} onPress={authState.logOut}>
 					<Text>Log out</Text>
 				</Button>
-				<Button
+				<Button icon = {"account-group"}
 					onPress={() => {
 						router.push("../screens/friends")
 					}}
 				>
 					Friends
 				</Button>
-				<Button
+				<Button icon={"shopping-outline"}
 					onPress={() => {
 						router.push("../screens/shop")
 					}}
 				>
 					Shop
 				</Button>
-				<Button
+				<Button icon = {"medal-outline"}
 					onPress={() => {
 						router.push("../screens/achievements")
 					}}
 				>
 					Achievements
 				</Button>
-				<Button
+				<Button icon = {"table-eye"}
 					onPress={() => {
 						router.push("../screens/stats")
 					}}
@@ -369,7 +364,7 @@ export default function ProfileScreen() {
 				</Button>
 
 				<Button>Theme</Button>
-				<Button
+				<Button icon = {"delete"}
 					onPress={function () {
 						Alert.alert(
 							"Are u sure u want to delete this account?",

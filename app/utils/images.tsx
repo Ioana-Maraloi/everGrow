@@ -34,6 +34,10 @@ export default {
     discipled : require("../../assets/achievements/streakDone/discipled.png"),
     masterOfHabbit : require("../../assets/achievements/streakDone/masterOfHabbit.png"),
     legendaryStreak: require("../../assets/achievements/streakDone/legendaryStreak.png"),
+    // hour focus
+    focusBunny : require("../../assets/achievements/timeFocusDone/focusBunny.png"),
+    clockWizzard : require("../../assets/achievements/timeFocusDone/clockWizzard.png"),
+    concentrationMaster : require("../../assets/achievements/timeFocusDone/concentrationMaster.png"),
     
     // NOT DONE
     firstSeedNotDone: require("../../assets/achievements/focusNotDone/firstSeed.png"),
@@ -49,7 +53,12 @@ export default {
     discipledNotDone : require("../../assets/achievements/streakNotDone/discipled.png"),
     masterOfHabbitNotDone : require("../../assets/achievements/streakNotDone/masterOfHabbit.png"),
     legendaryStreakNotDone: require("../../assets/achievements/streakNotDone/legendaryStreak.png"),
+    // hour focus
 
+    focusBunnyNotDone : require("../../assets/achievements/timeFocusNotDone/makingFriends.png"),
+    clockWizzardNotDone : require("../../assets/achievements/timeFocusNotDone/clockWizzard.png"),
+    concentrationMasterNotDone : require("../../assets/achievements/timeFocusNotDone/concentrationMaster.png"),
+    // 
     // daily tasks
     threeHourFocus : require("../../assets/achievements/daily/threeHourFocus.png"),
     oneHourFocus : require("../../assets/achievements/daily/oneHourFocus.png"),

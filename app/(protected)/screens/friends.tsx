@@ -78,7 +78,7 @@ export default function Friends() {
         try {
             const friendList = await getDocs(collection(db, "users", authState.displayName, "friends", "actualFriends", "friendList"))
             if (friendList.empty) {
-
+                return
             } else {
                 const items: Friend[] = friendList.docs.map(doc => {
                     const data = doc.data()
@@ -212,7 +212,6 @@ export default function Friends() {
     
     const confirmFriendRequest = async (username: string) => {
         try {
-            console.log("dece nu merge")
             await deleteDoc(doc(db, "users", authState.displayName, "friends", "friendRequestsReceived", "requestsReceived", username))
             await deleteDoc(doc(db, "users", username, "friends", "friendRequestsSend", "requestsSend", authState.displayName))
 
@@ -229,7 +228,7 @@ export default function Friends() {
                     username: authState.displayName
                 }
                 await setDoc(myRef, me)
-                // console.log("friend confirmed")
+                console.log("friend confirmed")
                 setFriendRequestsRecived((prev) => prev.filter((f) => f.username !== username))
             } 
         } catch (error) {
@@ -240,8 +239,7 @@ export default function Friends() {
         try {
             await deleteDoc(doc(db, "users", authState.displayName, "friends", "friendRequestsReceived", "requestsReceived", username))
             await deleteDoc(doc(db, "users", username, "friends", "friendRequestsSend", "requestsSend", authState.displayName))
-
-            // console.log("request deleted")
+            console.log("request deleted")
             setFriendRequestsRecived((prev) => prev.filter((f) => f.username !== username))
 
         } catch (error) {
