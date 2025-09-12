@@ -307,7 +307,24 @@ export default function ForestScreen() {
 			console.log(error)
 		}
 	}
-	
+	const treeDeath = async () => {
+		try {
+			const countRef = doc(db, "users", authState.displayName, "trees", "stats")
+			const countSnap = await getDoc(countRef)
+			if (!countSnap.exists()) {
+				return
+			}
+			await updateDoc(countRef,
+				{
+					treesDead: increment(1),
+
+				}
+			)
+			
+		} catch(error) {
+			console.log(error)
+		}
+	}
 	const completedPlant = async (duration: number, choiceTree: string) => {
 		try {
 			setDurations("60")
@@ -490,17 +507,20 @@ export default function ForestScreen() {
 									{
 										text: 'Cancel',
 										onPress: () => {
-											setModalVisible(true)
-											setSuccesful(false)
+											// setModalVisible(true)
+											// setSuccesful(false)
 										},
 										style: 'cancel',
 									},
 									{
 										text: 'Confirm',
 										onPress: () => {
-											// console.log('OK Pressed')
+											console.log('OK Pressed')
 											setIsPlaying(false)
 											setWasStopped(true)
+											setModalVisible(true)
+											setSuccesful(false)
+											treeDeath()
 										}
 									},
 								])
@@ -552,6 +572,7 @@ export default function ForestScreen() {
 									setSuccesful(false)
 									setChoiceTree("treeModel1Green")
 									setModalVisible(!modalVisible)
+
 								}}>
 								<Text style={styles.textStyle}>Dismiss</Text>
 							</Pressable>

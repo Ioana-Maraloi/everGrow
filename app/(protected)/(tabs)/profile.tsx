@@ -1,11 +1,4 @@
-import {
-	Text,
-	Alert,
-	View,
-	Modal,
-	Pressable,
-	TouchableOpacity,
-} from "react-native"
+import {Text, Alert, View, Modal, Pressable, TouchableOpacity} from "react-native"
 import { Button, Avatar, TextInput } from "react-native-paper"
 import { useContext, useState } from "react"
 import { AuthContext } from "../../utils/authContext"
@@ -152,7 +145,7 @@ export default function ProfileScreen() {
 		if (namePicture === "taskBefore12")
 			return "Early Bird"
 	}
-	const getDescriptionModal = (namePicture: string) =>{
+	const getDescriptionModal = (namePicture: string) => {
 		if (namePicture === "oneHourFocus") {
 			if (oneHourFocusDone)
 				return "You earned this badge"
@@ -177,7 +170,7 @@ export default function ProfileScreen() {
 			if (taskBefore12Done)
 				return "You earned this badge"
 			return "Complete a task before 12AM to earn this badge"
-		}	
+		}
 	}
 	return (
 		<SafeAreaProvider>
@@ -220,7 +213,7 @@ export default function ProfileScreen() {
 							5 tasks
 							one task before 12
 							 */}
-							
+
 							<Button onPress={() => {
 								setPictureDisplayModal("oneHourFocus")
 								setdailyAchievementModal(true)
@@ -317,8 +310,8 @@ export default function ProfileScreen() {
 								style={{ width: 100, height: 100, justifyContent: 'center', alignItems: 'center', marginRight: 10 }}
 								resizeMode="stretch">
 							</ImageBackground>
-							<Text style = {styles.modalText}>{getTextforModal(pictureDisplayModal)}</Text>
-							<Text style = {styles.modalText}>{ getDescriptionModal(pictureDisplayModal)}</Text>
+							<Text style={styles.modalText}>{getTextforModal(pictureDisplayModal)}</Text>
+							<Text style={styles.modalText}>{getDescriptionModal(pictureDisplayModal)}</Text>
 							<Pressable
 								style={[styles.button, styles.buttonClose]}
 								onPress={() => {
@@ -334,7 +327,7 @@ export default function ProfileScreen() {
 				<Button icon={"logout"} onPress={authState.logOut}>
 					<Text>Log out</Text>
 				</Button>
-				<Button icon = {"account-group"}
+				<Button icon={"account-group"}
 					onPress={() => {
 						router.push("../screens/friends")
 					}}
@@ -348,14 +341,14 @@ export default function ProfileScreen() {
 				>
 					Shop
 				</Button>
-				<Button icon = {"medal-outline"}
+				<Button icon={"medal-outline"}
 					onPress={() => {
 						router.push("../screens/achievements")
 					}}
 				>
 					Achievements
 				</Button>
-				<Button icon = {"table-eye"}
+				<Button icon={"table-eye"}
 					onPress={() => {
 						router.push("../screens/stats")
 					}}
@@ -364,7 +357,7 @@ export default function ProfileScreen() {
 				</Button>
 
 				<Button>Theme</Button>
-				<Button icon = {"delete"}
+				<Button icon={"delete"}
 					onPress={function () {
 						Alert.alert(
 							"Are u sure u want to delete this account?",

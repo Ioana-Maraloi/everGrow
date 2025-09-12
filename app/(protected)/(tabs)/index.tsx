@@ -4,6 +4,7 @@ import React, { useState,useRef, useContext, useEffect } from 'react'
 import { AuthContext } from "../../utils/authContext"
 import { View, Text } from 'react-native'
 import styles from '../../utils/styles'
+import images from "../../utils/images"
 import { collection, doc,getDoc, getFirestore, setDoc, getDocs, Timestamp, query, where, onSnapshot, deleteDoc, updateDoc, increment } from 'firebase/firestore'
 import { ScrollView, Swipeable } from "react-native-gesture-handler"
 // https://www.youtube.com/watch?v=nZwrxeUHtOQ&ab_channel=MissCoding
@@ -17,6 +18,18 @@ interface Todo {
     deadline: Timestamp,
     createdAt: Timestamp,
     priority:string
+}
+
+ function getBadgePicture(label: string) {
+    if (label === "makingFriends") {
+        return images.makingFriends
+    }
+    if (label === "socialButterfly") {
+        return images.socialButterfly
+    }
+    if (label === "tree-mendousFriends") {
+        return images.treeMendousFriends
+    }
 }
 export default function TodoScreen() {
 

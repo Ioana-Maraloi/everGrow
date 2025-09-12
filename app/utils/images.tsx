@@ -55,7 +55,7 @@ export default {
     legendaryStreakNotDone: require("../../assets/achievements/streakNotDone/legendaryStreak.png"),
     // hour focus
 
-    focusBunnyNotDone : require("../../assets/achievements/timeFocusNotDone/makingFriends.png"),
+    focusBunnyNotDone : require("../../assets/achievements/timeFocusNotDone/focusBunny.png"),
     clockWizzardNotDone : require("../../assets/achievements/timeFocusNotDone/clockWizzard.png"),
     concentrationMasterNotDone : require("../../assets/achievements/timeFocusNotDone/concentrationMaster.png"),
     // 
