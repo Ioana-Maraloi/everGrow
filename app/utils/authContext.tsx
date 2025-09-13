@@ -122,25 +122,25 @@ export function AuthProvider({ children }: PropsWithChildren) {
             // for (const achievementRef of achievementsSnap.docs) {
             //     await deleteDoc(achievementRef.ref)
             // }
-            // // trees
-            // // trees/notOwnedTrees
-            // const treesNotOwnedSnap = await getDocs(collection(db, "users", displayName, "trees", "notOwnedTrees", "notOwnedTreesList"))
-            // for (const notOwnedTree of treesNotOwnedSnap.docs) {
-            //     await deleteDoc(notOwnedTree.ref)
-            // }
-            // // trees/ownedTrees
-            // const treesOwnedSnap = await getDocs(collection(db, "users", displayName, "trees", "ownedTrees", "ownedTreesList"))
-            // for (const ownedTree of treesOwnedSnap.docs) {
-            //     await deleteDoc(ownedTree.ref)
-            // }
-            // // trees/treesPlanted
-            // const treesPlantedSnap = await getDocs(collection(db, "users", displayName, "trees", "stats", "treesPlanted"))
-            // for (const treePlanted of treesPlantedSnap.docs) {
-            //     await deleteDoc(treePlanted.ref)
-            // }
-            // // trees/stats
-            // const statsSnap = await getDoc(doc(db, "users", displayName, "trees", "stats"))
-            // await deleteDoc(statsSnap.ref)
+            // trees
+            // trees/notOwnedTrees
+            const treesNotOwnedSnap = await getDocs(collection(db, "users", displayName, "trees", "notOwnedTrees", "notOwnedTreesList"))
+            for (const notOwnedTree of treesNotOwnedSnap.docs) {
+                await deleteDoc(notOwnedTree.ref)
+            }
+            // trees/ownedTrees
+            const treesOwnedSnap = await getDocs(collection(db, "users", displayName, "trees", "ownedTrees", "ownedTreesList"))
+            for (const ownedTree of treesOwnedSnap.docs) {
+                await deleteDoc(ownedTree.ref)
+            }
+            // trees/treesPlanted
+            const treesPlantedSnap = await getDocs(collection(db, "users", displayName, "trees", "stats", "treesPlanted"))
+            for (const treePlanted of treesPlantedSnap.docs) {
+                await deleteDoc(treePlanted.ref)
+            }
+            // trees/stats
+            const statsSnap = await getDoc(doc(db, "users", displayName, "trees", "stats"))
+            await deleteDoc(statsSnap.ref)
                         
             // // tasks/stats
             // const tasksDaysSnap = await getDocs(collection(db, "users", displayName, "tasks", "stats"))

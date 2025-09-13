@@ -68,7 +68,16 @@ export default function ProtectedLayout() {
                     title:"Stats"
 
                 }} />
+ <Stack.Screen name="screens/theme" options={{
+                    headerShown: true,
+                    headerBackTitle: "Profile",
+                    headerStyle: {
+                        backgroundColor: "#9EBC8A"
+                    },
+                    headerTintColor: "#000000ff",
+                    title:"Stats celalalt"
 
+                }} />
             </Stack>
         </GestureHandlerRootView>
 

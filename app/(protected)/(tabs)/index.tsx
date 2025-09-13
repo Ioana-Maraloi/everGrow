@@ -16,7 +16,7 @@ interface Todo {
     title: string;
     completed: boolean;
     deadline: Timestamp,
-    createdAt: Timestamp,
+    createdAt: string,
     priority:string
 }
 
@@ -38,7 +38,7 @@ export default function TodoScreen() {
     const yearToday = new Date().getFullYear()
 
     const today = new Date(yearToday, monthToday, dateToday)
-    const todayString =  dateToday + "-" + monthToday + "-" + yearToday
+	const todayString = dateToday.toString().padStart(2, "0") + "-" + monthToday.toString().padStart(2, "0") + "-" + yearToday.toString().padStart(2, "0")
     
     const [title, setTitle] = useState('')
     const [description, setDescription] = useState('')
@@ -69,12 +69,16 @@ export default function TodoScreen() {
             // if there is no document at the location
             // exists = false
             if (docSnap.exists()) {
+                console.log("exisrra")
                 // var streak = docSnap.data()
                 let lastCheckin = docSnap.data().lastCheckin
                 let streakVal = docSnap.data().streak
-                let lastCheckinDay = lastCheckin.getDate()
-                let lastCheckinMonth = lastCheckin.getMonth() + 1
-                let lastCheckinYear = lastCheckin.getFullYear()
+
+                  const [lastCheckinDay, lastCheckinMonth, lastCheckinYear] = lastCheckin.split("-").map(Number);
+
+                // let lastCheckinDay = lastCheckin.getDate()
+                // let lastCheckinMonth = lastCheckin.getMonth() + 1
+                // let lastCheckinYear = lastCheckin.getFullYear()
 
                 let today = new Date()
                 let todayDay = today.getDate()
@@ -132,14 +136,15 @@ export default function TodoScreen() {
                 await updateDoc(statsRef, {
                     tasksBeingDone: increment(1),
                     streak: streakVal,
-                    lastCheckin: Timestamp.fromDate(new Date()),
+                    lastCheckin:todayString,
                 })             
             } else {
+                console.log("intra aici")
                 const stats = {
                     tasksCompleted: 0,
                     tasksDeleted: 0,
                     tasksBeingDone: 1,
-                    lastCheckin: Timestamp.fromDate(new Date()),
+                    lastCheckin: todayString,
                 }
                 await setDoc(statsRef, stats, {merge:true})
             }
@@ -148,7 +153,7 @@ export default function TodoScreen() {
             const docData = {
                 description: description,
                 completed: false,
-                createdAt: Timestamp.fromDate(new Date()),
+                createdAt: todayString,
                 deadline: Timestamp.fromDate(deadline),
                 title: title,
                 priority: priority
@@ -156,6 +161,23 @@ export default function TodoScreen() {
 
             const todoCollectionRef = doc(db, 'users', username!, 'tasks', 'stats', todayString, title)
             await setDoc(todoCollectionRef, docData)
+
+            const todayStatsRef = doc(db, 'users', username!, 'tasks', 'stats', todayString, "statsToday")
+            const todayStatsSnap = await getDoc(todayStatsRef)
+            if (todayStatsSnap.exists()) {
+                 await updateDoc(todayStatsRef, {
+                     tasksBeingDone: increment(1),
+            })
+            } else {
+                const todayStats = {
+                    tasksCompleted: 0,
+                    tasksBeingDone: 1,
+                    tasksDeleted: 0,
+                    completed:true
+                }
+                await setDoc(todayStatsRef, todayStats)
+            }
+
 
             alert("task added succesfully")
         }
@@ -166,9 +188,15 @@ export default function TodoScreen() {
     }
     const fetchTodos = async () => {
         try {
-            const todos = await getDocs(collection(db, "users", authState.displayName, "tasks", "stats", todayString))
-            console.log(todos)
-            const items: Todo[] = todos.docs.map(doc => ({
+            // const todos = await getDocs(collection(db, "users", authState.displayName, "tasks", "stats", todayString))
+            // console.log(todos)
+              const q = query(
+            collection(db, "users", authState.displayName, "tasks", "stats", todayString),
+            where("completed", "==", false)
+            )
+            const todosSnapshot = await getDocs(q)
+
+            const items: Todo[] = todosSnapshot.docs.map(doc => ({
                 ...doc.data()
             })) as Todo[]
             setTodos(items)
@@ -213,6 +241,10 @@ export default function TodoScreen() {
                 tasksDeleted: increment(1),
                 tasksBeingDone: increment(-1)
             })
+            const todayStatsRef = doc(db, 'users', username!, 'tasks', 'stats', todayString, "statsToday")
+            await updateDoc(todayStatsRef, {
+                tasksBeingDone:increment(-1),
+            })
         } catch (error: any) {
             console.log(error)
         }
@@ -226,6 +258,12 @@ export default function TodoScreen() {
                 tasksCompleted: increment(1),
                 tasksBeingDone: increment(-1)
             })
+            const todayStatsRef = doc(db, 'users', username!, 'tasks', 'stats', todayString, "statsToday")
+            await updateDoc(todayStatsRef, {
+                tasksCompleted: increment(1),
+                tasksBeingDone:increment(-1),
+            })
+
         } catch (error: any) {
             console.log(error)
         } 

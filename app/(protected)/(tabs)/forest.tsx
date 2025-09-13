@@ -317,7 +317,6 @@ export default function ForestScreen() {
 			await updateDoc(countRef,
 				{
 					treesDead: increment(1),
-
 				}
 			)
 			
@@ -356,9 +355,31 @@ export default function ForestScreen() {
 				{
 					treesPlanted: increment(1),
 					totalFocusedTime: increment(duration)
-
 				}
 			)
+
+			const dateToday = new Date().getDate()
+			const monthToday = new Date().getMonth() + 1
+			const yearToday = new Date().getFullYear()
+			const todayString = dateToday.toString().padStart(2, "0") + "-" + monthToday.toString().padStart(2, "0") + "-" + yearToday.toString().padStart(2, "0")
+			
+			const todayRef = doc(db, "users", authState.displayName, "trees", "stats", todayString, "statsToday")
+			const todaySnap = await getDoc(todayRef)
+			if (!todaySnap.exists()) {
+				console.log("NU EXISTA")
+				const statsInfo = {
+						treesPlantedToday: 1,
+						timeFocusedToday: duration,
+					}
+					await setDoc(todayRef, statsInfo)
+			} else {
+				await updateDoc(todayRef,
+					{
+						treesPlantedToday: increment(1),
+						timeFocusedToday: increment(duration)
+				})
+			}
+
 			// const treeRef = doc(db, "users", authState.displayName, "trees", "treesPlanted", todayString, "tree" + countTrees.toString())
 
 			// const statsRef = doc(db, 'users', authState.displayName, 'trees', 'stats')
@@ -543,6 +564,7 @@ export default function ForestScreen() {
 						{succesful && (<View style={styles.modalView}>
 							<Text style={styles.modalText}>Congratulations! You planted a tree</Text>
 							<ImageBackground
+								// source={require("../../../assets/ayrton.jpg")}
 								source={getTreePicture(choiceTree, -1, -1)}
 								style={{ width: 100, height: 100, justifyContent: 'center', alignItems: 'center', marginRight: 10 }}
 								resizeMode="stretch">

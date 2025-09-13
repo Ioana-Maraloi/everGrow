@@ -1,6 +1,6 @@
 import {Text, Alert, View, Modal, Pressable, TouchableOpacity} from "react-native"
 import { Button, Avatar, TextInput } from "react-native-paper"
-import { useContext, useState } from "react"
+import { useContext, useState, useEffect } from "react"
 import { AuthContext } from "../../utils/authContext"
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context"
 import styles from "../../utils/styles"
@@ -38,7 +38,7 @@ export default function ProfileScreen() {
 	const yearToday = new Date().getFullYear()
 
 	// const today = new Date(yearToday, monthToday, dateToday)
-	const todayString = dateToday + "-" + monthToday + "-" + yearToday
+	const todayString = dateToday.toString().padStart(2, "0") + "-" + monthToday.toString().padStart(2, "0") + "-" + yearToday.toString().padStart(2, "0")
 
 
 
@@ -62,7 +62,7 @@ export default function ProfileScreen() {
 				setFiveTasksDone(false)
 				setTaskBefore12Done(false)
 			} else {
-				const tasksCompleted = tasksStatsSnap.data().todayCompleted
+				const tasksCompleted = tasksStatsSnap.data().tasksCompleted
 				if (tasksCompleted >= 3) {
 					setThreeTasksDone(true)
 				}
@@ -93,6 +93,24 @@ export default function ProfileScreen() {
 			console.log(error)
 		}
 	}
+	useEffect(() => {
+		try {
+			const listen1 = onSnapshot(doc(db, "users", authState.displayName, "tasks", "stats", todayString, "statsToday"), (doc) => {
+				checkTasks()
+			})
+			const listen2 = onSnapshot(doc(db, "users", authState.displayName, "trees", "stats", todayString, "statsToday"), (doc) => {
+				checkTasks()
+			})
+			return () => {
+				listen1()
+				listen2()
+			}
+			
+		} catch (error) {
+			console.log(error)
+		}
+	})
+	
 
 
 	const getOneHourFocusPicture = () => {
@@ -356,7 +374,9 @@ export default function ProfileScreen() {
 					Stats
 				</Button>
 
-				<Button>Theme</Button>
+				<Button onPress={() => {
+						router.push("../screens/theme")
+					}}>Theme</Button>
 				<Button icon={"delete"}
 					onPress={function () {
 						Alert.alert(
