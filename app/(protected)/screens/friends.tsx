@@ -87,7 +87,6 @@ export default function Friends() {
                     } as Friend
                 })
                 setFriends(items)
-                console.log("LISTA", friends)
                 if (friends.length === 1) {
                     const badgeFriendDoc = doc(db, "users", authState.displayName, "achievements", "notDone", 'notDoneList', "ImakingFriends")
                     const badgeMakingFriendsSnap = await getDoc(badgeFriendDoc)

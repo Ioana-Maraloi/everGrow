@@ -1,34 +1,32 @@
-import { Button, Surface, TextInput, SegmentedButtons } from 'react-native-paper'
+import { Button, Surface, TextInput, SegmentedButtons} from 'react-native-paper'
 import { FIREBASE_APP } from "../../../firebaseConfig"
-import React, { useState,useRef, useContext, useEffect } from 'react'
+import React, { useState, useRef, useContext, useEffect } from 'react'
 import { AuthContext } from "../../utils/authContext"
-import { View, Text } from 'react-native'
+import { View, Text,Modal, Pressable} from 'react-native'
 import styles from '../../utils/styles'
 import images from "../../utils/images"
-import { collection, doc,getDoc, getFirestore, setDoc, getDocs, Timestamp, query, where, onSnapshot, deleteDoc, updateDoc, increment } from 'firebase/firestore'
+import { ImageBackground } from "expo-image"
+import { collection, doc, getDoc, getFirestore, setDoc, getDocs, Timestamp, query, where, onSnapshot, deleteDoc, updateDoc, increment } from 'firebase/firestore'
 import { ScrollView, Swipeable } from "react-native-gesture-handler"
 // https://www.youtube.com/watch?v=nZwrxeUHtOQ&ab_channel=MissCoding
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context'
 interface Todo {
-  description: string;
+    description: string;
     title: string;
     completed: boolean;
     deadline: Timestamp,
     createdAt: string,
-    priority:string
+    priority: string
 }
 
- function getBadgePicture(label: string) {
-    if (label === "makingFriends") {
-        return images.makingFriends
+function getBadgePicture(label: string) {
+    if (label === "taskStreak3") {
+        return images.taskStreak3
     }
-    if (label === "socialButterfly") {
-        return images.socialButterfly
-    }
-    if (label === "tree-mendousFriends") {
-        return images.treeMendousFriends
+    if (label === "taskStreak5") {
+        return images.taskStreak5
     }
 }
 export default function TodoScreen() {
@@ -38,8 +36,8 @@ export default function TodoScreen() {
     const yearToday = new Date().getFullYear()
 
     const today = new Date(yearToday, monthToday, dateToday)
-	const todayString = dateToday.toString().padStart(2, "0") + "-" + monthToday.toString().padStart(2, "0") + "-" + yearToday.toString().padStart(2, "0")
-    
+    const todayString = dateToday.toString().padStart(2, "0") + "-" + monthToday.toString().padStart(2, "0") + "-" + yearToday.toString().padStart(2, "0")
+
     const [title, setTitle] = useState('')
     const [description, setDescription] = useState('')
     const authState = useContext(AuthContext)
@@ -49,7 +47,11 @@ export default function TodoScreen() {
     const [priority, setPriority] = useState("")
     const [displayAddButtons, setDisplayAddButtons] = useState(false)
     const [todos, setTodos] = useState<Todo[]>([])
+
     
+    const [modalVisible, setModalVisible] = useState(false);
+    const [displayBadge, setDisplayBadge] = useState("ImakingFriends")
+        
 
     const swipeableRefs = useRef<{ [key: string]: Swipeable | null }>({})
 
@@ -63,23 +65,17 @@ export default function TodoScreen() {
     const addTodo = async () => {
         try {
             console.log("Adding todo:", title, description, deadline)
-            
+
             const statsRef = doc(db, 'users', username!, 'tasks', 'stats')
             const docSnap = await getDoc(statsRef)
             // if there is no document at the location
             // exists = false
             if (docSnap.exists()) {
-                console.log("exisrra")
                 // var streak = docSnap.data()
                 let lastCheckin = docSnap.data().lastCheckin
                 let streakVal = docSnap.data().streak
 
-                  const [lastCheckinDay, lastCheckinMonth, lastCheckinYear] = lastCheckin.split("-").map(Number);
-
-                // let lastCheckinDay = lastCheckin.getDate()
-                // let lastCheckinMonth = lastCheckin.getMonth() + 1
-                // let lastCheckinYear = lastCheckin.getFullYear()
-
+                const [lastCheckinDay, lastCheckinMonth, lastCheckinYear] = lastCheckin.split("-").map(Number);
                 let today = new Date()
                 let todayDay = today.getDate()
                 let todayMonth = today.getMonth() + 1
@@ -107,7 +103,7 @@ export default function TodoScreen() {
                                 } else {
                                     streakVal = 0
                                 }
-                                
+
                             } else if (lastCheckinDay === 28) {
                                 if (lastCheckinMonth === 2) {
                                     streakVal++
@@ -116,7 +112,7 @@ export default function TodoScreen() {
                                 }
 
                             } else if (lastCheckinDay === 29) {
-                                
+
                             } else {
                                 streakVal = 0
                             }
@@ -124,20 +120,20 @@ export default function TodoScreen() {
                             streakVal = 0
                         }
                     }
-                } else if (todayYear === lastCheckinYear + 1){ 
+                } else if (todayYear === lastCheckinYear + 1) {
                     if (todayDay === 1 && lastCheckinDay === 31) {
                         streakVal++
                     } else {
                         streakVal = 0
-                    }        
+                    }
                 } else {
                     streakVal = 0
                 }
                 await updateDoc(statsRef, {
                     tasksBeingDone: increment(1),
                     streak: streakVal,
-                    lastCheckin:todayString,
-                })             
+                    lastCheckin: todayString,
+                })
             } else {
                 console.log("intra aici")
                 const stats = {
@@ -146,10 +142,10 @@ export default function TodoScreen() {
                     tasksBeingDone: 1,
                     lastCheckin: todayString,
                 }
-                await setDoc(statsRef, stats, {merge:true})
+                await setDoc(statsRef, stats, { merge: true })
             }
-    
-            
+
+
             const docData = {
                 description: description,
                 completed: false,
@@ -165,15 +161,15 @@ export default function TodoScreen() {
             const todayStatsRef = doc(db, 'users', username!, 'tasks', 'stats', todayString, "statsToday")
             const todayStatsSnap = await getDoc(todayStatsRef)
             if (todayStatsSnap.exists()) {
-                 await updateDoc(todayStatsRef, {
-                     tasksBeingDone: increment(1),
-            })
+                await updateDoc(todayStatsRef, {
+                    tasksBeingDone: increment(1),
+                })
             } else {
                 const todayStats = {
                     tasksCompleted: 0,
                     tasksBeingDone: 1,
                     tasksDeleted: 0,
-                    completed:true
+                    completed: true
                 }
                 await setDoc(todayStatsRef, todayStats)
             }
@@ -190,9 +186,9 @@ export default function TodoScreen() {
         try {
             // const todos = await getDocs(collection(db, "users", authState.displayName, "tasks", "stats", todayString))
             // console.log(todos)
-              const q = query(
-            collection(db, "users", authState.displayName, "tasks", "stats", todayString),
-            where("completed", "==", false)
+            const q = query(
+                collection(db, "users", authState.displayName, "tasks", "stats", todayString),
+                where("completed", "==", false)
             )
             const todosSnapshot = await getDocs(q)
 
@@ -210,29 +206,29 @@ export default function TodoScreen() {
             const unsubscribe = onSnapshot(q, (snapshot) => {
                 snapshot.docChanges().forEach((change) => {
                     if (change.type === "added") {
-                        console.log("NEW ADD:", change.doc.data())
+                        // console.log("NEW ADD:", change.doc.data())
                         fetchTodos()
                     }
                     if (change.type === "modified") {
-                        console.log("NEW modify:", change.doc.data())
+                        // console.log("NEW modify:", change.doc.data())
                         fetchTodos()
                     }
                     if (change.type === "removed") {
-                        console.log("NEW remove:", change.doc.data())
+                        // console.log("NEW remove:", change.doc.data())
                         fetchTodos()
                     }
                 })
-            })    
+            })
             // fetchTodos()
             return () => {
                 unsubscribe()
-            }  
+            }
         }
         catch (error) {
             console.log(error)
         }
     })
-    const handleDeleteAction = async (name:string) => {
+    const handleDeleteAction = async (name: string) => {
         try {
             await deleteDoc(doc(db, "users", authState.displayName, "tasks", "stats", todayString, name))
             const statsRef = doc(db, 'users', username!, 'tasks', 'stats')
@@ -243,13 +239,13 @@ export default function TodoScreen() {
             })
             const todayStatsRef = doc(db, 'users', username!, 'tasks', 'stats', todayString, "statsToday")
             await updateDoc(todayStatsRef, {
-                tasksBeingDone:increment(-1),
+                tasksBeingDone: increment(-1),
             })
         } catch (error: any) {
             console.log(error)
         }
     }
-    const handleCompleteAction = async (name:string) => {
+    const handleCompleteAction = async (name: string) => {
         try {
             await deleteDoc(doc(db, "users", authState.displayName, "tasks", "stats", todayString, name))
             const statsRef = doc(db, 'users', username!, 'tasks', 'stats')
@@ -261,73 +257,89 @@ export default function TodoScreen() {
             const todayStatsRef = doc(db, 'users', username!, 'tasks', 'stats', todayString, "statsToday")
             await updateDoc(todayStatsRef, {
                 tasksCompleted: increment(1),
-                tasksBeingDone:increment(-1),
+                tasksBeingDone: increment(-1),
             })
+            const todayStatsSnap = await getDoc(todayStatsRef)
+            if (!todayStatsSnap.exists()) {
+                console.log("error setting the daily task stats")
+                return
+            }
+            const numberTasksToday = todayStatsSnap.data().tasksCompleted
+            if (numberTasksToday === 3) {
+                setModalVisible(true)
+                setDisplayBadge("taskStreak3")
+            }
+            if (numberTasksToday === 5) {
+                setModalVisible(true)
+                setDisplayBadge("taskStreak5")
+
+            }
+
 
         } catch (error: any) {
             console.log(error)
-        } 
-        
+        }
+
     }
     const renderRightActions = () => {
         return <View style={styles.swipeActionRight}>
             <MaterialCommunityIcons name="check-circle-outline"
                 size={32}
-            color={"#fff"}>
+                color={"#fff"}>
             </MaterialCommunityIcons>
         </View>
-        
+
     }
-        const renderLeftActions= () => {
-            return <View style={ styles.swipeActionLeft}>
+    const renderLeftActions = () => {
+        return <View style={styles.swipeActionLeft}>
             <MaterialCommunityIcons name="trash-can-outline"
                 size={32}
-            color={"#fff"}>
+                color={"#fff"}>
             </MaterialCommunityIcons>
         </View>
     }
     return (
         <SafeAreaProvider >
-        <SafeAreaView style={styles.container}>
-            {!displayAddButtons && (<Button icon = {"note-edit-outline"} onPress={() => {
+            <SafeAreaView style={styles.container}>
+                {!displayAddButtons && (<Button icon={"note-edit-outline"} onPress={() => {
                     if (displayAddButtons)
                         setDisplayAddButtons(false)
                     else
                         setDisplayAddButtons(true)
-                    }}>
+                }}>
                     <Text>Add Task for Today!</Text>
                 </Button>)}
                 {displayAddButtons && (<Button icon={"order-bool-descending-variant"}
                     onPress={() => {
-                    if (displayAddButtons)
-                        setDisplayAddButtons(false)
-                    else
-                        setDisplayAddButtons(true)
+                        if (displayAddButtons)
+                            setDisplayAddButtons(false)
+                        else
+                            setDisplayAddButtons(true)
                     }}>
                     <Text>See today&apos;s tasks</Text>
                 </Button>)}
-            {displayAddButtons && (
-                <View style={[styles.container, { alignItems: "center" }]}>
-                <TextInput style={styles.input} mode="outlined" label = "title" onChangeText={setTitle}/>
-                <TextInput style={styles.input} mode="outlined" label="description" onChangeText={setDescription} />
-                
-                <SegmentedButtons style={{
-						alignContent: "center",
-						width: "80%",
-						alignSelf: "center",
-						height: 50,
-					}}
-					value={priority}
-					onValueChange={setPriority}
+                {displayAddButtons && (
+                    <View style={[styles.container, { alignItems: "center" }]}>
+                        <TextInput style={styles.input} mode="outlined" label="title" onChangeText={setTitle} />
+                        <TextInput style={styles.input} mode="outlined" label="description" onChangeText={setDescription} />
+
+                        <SegmentedButtons style={{
+                            alignContent: "center",
+                            width: "80%",
+                            alignSelf: "center",
+                            height: 50,
+                        }}
+                            value={priority}
+                            onValueChange={setPriority}
                             buttons={[
                                 {
                                     value: "Low",
-                                    label:"Low"
+                                    label: "Low"
                                 },
-                                
+
                                 {
                                     value: "Medium",
-                                    label:"Medium",
+                                    label: "Medium",
                                 },
                                 {
                                     value: "High",
@@ -335,68 +347,92 @@ export default function TodoScreen() {
                                 },]}>
                         </SegmentedButtons>
                         <Button style={styles.loginButton} onPress={() => { setShow(true) }}>
-                    <Text style={styles.startText}>Add Deadline</Text>
-                </Button>
-                {show && (
-                    <DateTimePicker minimumDate={today}
-                        style={{ alignSelf: "center" }}
-                        value={deadline} mode="date"
-                        onChange={onChange}
-                    />
-                )} 
-                <Button onPress={addTodo} style={styles.loginButton} mode = "contained" disabled={!title || !description || !deadline}>
-                <Text style={styles.startText}>Add Task</Text>
-                </Button>
-                </View>
-                 )}
- 
+                            <Text style={styles.startText}>Add Deadline</Text>
+                        </Button>
+                        {show && (
+                            <DateTimePicker minimumDate={today}
+                                style={{ alignSelf: "center" }}
+                                value={deadline} mode="date"
+                                onChange={onChange}
+                            />
+                        )}
+                        <Button onPress={addTodo} style={styles.loginButton} mode="contained" disabled={!title || !description || !deadline}>
+                            <Text style={styles.startText}>Add Task</Text>
+                        </Button>
+                    </View>
+                )}
+
                 {!displayAddButtons && (
-                <ScrollView showsVerticalScrollIndicator={false}>        
-                {todos.length === 0 ? (
-                    <Text>No todos</Text>
-                ) : (
-                    todos?.map((todo, key) => (
-                    <Swipeable
-                        ref={(ref) => {
-                            swipeableRefs.current[todo.title]=ref
-                        }}
-                        key={key}
-                        overshootLeft={false}
-                        overshootRight={false}
-                        renderLeftActions={ renderLeftActions}
-                        renderRightActions={renderRightActions}
-                        onSwipeableOpen={(direction) => {
-                            if (direction === "left") {
-                                handleDeleteAction(todo.title)
-                            }
-                            if (direction === "right")
-                                handleCompleteAction(todo.title)
-                            swipeableRefs.current[todo.title]?.close( )
-                            }}>
-                            
-                        <Surface  style = {styles.card}>
-                            <View style={{
-                                flexDirection: "row",
-                                justifyContent: "space-between",
-                                alignItems: "center",
-                                marginBottom: 4,
-                                }}>
-                                    <Text style = {styles.cardTitle}>{todo.title}</Text>
-                                    <View style = {{alignItems:"center", marginBottom: 4, flexDirection:"row"}}>
-                                        <MaterialCommunityIcons name="calendar-clock"
-                                            size={20}
-                                            color={"#000000ff"}>
-                                        </MaterialCommunityIcons>
-                                        <Text style={styles.cardDeadline}>{todo.deadline.toDate().toLocaleDateString("en-GB")}</Text>
-                                    </View>
-                                </View>
-                                <Text  style = {styles.cardDescription}>{todo.description}</Text>
-                        </Surface>
-                    </Swipeable>
-                )))}
-                </ScrollView>
-                )} 
+                    <ScrollView showsVerticalScrollIndicator={false}>
+                        {todos.length === 0 ? (
+                            <Text style = {styles.text}>No todos</Text>
+                        ) : (
+                            todos?.map((todo, key) => (
+                                <Swipeable
+                                    ref={(ref) => {
+                                        swipeableRefs.current[todo.title] = ref
+                                    }}
+                                    key={key}
+                                    overshootLeft={false}
+                                    overshootRight={false}
+                                    renderLeftActions={renderLeftActions}
+                                    renderRightActions={renderRightActions}
+                                    onSwipeableOpen={(direction) => {
+                                        if (direction === "left") {
+                                            handleDeleteAction(todo.title)
+                                        }
+                                        if (direction === "right")
+                                            handleCompleteAction(todo.title)
+                                        swipeableRefs.current[todo.title]?.close()
+                                    }}>
+
+                                    <Surface style={styles.card}>
+                                        <View style={{
+                                            flexDirection: "row",
+                                            justifyContent: "space-between",
+                                            alignItems: "center",
+                                            marginBottom: 4,
+                                        }}>
+                                            <Text style={styles.cardTitle}>{todo.title}</Text>
+                                            <View style={{ alignItems: "center", marginBottom: 4, flexDirection: "row" }}>
+                                                <MaterialCommunityIcons name="calendar-clock"
+                                                    size={20}
+                                                    color={"#000000ff"}>
+                                                </MaterialCommunityIcons>
+                                                <Text style={styles.cardDeadline}>{todo.deadline.toDate().toLocaleDateString("en-GB")}</Text>
+                                            </View>
+                                        </View>
+                                        <Text style={styles.cardDescription}>{todo.description}</Text>
+                                    </Surface>
+                                </Swipeable>
+                            )))}
+                    </ScrollView>
+                )}
+                <Modal
+                    animationType="slide"
+                    transparent={true}
+                    visible={modalVisible}
+                    onRequestClose={() => {
+                        setModalVisible(!modalVisible);
+                    }}>
+                    <View style={styles.centeredView}>
+                        <View style={styles.modalView}>
+                            <Text style={styles.modalText}>Achievement unlocked!</Text>
+                            <ImageBackground
+                                source={getBadgePicture(displayBadge.slice(1))}
+                                style={{ width: 100, height: 100, justifyContent: 'center', alignItems: 'center', marginRight: 10 }}
+                                resizeMode="stretch">
+                            </ImageBackground>
+                            <Text style={styles.modalText}>{}</Text>
+                            <Pressable
+                                style={[styles.button, styles.buttonClose]}
+                                onPress={() => setModalVisible(!modalVisible)}>
+                                <Text style={styles.textStyle}>Dismiss</Text>
+                            </Pressable>
+                        </View>
+                    </View>
+                </Modal>
             </SafeAreaView>
         </SafeAreaProvider>
-  )
+    )
 }

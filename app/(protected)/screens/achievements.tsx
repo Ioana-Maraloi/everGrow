@@ -10,44 +10,84 @@ import { ImageBackground } from "expo-image"
 
 import { FIREBASE_APP } from "../../../firebaseConfig"
 import {collection, getFirestore, getDocs, query, onSnapshot} from 'firebase/firestore'
+import { ScrollView } from "react-native-gesture-handler"
 // https://www.flaticon.com/packs/awards-129?k=1757068106473&log-in=google
 
-function getBadgePicture(label: string) {
+function getBadgePicture(label: string, done:boolean) {
     // focus
     if (label === "firstSeed") {
-        return images.firstSeed
+        if (done)
+            return images.firstSeed
+        return images.firstSeedNotDone
     }
     if (label === "growingTree") {
-        return images.growingTree
+        if (done)
+            return images.growingTree
+        return images.growingTreeNotDone
     }
     if (label === "deepRoots") {
-        return images.deepRoots
+        if(done)
+            return images.deepRoots
+        return images.deepRootsNotDone
     }
     if (label === "forestGuardian") {
-        return images.forestGuardian
+        if(done)
+            return images.forestGuardian
+        return images.forestGuardianNotDone
+    }
+    // hour focus
+
+    if (label === "focusBunny") {
+         if(done)
+            return images.focusBunny
+        return images.focusBunnyNotDone
+    }
+    if (label === "clockWizzard") {
+        if (done)
+            return images.clockWizzard
+        return images.clockWizzardNotDone
+    }
+    if (label === "concentrationMaster") {
+        if(done)
+            return images.concentrationMaster
+        return images.concentrationMasterNotDone
     }
     // friends
     if (label === "makingFriends") {
-        return images.makingFriends
+        if(done)
+            return images.makingFriends
+        return images.makingFriendsNotDone
     }
     if (label === "socialButterfly") {
-        return images.socialButterfly
+        if(done)
+            return images.socialButterfly
+        return images.socialButterflyNotDone
     }
     if (label === "tree-mendousFriends") {
-        return images.treeMendousFriends
+        if(done)
+            return images.treeMendousFriends
+        return images.treeMendousFriendsNotDone
     }
     // streak
     if (label === "babyStreak") {
-        return images.babyStreak
+        if(done)
+            return images.babyStreak
+        return images.babyStreakNotDone
     }
     if (label === "discipled") {
-        return images.discipled
+        if(done)
+            return images.discipled
+        return images.discipledNotDone
     }
     if (label === "masterOfHabbit") {
-        return images.masterOfHabbit
+        if (done)
+            return images.masterOfHabbit
+        return images.masterOfHabbitNotDone
     }
     if (label === "legendaryStreak") {
-        return images.legendaryStreak
+        if(done)
+            return images.legendaryStreak
+        return images.legendaryStreakNotDone
     }
 }
 
@@ -126,18 +166,67 @@ export default function Achievements() {
         <SafeAreaProvider >
             <SafeAreaView style={styles.container}>
                 <Text style = {styles.text}>Complete achievements to earn xp!</Text>
-                {achievements.length === 0 ?
-                    (<View><Text>No more achievments to complete! Congratulations</Text></View>): 
+                <ScrollView showsVerticalScrollIndicator={false}>
+                    {achievements.length == 0 ? (
+                        <View>
+                            <Text style={styles.text}>No more achievements to complete! Congratulations</Text>
+                        </View>
+                    ) : (
+                            achievements?.map((achievement, key) => (
+                                <Surface key={key}  style={styles.card}>
+                                    <View style={styles.cardRowAchievements}>
+                                    <ImageBackground
+                                    source={getBadgePicture(achievement.name.slice(1), false)}
+                                    style={{ width: 70, height: 70, justifyContent: 'center', alignItems: 'center', marginRight:10 }}
+                                    resizeMode="stretch">
+                                    </ImageBackground>
+                                    <View style={styles.cardTextAchievements}>
+                                        <Text style = {styles.cardTitleAchievements}>{formatCamelCase(achievement.name)}</Text>
+                                        <Text style ={styles.cardDescriptionAchievements} >{achievement.description}</Text>
+                                    </View>
+                                </View>
+                                </Surface>
+                            ))
+                    )
+                    }
+                    {achievementsCompleted.length == 0 ? (
+                        <View>
+                            <Text style={styles.text}>No achievments completed yet!</Text>
+                        </View>
+                    ) : (
+                            achievementsCompleted?.map((achievement, key) => (
+                                <Surface key={key}  style={styles.card}>
+                                    <View style={styles.cardRowAchievements}>
+                                    <ImageBackground
+                                    source={getBadgePicture(achievement.name.slice(1), true)}
+                                    style={{ width: 70, height: 70, justifyContent: 'center', alignItems: 'center', marginRight:10 }}
+                                    resizeMode="stretch">
+                                    </ImageBackground>
+                                    <View style={styles.cardTextAchievements}>
+                                        <Text style = {styles.cardTitleAchievements}>{formatCamelCase(achievement.name)}</Text>
+                                        <Text style ={styles.cardDescriptionAchievements} >{achievement.description}</Text>
+                                    </View>
+                                </View>
+                                </Surface>
+                            ))
+                    )
+                    }
+                </ScrollView>
+    
+                {/* {achievements.length === 0 ?
+                    (<View>
+                        <Text style = {styles.text}>No more achievments to complete! Congratulations</Text>
+                    </View>) :
                     (<FlatList
                         data = {achievements}
-                        renderItem={({ item }) => 
+                        renderItem={({ item }) =>
                             <Surface style={styles.card}>
                             <View style={styles.cardRowAchievements}>
                                     <ImageBackground
-                                    source={getBadgePicture(item.name.slice(1))}
+                                    source={getBadgePicture(item.name.slice(1), false)}
                                     style={{ width: 70, height: 70, justifyContent: 'center', alignItems: 'center', marginRight:10 }}
                                     resizeMode="stretch">
-                                    </ImageBackground>  
+                                    </ImageBackground>
                                     <View style={styles.cardTextAchievements}>
                                 <Text style = {styles.cardTitleAchievements}>{formatCamelCase(item.name)}</Text>
                                         <Text style ={styles.cardDescriptionAchievements} >{item.description}</Text>
@@ -150,17 +239,19 @@ export default function Achievements() {
                 }
 
                 {achievementsCompleted.length === 0 ?
-                    (<View><Text>No achievments Completed</Text></View>): 
+                    (<View>
+                        <Text style={styles.text}>No achievments Completed</Text>
+                    </View>) :
                     (<FlatList
                         data = {achievementsCompleted}
-                        renderItem={({ item }) => 
+                        renderItem={({ item }) =>
                             <Surface style={styles.card}>
                             <View style={styles.cardRowAchievements}>
                                 <ImageBackground
-                                    source={getBadgePicture(item.name.slice(1))}
+                                    source={getBadgePicture(item.name.slice(1), true)}
                                     style={{ width: 70, height: 70, justifyContent: 'center', alignItems: 'center', marginRight:10 }}
                                     resizeMode="stretch">
-                                </ImageBackground>  
+                                </ImageBackground>
                                 <View style={styles.cardTextAchievements}>
                                     <Text style = {styles.cardTitleAchievements}>{formatCamelCase(item.name)}</Text>
                                     <Text style ={styles.cardDescriptionAchievements} >{item.description}</Text>
@@ -169,7 +260,7 @@ export default function Achievements() {
                         </Surface>
                         }>
                     </FlatList>)
-                }
+                } */}
 
 
             </SafeAreaView>
