@@ -12,6 +12,7 @@ import { FIREBASE_APP } from "../../../firebaseConfig"
 import { collection, doc, getFirestore, updateDoc, setDoc, getDocs, query, onSnapshot, deleteDoc, getDoc, increment } from 'firebase/firestore'
 
 import { AuthContext } from "../../utils/authContext"
+import { getExpoGoProjectConfig } from "expo"
 // https://jennpixel.itch.io/free-flower-pack-12-icons?download
 // https://anokolisa.itch.io/free-pixel-art-asset-pack-topdown-tileset-rpg-16x16-sprites
 
@@ -131,6 +132,7 @@ export default function ForestScreen() {
 
 
 	const [displayBadge, setDisplayBadge] = useState("AfirstSeed")
+	const [xp, SetXp] = useState(0)
 
 
 	const [succesful, setSuccesful] = useState(false)
@@ -252,12 +254,18 @@ export default function ForestScreen() {
 					await deleteDoc(badgeDoc)
 					const description = badgeSnap.data().description
 					const xp = badgeSnap.data().xp
+					SetXp(xp)
 					authState.xp += xp
+
+					const userRef = doc(db, "users", authState.displayName)
+					await updateDoc(userRef,{
+						xp:increment(xp)
+					})
 
 					const dateToday = new Date().getDate()
 					const monthToday = new Date().getMonth() + 1
 					const yearToday = new Date().getFullYear()
-					const todayString = dateToday + "-" + monthToday + "-" + yearToday
+				    const todayString = dateToday.toString().padStart(2, "0") + "-" + monthToday.toString().padStart(2, "0") + "-" + yearToday.toString().padStart(2, "0")
 
 					const badgeDone = doc(db, "users", authState.displayName, "achievements", "done", "doneList", name)
 					const badgeInfo = {
@@ -286,12 +294,18 @@ export default function ForestScreen() {
 					await deleteDoc(badgeDoc)
 					const description = badgeSnap.data().description
 					const xp = badgeSnap.data().xp
+					SetXp(xp)
 					authState.xp += xp
+
+					const userRef = doc(db, "users", authState.displayName)
+					await updateDoc(userRef,{
+						xp:increment(xp)
+					})
 
 					const dateToday = new Date().getDate()
 					const monthToday = new Date().getMonth() + 1
 					const yearToday = new Date().getFullYear()
-					const todayString = dateToday + "-" + monthToday + "-" + yearToday
+				    const todayString = dateToday.toString().padStart(2, "0") + "-" + monthToday.toString().padStart(2, "0") + "-" + yearToday.toString().padStart(2, "0")
 
 					const badgeDone = doc(db, "users", authState.displayName, "achievements", "done", "doneList", name)
 					const badgeInfo = {
@@ -340,7 +354,7 @@ export default function ForestScreen() {
 			}
 			const treesPlanted = countSnap.data().treesPlanted
 			const totalFocusedTime = countSnap.data().totalFocusedTime
-			// check achievements for: first tree planted, 5th tree 20th tree and 100th tree
+			// check achievements for: first tree planted, 5th tree, 20th tree and 100th tree
 			checkAchievementUnlocked(treesPlanted, "AfirstSeed", 0)
 			checkAchievementUnlocked(treesPlanted, "BgrowingTree", 4)
 			checkAchievementUnlocked(treesPlanted, "CdeepRoots", 9)
@@ -366,7 +380,6 @@ export default function ForestScreen() {
 			const todayRef = doc(db, "users", authState.displayName, "trees", "stats", todayString, "statsToday")
 			const todaySnap = await getDoc(todayRef)
 			if (!todaySnap.exists()) {
-				console.log("NU EXISTA")
 				const statsInfo = {
 						treesPlantedToday: 1,
 						timeFocusedToday: duration,
@@ -618,6 +631,8 @@ export default function ForestScreen() {
 								resizeMode="stretch">
 							</ImageBackground>
 							<Text style={styles.modalText}>{formatCamelCase(displayBadge)}</Text>
+							<Text style={styles.modalText}>You earned {xp} xp!</Text>
+
 							<Pressable
 								style={[styles.button, styles.buttonClose]}
 								onPress={() => setModalVisible(!modalVisibleAchievement)}>

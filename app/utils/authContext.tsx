@@ -13,7 +13,7 @@ const functions = getFunctions();
 type AuthState = {
     isLoggedIn: boolean
     isReady: boolean
-    logIn: (email: string, password: string) => void
+    logIn: (email: string, password: string, xp:number) => void
     logOut: () => void
     deleteAccount: () => void
     email: string
@@ -60,7 +60,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
             
         }
     }
-    const logIn = async function (email: string, password: string) {
+    const logIn = async function (email: string, password: string, xp:number) {
         const username = email.split('@')[0]
         const docRef = doc(db, "users", username)
         const docSnap = await getDoc(docRef)
@@ -73,6 +73,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
             setDisplayName(username)
             router.replace("/(protected)/(tabs)")
         }
+        setXp(xp)
     }
 
     const logOut = () => {

@@ -2,7 +2,7 @@ import { View, Text, Modal, Pressable } from "react-native"
 import { Button, TextInput, List, Surface, IconButton } from "react-native-paper"
 import styles from '../../utils/styles'
 import { FIREBASE_APP } from "../../../firebaseConfig"
-import { collection, doc, getFirestore, setDoc, getDocs, query, onSnapshot, deleteDoc, getDoc } from 'firebase/firestore'
+import { collection, doc, getFirestore,updateDoc, increment, setDoc, getDocs, query, onSnapshot, deleteDoc, getDoc } from 'firebase/firestore'
 import { AuthContext } from "../../utils/authContext"
 import React, {useContext, useState, useEffect } from 'react'
 import { ScrollView } from "react-native-gesture-handler"
@@ -74,6 +74,21 @@ export default function Friends() {
             console.log(error)
         }
     }
+    
+        const addXp = async (xp: number) => {
+            try {
+                authState.xp += xp
+                const userRef = doc(db, "users", authState.displayName)
+                await updateDoc(userRef,
+                    {
+                    xp:increment(xp)
+                })
+            
+            } catch (error) {
+                console.log(error)
+            }
+        }
+        
     const getFriendList = async () => {
         try {
             const friendList = await getDocs(collection(db, "users", authState.displayName, "friends", "actualFriends", "friendList"))
@@ -92,7 +107,7 @@ export default function Friends() {
                     const badgeMakingFriendsSnap = await getDoc(badgeFriendDoc)
                     if (badgeMakingFriendsSnap.exists()) {
                         setModalVisible(true)
-                        authState.xp += 20
+                        addXp(20)
                         setDisplayBadge("ImakingFriends")
                         await deleteDoc(badgeFriendDoc)
 
@@ -110,6 +125,7 @@ export default function Friends() {
                     const badgeMakingFriendsSnap = await getDoc(badgeFriendDoc)
                     if (badgeMakingFriendsSnap.exists()) {
                         setModalVisible(true)
+                        addXp(50)
                         setDisplayBadge("JsocialButterfly")
                         await deleteDoc(badgeFriendDoc)
 
@@ -126,8 +142,10 @@ export default function Friends() {
                     const badgeFriendDoc = doc(db, "users", authState.displayName, "achievements", "notDone", 'notDoneList', "Ktree-mendousFriends")
                     const badgeMakingFriendsSnap = await getDoc(badgeFriendDoc)
                     if (badgeMakingFriendsSnap.exists()) {
-                        await deleteDoc(badgeFriendDoc)
+                        setModalVisible(true)
+                        addXp(100)
                         setDisplayBadge("Ktree-mendousFriends")
+                        await deleteDoc(badgeFriendDoc)
 
                         const badgeFriendDone = doc(db, "users", authState.displayName, "achievements", "done", 'doneList', "Ktree-mendousFriends")
                         const badgeFriendInfo = {

@@ -29,6 +29,15 @@ function getBadgePicture(label: string) {
         return images.taskStreak5
     }
 }
+function getXp(label: string) {
+    if (label === "taskStreak3") {
+        return 20
+    }
+    if (label === "taskStreak5") {
+        return 50
+    }
+    return 0
+}
 export default function TodoScreen() {
 
     const dateToday = new Date().getDate()
@@ -48,7 +57,7 @@ export default function TodoScreen() {
     const [displayAddButtons, setDisplayAddButtons] = useState(false)
     const [todos, setTodos] = useState<Todo[]>([])
 
-    
+
     const [modalVisible, setModalVisible] = useState(false);
     const [displayBadge, setDisplayBadge] = useState("ImakingFriends")
         
@@ -62,6 +71,20 @@ export default function TodoScreen() {
 
     const db = getFirestore(FIREBASE_APP)
 
+    const addXp = async (xp: number) => {
+        try {
+            authState.xp += xp
+            const userRef = doc(db, "users", authState.displayName)
+            await updateDoc(userRef,
+                {
+                xp:increment(xp)
+            })
+        
+        } catch (error) {
+            console.log(error)
+        }
+    }
+    
     const addTodo = async () => {
         try {
             console.log("Adding todo:", title, description, deadline)
@@ -272,10 +295,7 @@ export default function TodoScreen() {
             if (numberTasksToday === 5) {
                 setModalVisible(true)
                 setDisplayBadge("taskStreak5")
-
             }
-
-
         } catch (error: any) {
             console.log(error)
         }
@@ -419,14 +439,20 @@ export default function TodoScreen() {
                         <View style={styles.modalView}>
                             <Text style={styles.modalText}>Achievement unlocked!</Text>
                             <ImageBackground
-                                source={getBadgePicture(displayBadge.slice(1))}
+                                source={getBadgePicture(displayBadge)}
                                 style={{ width: 100, height: 100, justifyContent: 'center', alignItems: 'center', marginRight: 10 }}
                                 resizeMode="stretch">
                             </ImageBackground>
-                            <Text style={styles.modalText}>{}</Text>
+                            <Text style={styles.modalText}>You earned {getXp(displayBadge)} xp!</Text>
                             <Pressable
                                 style={[styles.button, styles.buttonClose]}
-                                onPress={() => setModalVisible(!modalVisible)}>
+                                onPress={
+                                    () => {
+                                        addXp(getXp(displayBadge))
+                                        setModalVisible(!modalVisible)
+                                    }
+                                }
+                            >
                                 <Text style={styles.textStyle}>Dismiss</Text>
                             </Pressable>
                         </View>
