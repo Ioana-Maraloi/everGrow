@@ -18,6 +18,43 @@ export default {
 
     treeModel1Dead : require("../../assets/trees/model1/dead/Size_05.png"),
     
+    
+    // extra trees
+    treeModel2Blue5: require("../../assets/trees/model2/blue/Size_05.png"),
+    treeModel2Blue4 : require("../../assets/trees/model2/blue/Size_04.png"),
+    treeModel2Blue3 : require("../../assets/trees/model2/blue/Size_03.png"),
+
+    treeModel2Green5: require("../../assets/trees/model2/green/Size_05.png"),
+    treeModel2Green4 : require("../../assets/trees/model2/green/Size_04.png"),
+    treeModel2Green3 : require("../../assets/trees/model2/green/Size_03.png"),
+
+    treeModel2Turquoise5: require("../../assets/trees/model2/turquoise/Size_05.png"),
+    treeModel2Turquoise4 : require("../../assets/trees/model2/turquoise/Size_04.png"),
+    treeModel2Turquoise3 : require("../../assets/trees/model2/turquoise/Size_03.png"),
+
+    treeModel3Green5: require("../../assets/trees/model3/green/Size_05.png"),
+    treeModel3Green4 : require("../../assets/trees/model3/green/Size_04.png"),
+    treeModel3Green3 : require("../../assets/trees/model3/green/Size_03.png"),
+
+    treeModel3LightGreen5: require("../../assets/trees/model3/lightGreen/Size_05.png"),
+    treeModel3LightGreen4 : require("../../assets/trees/model3/lightGreen/Size_04.png"),
+    treeModel3LightGreen3 : require("../../assets/trees/model3/lightGreen/Size_03.png"),
+
+    treeModel3Orange5: require("../../assets/trees/model3/orange/Size_05.png"),
+    treeModel3Orange4 : require("../../assets/trees/model3/orange/Size_04.png"),
+    treeModel3Orange3 : require("../../assets/trees/model3/orange/Size_03.png"),
+
+    treeModel3Red5: require("../../assets/trees/model3/red/Size_05.png"),
+    treeModel3Red4: require("../../assets/trees/model3/red/Size_04.png"),
+    treeModel3Red3: require("../../assets/trees/model3/red/Size_03.png"),
+
+    
+    redMushroom : require("../../assets/trees/plants/mushrooms/red.png"),
+    blueMushroom : require("../../assets/trees/plants/mushrooms/blue.png"),
+    flower : require("../../assets/trees/plants/flower/big.png"),
+    greenBush : require("../../assets/trees/plants/green/big.png"),
+    orangeBush : require("../../assets/trees/plants/orange/big.png"),
+
     // achievements
     // DONE
     // focus
@@ -72,21 +109,6 @@ export default {
     taskBefore12NotDone : require("../../assets/achievements/dailyNotDone/taskBefore12.png"),
     taskStreak3NotDone : require("../../assets/achievements/dailyNotDone/taskStreak3.png"),
     taskStreak5NotDone : require("../../assets/achievements/dailyNotDone/taskStreak5.png"),
-    
-    // extra trees
-    treeModel2Blue : require("../../assets/trees/model2/blue/Size_05.png"),
-    treeModel2Green : require("../../assets/trees/model2/green/Size_05.png"),
-    treeModel2Turquoise : require("../../assets/trees/model2/turquoise/Size_05.png"),
-    treeModel3Green : require("../../assets/trees/model3/green/Size_05.png"),
-    treeModel3LightGreen : require("../../assets/trees/model3/lightGreen/Size_05.png"),
-    treeModel3Orange : require("../../assets/trees/model3/orange/Size_05.png"),
-    treeModel3Red : require("../../assets/trees/model3/red/Size_05.png"),
-    
-    redMushroom : require("../../assets/trees/plants/mushrooms/red.png"),
-    blueMushroom : require("../../assets/trees/plants/mushrooms/blue.png"),
-    flower : require("../../assets/trees/plants/flower/big.png"),
-    greenBush : require("../../assets/trees/plants/green/big.png"),
-    orangeBush : require("../../assets/trees/plants/orange/big.png"),
 
 
 }

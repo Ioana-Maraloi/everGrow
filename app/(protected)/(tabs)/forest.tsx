@@ -17,6 +17,7 @@ import { getExpoGoProjectConfig } from "expo"
 // https://anokolisa.itch.io/free-pixel-art-asset-pack-topdown-tileset-rpg-16x16-sprites
 
 function getTreePicture(label: string, remainingTime: number, startTime: number) {
+	// model 1
 	if (label === "treeModel1Green") {
 		if (remainingTime === -1 && startTime === -1)
 			return images.treeModel1Green5
@@ -63,6 +64,115 @@ function getTreePicture(label: string, remainingTime: number, startTime: number)
 			return images.treeModel1Yellow4
 		}
 		return images.treeModel1Yellow5
+	}
+	// model 2
+		if (label === "treeModel2Blue") {
+		if (remainingTime === -1 && startTime === -1)
+			return images.treeModel2Blue5
+
+		if (startTime - remainingTime < startTime / 3) {
+			return images.treeModel2Blue3
+		}
+		if (startTime - remainingTime < 2 * startTime / 3) {
+			return images.treeModel2Blue4
+		}
+		return images.treeModel2Blue5
+	}
+	if (label === "treeModel2Green") {
+		if (remainingTime === -1 && startTime === -1)
+			return images.treeModel2Green5
+
+		if (startTime - remainingTime < startTime / 3) {
+			return images.treeModel2Green3
+		}
+		if (startTime - remainingTime < 2 * startTime / 3) {
+			return images.treeModel2Green4
+		}
+		return images.treeModel2Green5
+	}
+	if (label === "treeModel2Turquoise") {
+		if (remainingTime === -1 && startTime === -1)
+			return images.treeModel2Turquoise5
+
+		if (startTime - remainingTime < startTime / 3) {
+			return images.treeModel2Turquoise3
+		}
+		if (startTime - remainingTime < 2 * startTime / 3) {
+			return images.treeModel2Turquoise4
+		}
+		return images.treeModel2Turquoise5
+	}
+	// model 3
+	if (label === "treeModel3Green") {
+		if (remainingTime === -1 && startTime === -1)
+			return images.treeModel3Green5
+		if (startTime - remainingTime < startTime / 3) {
+			return images.treeModel3Green3
+		}
+		if (startTime - remainingTime < 2 * startTime / 3) {
+			return images.treeModel3Green4
+		}
+		return images.treeModel3Green5
+	}
+
+	if (label === "treeModel3LightGreen") {
+		if (remainingTime === -1 && startTime === -1)
+			return images.treeModel3LightGreen5
+
+		if (startTime - remainingTime < startTime / 3) {
+			return images.treeModel3LightGreen3
+		}
+		if (startTime - remainingTime < 2 * startTime / 3) {
+			return images.treeModel3LightGreen4
+		}
+		return images.treeModel3LightGreen5
+	}
+	if (label === "treeModel3Orange") {
+		if (remainingTime === -1 && startTime === -1)
+			return images.treeModel3Orange5
+
+		if (startTime - remainingTime < startTime / 3) {
+			return images.treeModel3Orange3
+		}
+		if (startTime - remainingTime < 2 * startTime / 3) {
+			return images.treeModel3Orange4
+		}
+		return images.treeModel3Orange5
+	}
+	if (label === "treeModel3Red") {
+		if (remainingTime === -1 && startTime === -1)
+			return images.treeModel3Red5
+
+		if (startTime - remainingTime < startTime / 3) {
+			return images.treeModel3Red3
+		}
+		if (startTime - remainingTime < 2 * startTime / 3) {
+			return images.treeModel3Red4
+		}
+		return images.treeModel3Red5
+	}
+	if (label === "redMushroom") {
+		// if (remainingTime === -1 && startTime === -1)
+		// 	return images.redMushroom
+		// if (startTime - remainingTime < startTime / 3) {
+		// 	return images.redMushroom
+		// }
+		// if (startTime - remainingTime < 2 * startTime / 3) {
+		// 	return images.redMushroom
+		// }
+		return images.redMushroom
+	}
+	if (label === "blueMushroom") {
+		return images.blueMushroom
+	}
+		if (label === "flower") {
+		return images.flower
+	}
+	if (label === "greenBush") {
+		return images.greenBush
+	}
+	if (label === "orangeBush") {
+		return images.orangeBush
 	}
 	if (startTime - remainingTime < startTime / 3) {
 		return images.treeModel1Green3
@@ -130,6 +240,8 @@ export default function ForestScreen() {
 	const [modalVisible, setModalVisible] = useState(false)
 	const [modalVisibleAchievement, setModalVisibleaAchievement] = useState(false)
 
+	  const [key, setKey] = useState(0);
+
 
 	const [displayBadge, setDisplayBadge] = useState("AfirstSeed")
 	const [xp, SetXp] = useState(0)
@@ -145,7 +257,6 @@ export default function ForestScreen() {
 			if (treesList.empty) {
 				// console.log("No purchased trees yet")
 			} else {
-				// console.log("purchased trees:")
 				const items: Tree[] = treesList.docs.map(doc => {
 					const data = doc.data()
 					return {
@@ -153,7 +264,6 @@ export default function ForestScreen() {
 					} as Tree
 				})
 				setTreesAvailable(items)
-				// console.log(treesAvailable)
 			}
 		} catch (error) {
 			console.log(error)
@@ -340,12 +450,22 @@ export default function ForestScreen() {
 	}
 	const completedPlant = async (duration: number, choiceTree: string) => {
 		try {
+			setKey(key+1)
 			setDurations("60")
 			setModalVisible(true)
 			setSuccesful(true)
 			authState.xp += duration
 			setIsPlaying(false)
+			SetXp(duration)
 
+			const userRef = doc(db, "users", authState.displayName)
+			const userSnap = await getDoc(userRef)
+			if (!userSnap.exists()) {
+				return
+			}
+			await updateDoc(userRef, {
+				xp: increment(duration)
+			})
 
 			const countRef = doc(db, "users", authState.displayName, "trees", "stats")
 			const countSnap = await getDoc(countRef)
@@ -386,24 +506,13 @@ export default function ForestScreen() {
 					}
 					await setDoc(todayRef, statsInfo)
 			} else {
-				await updateDoc(todayRef,
+				await updateDoc(todayRef, 
 					{
 						treesPlantedToday: increment(1),
 						timeFocusedToday: increment(duration)
 				})
 			}
 
-			// const treeRef = doc(db, "users", authState.displayName, "trees", "treesPlanted", todayString, "tree" + countTrees.toString())
-
-			// const statsRef = doc(db, 'users', authState.displayName, 'trees', 'stats')
-			// await updateDoc(statsRef, {
-			// 	totalFocusedTime: increment(duration),
-			// 	treesPlanted: increment(1),
-			// })
-			// const xpRef = doc(db, "users", authState.displayName)
-			// await updateDoc(xpRef, {
-			// 	xp: increment(duration)
-			// })
 		} catch (error) {
 			console.log(error)
 		}
@@ -413,6 +522,14 @@ export default function ForestScreen() {
 		const spaced = withoutPrefix.replace(/([A-Z])/g, ' $1').trim();
 		return spaced.charAt(0).toUpperCase() + spaced.slice(1).toLowerCase();
 	}
+	    const getPictureSize = (name: string) =>{
+        if (name === "redMushroom" || name ==="blueMushroom" || name ==="flower")
+            return 50
+        if (name === "greenBush" || name ==="orangeBush")
+            return 75
+        return 100
+        
+    }
 	return (
 		<SafeAreaProvider>
 			<SafeAreaView style={styles.container}>
@@ -468,10 +585,12 @@ export default function ForestScreen() {
 												{
 													value: tree.name,
 													icon: () => {
-														return <Image source={getTreePicture(tree.name, -1, -1)}
-															style={{ width: 90, height: 90, justifyContent: "center", alignItems: "center" }}
+														return <View style = {{width: 90, height:90, justifyContent: 'center',alignItems: "center" }}>
+														<Image source={getTreePicture(tree.name, -1, -1)}
+															style={{ width: getPictureSize(tree.name), height: getPictureSize(tree.name), justifyContent: "center", alignItems: "center" }}
 															resizeMode="stretch"
-														/>
+															/>
+														</View>
 													}
 
 												}))
@@ -518,6 +637,7 @@ export default function ForestScreen() {
 							style={{ alignSelf: 'center', marginTop: 20 }}>
 							<CountdownCircleTimer
 								size={250}
+								key = {key}
 								isPlaying={isPlaying}
 								duration={parseInt(duration)}
 								colors={['#004777', '#F7B801', '#A30000', '#A30000']}
@@ -582,7 +702,7 @@ export default function ForestScreen() {
 								style={{ width: 100, height: 100, justifyContent: 'center', alignItems: 'center', marginRight: 10 }}
 								resizeMode="stretch">
 							</ImageBackground>
-							<Text style={styles.modalText}>You earned {duration} coins</Text>
+							<Text style={styles.modalText}>You earned {xp} coins</Text>
 							<Pressable
 								style={[styles.button, styles.buttonClose]}
 								onPress={() => {
@@ -631,7 +751,7 @@ export default function ForestScreen() {
 								resizeMode="stretch">
 							</ImageBackground>
 							<Text style={styles.modalText}>{formatCamelCase(displayBadge)}</Text>
-							<Text style={styles.modalText}>You earned {xp} xp!</Text>
+							<Text style={styles.modalText}>You earned {xp} coins!</Text>
 
 							<Pressable
 								style={[styles.button, styles.buttonClose]}

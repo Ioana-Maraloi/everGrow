@@ -8,31 +8,31 @@ import { AuthContext } from "../../utils/authContext"
 import React, { useState, useContext, useEffect } from "react"
 
 import { FIREBASE_APP } from "../../../firebaseConfig"
-import { collection, doc, getFirestore, setDoc, getDocs, query, onSnapshot, deleteDoc } from 'firebase/firestore'
+import { collection, doc, getFirestore,getDoc, updateDoc,increment, setDoc, getDocs, query, onSnapshot, deleteDoc } from 'firebase/firestore'
 import { ImageBackground } from "expo-image"
 
 function getTreePicture(label: string) {
     // trees
 	if (label === "treeModel2Blue") {
-		return images.treeModel2Blue
+		return images.treeModel2Blue5
 	}
 	if (label === "treeModel2Green") {
-		return images.treeModel2Green
+		return images.treeModel2Green5
 	}
 	if (label === "treeModel2Turquoise") {
-	    return images.treeModel2Turquoise
+	    return images.treeModel2Turquoise5
 	}
 	if (label === "treeModel3Green") {
-		return images.treeModel3Green
+		return images.treeModel3Green5
     }
     if (label === "treeModel3LightGreen") {
-		return images.treeModel3LightGreen
+		return images.treeModel3LightGreen5
 	}
 	if (label === "treeModel3Orange") {
-	    return images.treeModel3Orange
+	    return images.treeModel3Orange5
 	}
 	if (label === "treeModel3Red") {
-		return images.treeModel3Red
+		return images.treeModel3Red5
     }
     // plants
     if (label === "redMushroom") {
@@ -50,7 +50,7 @@ function getTreePicture(label: string) {
 	if (label === "orangeBush") {
 		return images.orangeBush
 	}
-	return images.treeModel2Blue
+	return images.treeModel2Blue5
 }
 interface Tree{
     name: string,
@@ -83,12 +83,21 @@ export default function Shop() {
     }
     const deleteProduct = async (tree: Tree)=>{
         try {
-                await deleteDoc(doc(db, "users", authState.displayName, "trees", "notOwnedTrees", "notOwnedTreesList", tree.name))
-                const myFriendRef = doc(db, "users", authState.displayName, "trees", "ownedTrees", "ownedTreesList", tree.name)
-                await setDoc(myFriendRef, tree)
-            } catch (error) {
-                console.log(error)
-            }
+            authState.xp -= tree.price
+            const userRef = doc(db, "users", authState.displayName)
+                        const userSnap = await getDoc(userRef)
+                        if (!userSnap.exists()) {
+                            return
+                        }
+                        await updateDoc(userRef, {
+                            xp: increment(-tree.price)
+                        })
+            await deleteDoc(doc(db, "users", authState.displayName, "trees", "notOwnedTrees", "notOwnedTreesList", tree.name))
+            const myFriendRef = doc(db, "users", authState.displayName, "trees", "ownedTrees", "ownedTreesList", tree.name)
+            await setDoc(myFriendRef, tree)
+        } catch (error) {
+            console.log(error)
+        }
     }
     const getTrees = async () => {
             try {
@@ -125,6 +134,14 @@ export default function Shop() {
                 console.log(error)
             }
     })
+    const getPictureSize = (name: string) =>{
+        if (name === "redMushroom" || name ==="blueMushroom" || name ==="flower")
+            return 50
+        if (name === "greenBush" || name ==="orangeBush")
+            return 75
+        return 100
+        
+    }
     return (
         <SafeAreaProvider>
             <SafeAreaView style={styles.container}>
@@ -145,14 +162,15 @@ export default function Shop() {
                                         buyProduct(item)
                                         console.log(item.name)
                                     }}>
-                                    <View style={{alignItems:"center"}}>
-                                        <ImageBackground
-                                            source={getTreePicture(item.name)}
-                                            style={{ width: 90, height: 90, justifyContent: 'center', alignItems: 'center' }}
-								            resizeMode="stretch">
-                                        </ImageBackground>
-                                        <Text>{item.price}</Text>
-                                    </View>
+                                    
+                                    <View style={{  width: 100, height: 100, justifyContent: 'center',alignItems: "center" }}>
+                                            <ImageBackground
+                                                source={getTreePicture(item.name)}
+                                                style={{ width: getPictureSize(item.name), height: getPictureSize(item.name), justifyContent: 'center', alignItems: 'center' }}
+                                                resizeMode="stretch">
+                                            </ImageBackground>
+                                            <Text>{item.price}</Text>
+                                        </View>
                                 </Button>
                             </View>
                     }>

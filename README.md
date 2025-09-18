@@ -1,50 +1,55 @@
-# Welcome to your Expo app 👋
+# Productivity Gamified App
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A gamified productivity mobile app built with **React Native** and **Firebase**. The app helps users manage tasks, track productivity, and stay motivated through achievements, streaks, and gamification mechanics.
 
-## Get started
+## Implemented Features
 
-1. Install dependencies
+- **Task Management:** Users can create, edit, delete, and mark tasks as completed. Tasks are synced in real-time with Firebase Firestore.
+- **Gamification Mechanics:** 
+  - XP and coin system based on task completion and streaks.
+  - Achievements unlocked for milestones (e.g., completing 10 tasks in a row).
+- **Friends System:** Users can add friends, accept/reject friend requests, and compare progress.
+- **Leaderboard:** Global and friends-only leaderboard showing top users by XP.
+- **Virtual Shop:** Users can spend coins to unlock skins and other cosmetic items.
+- **Statistics & Charts:** Interactive charts display daily/weekly/monthly productivity.
+- **Notifications:** Push notifications remind users of pending tasks and streaks.
+- **UI/UX:** Custom animations for streaks, task completion, and achievement unlocks.
+- **Cloud Integration:** Firebase Authentication for login/signup and Firestore for real-time data storage.
 
-   ```bash
-   npm install
-   ```
+## Screenshots
 
-2. Start the app
+- **Home / Task List:** Screenshot or GIF showing task creation and completion.
+- **Achievements:** Screenshot of unlocked achievements.
+- **Friends / Leaderboard:** Screenshot showing friends and global leaderboard.
+- **Virtual Shop:** Screenshot showing skins or items users can buy with coins.
 
-   ```bash
-   npx expo start
-   ```
 
-In the output, you'll find options to open the app in a
+## Tech Stack
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+- **Frontend:** React Native with Expo
+- **Backend & Cloud:** Firebase (Authentication, Firestore, Storage)
+- **State Management:** React Context / Redux (optional)
+- **Charts:** `react-native-chart-kit`
+- **Navigation:** `expo-router`
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## Setup
 
-## Get a fresh project
+Follow these steps to run the project locally:
 
-When you're ready, run:
+### 1. Clone the repository
 
 ```bash
-npm run reset-project
+git clone https://github.com/Ioana-Maraloi/myForest.git
+cd myForest
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+### 2. Install dependencies
 
-## Learn more
+```bash
+npm install
+```
 
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+### 2. Run the app
+```bash
+npx expo start
+```
