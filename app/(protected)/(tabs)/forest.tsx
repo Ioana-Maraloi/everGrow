@@ -512,7 +512,6 @@ export default function ForestScreen() {
 						timeFocusedToday: increment(duration)
 				})
 			}
-
 		} catch (error) {
 			console.log(error)
 		}
@@ -524,10 +523,10 @@ export default function ForestScreen() {
 	}
 	    const getPictureSize = (name: string) =>{
         if (name === "redMushroom" || name ==="blueMushroom" || name ==="flower")
-            return 50
+            return 0.5
         if (name === "greenBush" || name ==="orangeBush")
-            return 75
-        return 100
+            return 0.75
+        return 1
         
     }
 	return (
@@ -579,18 +578,18 @@ export default function ForestScreen() {
 											alignSelf: "center",
 											height: 100,
 										}}
+											
 											value={choiceTree}
 											onValueChange={setChoiceTree}
 											buttons={treesAvailable.map((tree) => (
 												{
 													value: tree.name,
 													icon: () => {
-														return <View style = {{width: 90, height:90, justifyContent: 'center',alignItems: "center" }}>
-														<Image source={getTreePicture(tree.name, -1, -1)}
-															style={{ width: getPictureSize(tree.name), height: getPictureSize(tree.name), justifyContent: "center", alignItems: "center" }}
-															resizeMode="stretch"
+														return <Image source={getTreePicture(tree.name, -1, -1)}
+															style={{ width:90, height: 90, justifyContent: "center", alignItems: "center", transform:[{scale:getPictureSize(tree.name)}] }}
+															resizeMode="stretch"			
 															/>
-														</View>
+													
 													}
 
 												}))

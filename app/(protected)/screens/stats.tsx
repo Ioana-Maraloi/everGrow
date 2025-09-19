@@ -87,8 +87,9 @@ export default function Stats() {
             let dayString = todayString
             for (let i: number = 0; i < 6; i++) {
                 let yesterdayString = getYesterday(dayString)
-                const yesterdayRef = doc(db, "users", authState.displayName, "trees", "stats", yesterdayString, "stats")
+                const yesterdayRef = doc(db, "users", authState.displayName, "trees", "stats", yesterdayString, "statsToday")
                 const yesterdaySnap = await getDoc(yesterdayRef)
+                // console.log(yesterdayString)
                 if (yesterdaySnap.exists()) {
                     values.push(yesterdaySnap.data().timeFocusedToday)
                 } else {

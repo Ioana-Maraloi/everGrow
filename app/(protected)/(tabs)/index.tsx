@@ -87,14 +87,12 @@ export default function TodoScreen() {
     
     const addTodo = async () => {
         try {
-            console.log("Adding todo:", title, description, deadline)
 
             const statsRef = doc(db, 'users', username!, 'tasks', 'stats')
             const docSnap = await getDoc(statsRef)
             // if there is no document at the location
             // exists = false
             if (docSnap.exists()) {
-                // var streak = docSnap.data()
                 let lastCheckin = docSnap.data().lastCheckin
                 let streakVal = docSnap.data().streak
 
@@ -158,7 +156,6 @@ export default function TodoScreen() {
                     lastCheckin: todayString,
                 })
             } else {
-                console.log("intra aici")
                 const stats = {
                     tasksCompleted: 0,
                     tasksDeleted: 0,
