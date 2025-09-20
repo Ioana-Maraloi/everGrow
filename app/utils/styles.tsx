@@ -3,45 +3,43 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		padding: 16,
-		backgroundColor: '#faf8e7ff',
-		justifyContent:"center"
+		justifyContent: "center"
+	},
+	radioRow: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		marginBottom: 10,
 	},
 	input: {
 		height: 40,
 		width: '80%',
 		borderColor: 'gray',
-		// borderWidth: 1,
 		marginBottom: 10,
 		textAlign: 'center',
 		alignSelf: 'center',
-		backgroundColor: '#E7EFC7',
 	},
-  	title: {
+	title: {
 		fontSize: 20,
 		marginBottom: 20,
-	  	alignItems: 'center',
+		alignItems: 'center',
 		textAlign: 'center',
 	},
-  	text: {
-		fontWeight:"bold",
-		textAlign:"center",
+	text: {
+		fontWeight: "bold",
+		textAlign: "center",
 		fontSize: 20,
 		color: "#003829",
 	},
 	forgotPasswordText: {
-		fontWeight:"normal",
-		textAlign:"center",
+		fontWeight: "normal",
+		textAlign: "center",
 		fontSize: 15,
-		color: "#003829",
 	},
 	colors: {
 		backgroundColor: '#e7fff9',
-		shadowColor: '#007052',
 		tintColor: '#003829',
 		borderColor: '#004331',
 	},
-
-		// https://colorhunt.co/
 	loginButton: {
 		borderRadius: 30,
 		flexDirection: "row",
@@ -49,9 +47,7 @@ const styles = StyleSheet.create({
 		alignSelf: 'center',
 		margin: 10,
 		padding: 15,
-		justifyContent:"center",
-		backgroundColor: '#537D5D',
-	
+		justifyContent: "center",
 	},
 	loginButtonApple: {
 		borderRadius: 15,
@@ -60,8 +56,7 @@ const styles = StyleSheet.create({
 		alignSelf: 'center',
 		margin: 10,
 		padding: 20,
-		justifyContent:"center",
-		backgroundColor: '#5E936C',
+		justifyContent: "center",
 	},
 	startButton: {
 		borderRadius: 100,
@@ -77,7 +72,6 @@ const styles = StyleSheet.create({
 		backgroundColor: '#5e936cff',
 	},
 	startText: {
-		color: 'white',
 		fontSize: 15,
 	},
 	treeButton: {
@@ -90,43 +84,42 @@ const styles = StyleSheet.create({
 	},
 	separator: {
 		marginVertical: 8,
-		borderBottomColor: '#471515ff',
 		borderBottomWidth: StyleSheet.hairlineWidth,
 	},
 	app: {
-    	marginHorizontal: "auto",
-    	width: 600,
-    	flexDirection: "row",
-    	flexWrap: "wrap"
-  	},
+		marginHorizontal: "auto",
+		width: 600,
+		flexDirection: "row",
+		flexWrap: "wrap"
+	},
 	item: {
 		borderRadius: 50,
-    	flex: 1,
-    	minWidth: 100,
-    	maxWidth: 100,
-    	height: 100,
-    	justifyContent: "center",
-    	alignItems: "center",
+		flex: 1,
+		minWidth: 100,
+		maxWidth: 100,
+		height: 100,
+		justifyContent: "center",
+		alignItems: "center",
 		margin: 5,
-    	backgroundColor: "rgba(236, 207, 149, 0.25)",
-    	borderWidth: 1.5,
-    	borderColor: "#fff"
+		backgroundColor: "rgba(236, 207, 149, 0.25)",
+		borderWidth: 1.5,
+		borderColor: "#fff"
 	},
 	box: {
-    	height: "50%",
-    	width: "60%",
-    	borderRadius: 5,
-    	marginVertical: 40,
-    	backgroundColor: '#5e936cff',
-    	alignItems: 'center',
-    	justifyContent: 'center',
+		height: "50%",
+		width: "60%",
+		borderRadius: 5,
+		marginVertical: 40,
+		backgroundColor: '#5e936cff',
+		alignItems: 'center',
+		justifyContent: 'center',
 	},
 	surfaceCard: {
 		backgroundColor: "#E7EFC7",
 		marginBottom: 18,
 		borderRadius: 18,
 		shadowColor: "#000",
-		shadowOffset:{ width: 0, height: 2 },
+		shadowOffset: { width: 0, height: 2 },
 		shadowOpacity: 0.08,
 		shadowRadius: 8,
 		elevation: 4
@@ -134,22 +127,22 @@ const styles = StyleSheet.create({
 	cardContent: {
 		padding: 20,
 	},
-  	cardTitle: {
-    	fontSize: 20,
-    	fontWeight: "bold",
+	cardTitle: {
+		fontSize: 20,
+		fontWeight: "bold",
 		marginBottom: 4,
-		marginTop:4,
-    	color: "black",
-  	},
-  	cardDescription: {
-    	fontSize: 15,
-    	marginBottom: 16,
-    	color: "black",
+		marginTop: 4,
+		color: "black",
+	},
+	cardDescription: {
+		fontSize: 15,
+		marginBottom: 16,
+		color: "black",
 	},
 	cardDeadline: {
 		height: 20,
-    	fontSize: 15,
-    	color: "black",
+		fontSize: 15,
+		color: "black",
 	},
 	swipeActionLeft: {
 		justifyContent: "center",
@@ -159,8 +152,8 @@ const styles = StyleSheet.create({
 		borderRadius: 18,
 		marginBottom: 18,
 		marginTop: 2,
-		paddingRight:16,
-	  
+		paddingRight: 16,
+
 	},
 	swipeActionRight: {
 		justifyContent: "center",
@@ -170,169 +163,158 @@ const styles = StyleSheet.create({
 		borderRadius: 18,
 		marginBottom: 18,
 		marginTop: 2,
-		paddingRight:16,
+		paddingRight: 16,
 	},
 	moneyDisplay: {
 		backgroundColor: "#fadba9ff",
 		borderRadius: 10,
 		flexDirection: "row",
-    	alignItems: "center",
-    	paddingHorizontal: 10,
+		alignItems: "center",
+		paddingHorizontal: 10,
 		paddingVertical: 4,
 		marginLeft: 10,
-		marginRight:10
+		marginRight: 10
 	},
 	streakText: {
 		marginLeft: 6,
-		marginRight:6,
- 		color: "#ff9800",
-    	fontWeight: "bold",
-    	fontSize: 14,
+		marginRight: 6,
+		color: "#ff9800",
+		fontWeight: "bold",
+		fontSize: 14,
 	},
-	 header: {
-		 backgroundColor: '#D1D8BE',
-  	},
-  	headerContent: {
-    	padding: 30,
-    	alignItems: 'center',
-  	},
-  	avatar: {
-    	width: 130,
-    	height: 130,
-    	borderRadius: 63,
-    	borderWidth: 4,
-    	borderColor: 'white',
-    	marginBottom: 10,
-  	},
-  	name: {
-    	fontSize: 22,
-    	color: '#000000',
-    	fontWeight: '600',
-  	},
-  	userInfo: {
-    	fontSize: 16,
-    	color: '#778899',
-    	fontWeight: '600',
+	header: {
+		backgroundColor: '#D1D8BE',
+	},
+	headerContent: {
+		padding: 30,
+		alignItems: 'center',
+	},
+	avatar: {
+		width: 130,
+		height: 130,
+		borderRadius: 63,
+		borderWidth: 4,
+		borderColor: 'white',
+		marginBottom: 10,
+	},
+	name: {
+		fontSize: 22,
+		color: '#000000',
+		fontWeight: '600',
+	},
+	userInfo: {
+		fontSize: 16,
+		color: '#778899',
+		fontWeight: '600',
 	},
 	cardRow: {
-  		flexDirection: "row",
-  		justifyContent: "space-between",
-  		alignItems: "center",   
-  		paddingHorizontal: 20,
+		flexDirection: "row",
+		justifyContent: "space-between",
+		alignItems: "center",
+		paddingHorizontal: 20,
 		paddingVertical: 10,
-		marginBottom:4,
-},
-	confirmDelete: {
-  		flexDirection: "row",
-  		gap: 8,
+		marginBottom: 4,
 	},
-  	centeredView: {
-    	flex: 1,
-    	justifyContent: 'center',
-	  	alignItems: 'center',
+	confirmDelete: {
+		flexDirection: "row",
+		gap: 8,
+	},
+	centeredView: {
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center',
 
-  },
-  modalView: {
-	margin: 10,
-	width: "70%",
-	height:"25%",
-    backgroundColor: 'white',
-    borderRadius: 20,
-    padding: 15,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
+	},
+	modalView: {
+		margin: 10,
+		width: "70%",
+		height: "25%",
+		backgroundColor: 'white',
+		borderRadius: 20,
+		padding: 15,
+		alignItems: 'center',
+		shadowColor: '#000',
+		shadowOffset: {
+			width: 0,
+			height: 2,
+		},
+		shadowOpacity: 0.25,
+		shadowRadius: 4,
+		elevation: 5,
 	},
 	modalView2: {
 		width: "50%",
 		height: "25%",
 		backgroundColor: 'white',
-    borderRadius: 20,
-    padding: 15,
+		borderRadius: 20,
+		padding: 15,
 		alignItems: 'center',
-	// flex: 1,
-    	justifyContent: 'center',
-	  	// alignItems: 'center',
-		
-  },
-  button: {
-    borderRadius: 20,
-    padding: 10,
-    elevation: 2,
-  },
-  buttonOpen: {
-    backgroundColor: '#F194FF',
-  },
-  buttonClose: {
-    backgroundColor: '#2196F3',
-  },
-  textStyle: {
-    color: 'white',
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  modalText: {
-    marginBottom: 15,
-    textAlign: 'center',
+		justifyContent: 'center',
+	},
+	button: {
+		borderRadius: 20,
+		padding: 10,
+		elevation: 2,
+	},
+	buttonOpen: {
+		backgroundColor: '#F194FF',
+	},
+	buttonClose: {
+		backgroundColor: '#2196F3',
+	},
+	textStyle: {
+		color: 'white',
+		fontWeight: 'bold',
+		textAlign: 'center',
+	},
+	modalText: {
+		marginBottom: 15,
+		textAlign: 'center',
 	},
 	shopContainer: {
-	  	flex: 1,
-		// padding: 16,
-		// backgroundColor: '#faf8e7ff',
+		flex: 1,
 		justifyContent: "center",
 		backgroundColor: "#E7EFC7",
 		margin: 18,
 		borderRadius: 18,
 		shadowColor: "#000",
-		shadowOffset:{ width: 0, height: 2 },
+		shadowOffset: { width: 0, height: 2 },
 		shadowOpacity: 0.08,
 		shadowRadius: 8,
 		elevation: 4
 	},
 	card: {
-  		marginBottom: 16,
-  borderRadius: 12,
-  backgroundColor: '#E7EFC7',
-  elevation: 3,
-  padding: 12,
-},
-
-cardRowAchievements: {
-  flexDirection: 'row',
-  alignItems: 'center', 
-},
-
-cardTextAchievements: {
-  flex: 1, 
+		marginBottom: 16,
+		borderRadius: 12,
+		backgroundColor: '#E7EFC7',
+		elevation: 3,
+		padding: 12,
 	},
-cardRowAchievementsTodo: {
-  flexDirection: 'row',
-//   alignItems: 'center', 
-},
-cardTextAchievementsTodo: {
-	flex: 1,
-	textAlign:"right",
-	alignContent: "flex-end",
-	justifyContent:"flex-end"
-	
-},
-cardTitleAchievements: {
-  fontSize: 18,
-  fontWeight: 'bold',
-  marginBottom: 4,
-},
-
-cardDescriptionAchievements: {
-  fontSize: 14,
-  color: '#555',
-},
-
+	cardRowAchievements: {
+		flexDirection: 'row',
+		alignItems: 'center',
+	},
+	cardTextAchievements: {
+		flex: 1,
+	},
+	cardRowAchievementsTodo: {
+		flexDirection: 'row',
+	},
+	cardTextAchievementsTodo: {
+		flex: 1,
+		textAlign: "right",
+		alignContent: "flex-end",
+		justifyContent: "flex-end"
+	},
+	cardTitleAchievements: {
+		fontSize: 18,
+		fontWeight: 'bold',
+		marginBottom: 4,
+	},
+	cardDescriptionAchievements: {
+		fontSize: 14,
+		color: '#555',
+	},
 })
 
 export default styles

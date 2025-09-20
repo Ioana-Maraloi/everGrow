@@ -1,10 +1,12 @@
-import { Button, Surface, TextInput, SegmentedButtons} from 'react-native-paper'
+import { Button, Surface, TextInput, SegmentedButtons } from 'react-native-paper'
 import { FIREBASE_APP } from "../../../firebaseConfig"
 import React, { useState, useRef, useContext, useEffect } from 'react'
 import { AuthContext } from "../../utils/authContext"
-import { View, Text,Modal, Pressable} from 'react-native'
+import { View, Text, Modal, Pressable } from 'react-native'
 import styles from '../../utils/styles'
 import images from "../../utils/images"
+import { Colors } from '../../utils/colors'
+
 import { ImageBackground } from "expo-image"
 import { collection, doc, getDoc, getFirestore, setDoc, getDocs, Timestamp, query, where, onSnapshot, deleteDoc, updateDoc, increment } from 'firebase/firestore'
 import { ScrollView, Swipeable } from "react-native-gesture-handler"
@@ -58,9 +60,14 @@ export default function TodoScreen() {
     const [todos, setTodos] = useState<Todo[]>([])
 
 
+
+    const { theme } = useContext(AuthContext);
+    const currentTheme = (theme === "default" ? "light" : theme) as "light" | "dark";
+
+
     const [modalVisible, setModalVisible] = useState(false);
     const [displayBadge, setDisplayBadge] = useState("ImakingFriends")
-        
+
 
     const swipeableRefs = useRef<{ [key: string]: Swipeable | null }>({})
 
@@ -77,14 +84,14 @@ export default function TodoScreen() {
             const userRef = doc(db, "users", authState.displayName)
             await updateDoc(userRef,
                 {
-                xp:increment(xp)
-            })
-        
+                    xp: increment(xp)
+                })
+
         } catch (error) {
             console.log(error)
         }
     }
-    
+
     const addTodo = async () => {
         try {
 
@@ -165,7 +172,6 @@ export default function TodoScreen() {
                 await setDoc(statsRef, stats, { merge: true })
             }
 
-
             const docData = {
                 description: description,
                 completed: false,
@@ -193,8 +199,6 @@ export default function TodoScreen() {
                 }
                 await setDoc(todayStatsRef, todayStats)
             }
-
-
             alert("task added succesfully")
         }
         catch (error: any) {
@@ -204,8 +208,6 @@ export default function TodoScreen() {
     }
     const fetchTodos = async () => {
         try {
-            // const todos = await getDocs(collection(db, "users", authState.displayName, "tasks", "stats", todayString))
-            // console.log(todos)
             const q = query(
                 collection(db, "users", authState.displayName, "tasks", "stats", todayString),
                 where("completed", "==", false)
@@ -226,15 +228,12 @@ export default function TodoScreen() {
             const unsubscribe = onSnapshot(q, (snapshot) => {
                 snapshot.docChanges().forEach((change) => {
                     if (change.type === "added") {
-                        // console.log("NEW ADD:", change.doc.data())
                         fetchTodos()
                     }
                     if (change.type === "modified") {
-                        // console.log("NEW modify:", change.doc.data())
                         fetchTodos()
                     }
                     if (change.type === "removed") {
-                        // console.log("NEW remove:", change.doc.data())
                         fetchTodos()
                     }
                 })
@@ -316,24 +315,35 @@ export default function TodoScreen() {
         </View>
     }
     return (
-        <SafeAreaProvider >
-            <SafeAreaView style={styles.container}>
-                {!displayAddButtons && (<Button icon={"note-edit-outline"} onPress={() => {
-                    if (displayAddButtons)
-                        setDisplayAddButtons(false)
-                    else
-                        setDisplayAddButtons(true)
-                }}>
-                    <Text>Add Task for Today!</Text>
-                </Button>)}
-                {displayAddButtons && (<Button icon={"order-bool-descending-variant"}
+        <SafeAreaProvider>
+            <SafeAreaView style={[styles.container, {
+                backgroundColor: Colors[currentTheme].backgroundColor,
+            }]}>
+                {!displayAddButtons && (<Button
+                    style={[styles.loginButton, {
+                        backgroundColor: Colors[currentTheme].addTaskButton
+                    }]}
+                        icon={() => <MaterialCommunityIcons name="note-edit-outline" size={24} color={Colors[currentTheme].forgotPassword} />}
                     onPress={() => {
                         if (displayAddButtons)
                             setDisplayAddButtons(false)
                         else
                             setDisplayAddButtons(true)
                     }}>
-                    <Text>See today&apos;s tasks</Text>
+                    <Text style={{ color: Colors[currentTheme].forgotPassword }}>Add Task for Today!</Text>
+                </Button>)}
+                {displayAddButtons && (<Button
+                    style={[styles.loginButton, {
+                        backgroundColor: Colors[currentTheme].addTaskButton
+                    }]}
+                        icon={() => <MaterialCommunityIcons name="order-bool-descending-variant" size={24} color={Colors[currentTheme].forgotPassword} />}
+                    onPress={() => {
+                        if (displayAddButtons)
+                            setDisplayAddButtons(false)
+                        else
+                            setDisplayAddButtons(true)
+                    }}>
+                    <Text style={{ color: Colors[currentTheme].forgotPassword }}>See today&apos;s tasks</Text>
                 </Button>)}
                 {displayAddButtons && (
                     <View style={[styles.container, { alignItems: "center" }]}>
@@ -382,7 +392,7 @@ export default function TodoScreen() {
                 {!displayAddButtons && (
                     <ScrollView showsVerticalScrollIndicator={false}>
                         {todos.length === 0 ? (
-                            <Text style = {styles.text}>No todos</Text>
+                            <Text style={styles.text}>No todos</Text>
                         ) : (
                             todos?.map((todo, key) => (
                                 <Swipeable

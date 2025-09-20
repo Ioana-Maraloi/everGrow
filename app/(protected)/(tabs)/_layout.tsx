@@ -1,8 +1,8 @@
 import { Tabs } from "expo-router"
-import Feather from '@expo/vector-icons/Feather'
-import MaterialIcons from '@expo/vector-icons/MaterialIcons'
 import { View, Text } from 'react-native'
 import styles from "../../utils/styles"
+import { Colors } from '../../utils/colors'
+
 import { AuthContext } from "../../utils/authContext"
 import {useContext, useState} from 'react'
 import { MaterialCommunityIcons } from "@expo/vector-icons"
@@ -11,32 +11,32 @@ import { doc, getDoc, getFirestore, onSnapshot } from 'firebase/firestore'
 import { FIREBASE_APP } from "../../../firebaseConfig"
 
 export default function TabsLayout() {
-
 	const authState = useContext(AuthContext)
 	const [xp, setXp] = useState(0)
 	const [streak, setStreak] = useState(0)
-		const db = getFirestore(FIREBASE_APP)
+	const db = getFirestore(FIREBASE_APP)
 	
-	const setTheStreak= async () => {
+	const { theme } = useContext(AuthContext);
+	const currentTheme = (theme === "default" ? "light" : theme) as "light" | "dark";
+	
+	const setTheStreak = async () => {
 		try {
 			const statsRef = doc(db, 'users', authState.displayName, 'trees', 'stats')
             const docSnap = await getDoc(statsRef)
             if (docSnap.exists()) {
                 setStreak(docSnap.data().streak)
             }
-			
 		} catch (error) {
 			console.log(error)
 		}
 	}
-	const setTheXp= async () => {
+	const setTheXp = async () => {
 		try {
 			const statsRef = doc(db, 'users', authState.displayName)
             const docSnap = await getDoc(statsRef)
             if (docSnap.exists()) {
                 setXp(docSnap.data().xp)
             }
-			
 		} catch (error) {
 			console.log(error)
 		}
@@ -52,7 +52,6 @@ export default function TabsLayout() {
 			return () => {
 				listen()
 			}
-
 		} catch (error) {
 			console.log(error)
 		}
@@ -62,30 +61,35 @@ export default function TabsLayout() {
 			screenOptions={
 				{
 					headerStyle: {
-						backgroundColor: "#9EBC8A"
+						backgroundColor: Colors[currentTheme].colorTabsTop
 					},
 					headerShadowVisible: true,
 					tabBarStyle: {
-						backgroundColor: "#537D5D"
+						backgroundColor: Colors[currentTheme].colorTabsBottom
 					},
-					tabBarActiveTintColor: "#fff",
-					tabBarInactiveTintColor: "#041d16ff",
+					tabBarActiveTintColor: Colors[currentTheme].tabsActive,
+					tabBarInactiveTintColor: Colors[currentTheme].tabsInactive,
 				}
-				
 		}>    
 			<Tabs.Screen name="index" options={{
-				// headerShown: false,
 				title: "today's tasks", 
-				tabBarIcon: () => (
-				<Feather name="check-square" size={24} color="black" />
-			) }}>
+				headerTintColor:Colors[currentTheme].colorTitleTab,
+				tabBarIcon: ({ focused}) => (
+					<MaterialCommunityIcons 
+						name="checkbox-marked-outline" 	
+						size={24}
+						color={focused ? Colors[currentTheme].tabsActive : Colors[currentTheme].tabsInactive}>
+					</MaterialCommunityIcons>)
+				}}>
 			</Tabs.Screen>
 
 			<Tabs.Screen name="forest" options={{ 
 				headerRight: () => (
 					<View style={styles.moneyDisplay}>
 						<Text style= {styles.streakText}>{xp} </Text>
-						<MaterialCommunityIcons name = "currency-usd" size={18}
+						<MaterialCommunityIcons
+							name="currency-usd"
+							size={18}
 							color={"#66ff00ff"}>
 						</MaterialCommunityIcons>
 					</View>
@@ -99,19 +103,26 @@ export default function TabsLayout() {
 					</View>
 				),
 				title: "forest",
-				 tabBarIcon:()=>(
-				 <MaterialIcons name="forest" size={24} color="black" />) 
-					
-			 }}>
+				headerTintColor: Colors[currentTheme].colorTitleTab,
+				 tabBarIcon: ({ focused }) => (
+					<MaterialCommunityIcons 
+						name="forest" 	
+						size={24}
+						color={focused ? Colors[currentTheme].tabsActive : Colors[currentTheme].tabsInactive}>
+					</MaterialCommunityIcons>)
+				}}>
 			</Tabs.Screen>
 
 			<Tabs.Screen name="profile" options={{
-				tabBarInactiveTintColor: "#003829",
 				title: "profile",
-				tabBarIcon: () => (
-					<MaterialIcons name="account-circle" size={24} color="black" />
-				)
-			}}>
+				headerTintColor:Colors[currentTheme].colorTitleTab,
+				tabBarIcon: ({ focused }) => (
+					<MaterialCommunityIcons
+						name="face-man" 	
+						size={24}
+						color={focused ? Colors[currentTheme].tabsActive : Colors[currentTheme].tabsInactive}>
+					</MaterialCommunityIcons>)
+				}}>
 			</Tabs.Screen>
 		
 	</Tabs>

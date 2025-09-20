@@ -1,57 +1,50 @@
-import {Text, Alert, View, Modal, Pressable, TouchableOpacity} from "react-native"
+import { Text, Alert, View, Modal, Pressable, TouchableOpacity } from "react-native"
 import { Button, Avatar, TextInput } from "react-native-paper"
 import { useContext, useState, useEffect } from "react"
 import { AuthContext } from "../../utils/authContext"
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context"
 import styles from "../../utils/styles"
 import images from "../../utils/images"
+import { Colors } from '../../utils/colors'
 
 import { useRouter } from "expo-router"
 import { MaterialCommunityIcons } from "@expo/vector-icons"
-// import { FIREBASE_APP } from "../../../firebaseConfig"
-// import { collection, doc, getFirestore, setDoc, getDocs, query, where, onSnapshot, deleteDoc, getDoc, addDoc } from 'firebase/firestore'
-// import { launchImageLibrary } from "react-native-image-picker"
-// import { getStorage, ref } from "firebase/storage"
 import { FIREBASE_APP } from "../../../firebaseConfig"
 import { collection, doc, getDoc, getFirestore, setDoc, getDocs, Timestamp, query, where, onSnapshot, deleteDoc, updateDoc, increment } from 'firebase/firestore'
 import { ImageBackground } from "expo-image"
+import { Color } from "three/src/Three.Core.js"
 
 
 // https://www.freepik.com/serie/133741891
 export default function ProfileScreen() {
-	// const db = getFirestore(FIREBASE_APP)
 
 	const [visible, setVisible] = useState(false)
-	// const containerStyle = {backgroundColor: 'white', padding: 20}
 
 	const authState = useContext(AuthContext)
 	const router = useRouter()
-	// const [newUsername, setNewUsername] = useState("")
-
-	// const changeUsername = async (username:string) => {
-	//     authState.displayName = username
-
-	// }
 
 	const dateToday = new Date().getDate()
 	const monthToday = new Date().getMonth() + 1
 	const yearToday = new Date().getFullYear()
 
-	// const today = new Date(yearToday, monthToday, dateToday)
 	const todayString = dateToday.toString().padStart(2, "0") + "-" + monthToday.toString().padStart(2, "0") + "-" + yearToday.toString().padStart(2, "0")
 
+	console.log("Auth State:", authState);
 
-
+	// for today's tasks
 	const [oneHourFocusDone, setOneHourFocusDone] = useState(false)
 	const [threeHourFocusDone, setThreeHourFocusDone] = useState(false)
 	const [threeTasksDone, setThreeTasksDone] = useState(false)
 	const [fiveTasksDone, setFiveTasksDone] = useState(false)
 	const [taskBefore12Done, setTaskBefore12Done] = useState(false)
-
+	// for displaying info about today's tasks	
 	const [dailyAchievementModal, setdailyAchievementModal] = useState(false)
 	const [pictureDisplayModal, setPictureDisplayModal] = useState("")
 	const db = getFirestore(FIREBASE_APP)
 
+
+	const { theme } = useContext(AuthContext);
+	const currentTheme = (theme === "default" ? "light" : theme) as "light" | "dark";
 
 	const checkTasks = async () => {
 		try {
@@ -105,13 +98,11 @@ export default function ProfileScreen() {
 				listen1()
 				listen2()
 			}
-			
+
 		} catch (error) {
 			console.log(error)
 		}
 	})
-	
-
 
 	const getOneHourFocusPicture = () => {
 		if (oneHourFocusDone === true) {
@@ -192,8 +183,8 @@ export default function ProfileScreen() {
 	}
 	return (
 		<SafeAreaProvider>
-			<SafeAreaView>
-				<View style={styles.header}>
+			<SafeAreaView style={{ backgroundColor: Colors[currentTheme].bottom }}>
+				<View style={{ backgroundColor: Colors[currentTheme].header }}>
 					<View style={styles.headerContent}>
 						<TouchableOpacity>
 							<Avatar.Image
@@ -342,43 +333,82 @@ export default function ProfileScreen() {
 				</Modal>
 
 
-				<Button icon={"logout"} onPress={authState.logOut}>
-					<Text>Log out</Text>
+				<Button
+					icon={() => <MaterialCommunityIcons
+						name="logout"
+						size={24}
+						color={Colors[currentTheme].forgotPassword} />}
+					onPress={authState.logOut}>
+					<Text style={{
+						color: Colors[currentTheme].forgotPassword
+					}}>Log out</Text>
 				</Button>
-				<Button icon={"account-group"}
+				<Button
+					icon={() => <MaterialCommunityIcons
+						name="account-group"
+						size={24}
+						color={Colors[currentTheme].forgotPassword} />}
 					onPress={() => {
 						router.push("../screens/friends")
-					}}
-				>
-					Friends
+					}}>
+					<Text style={{
+						color: Colors[currentTheme].forgotPassword
+					}}>Friends</Text>
 				</Button>
-				<Button icon={"shopping-outline"}
+				<Button
+					icon={() => <MaterialCommunityIcons
+						name="shopping-outline"
+						size={24}
+						color={Colors[currentTheme].forgotPassword} />}
 					onPress={() => {
 						router.push("../screens/shop")
-					}}
-				>
-					Shop
+					}}>
+					<Text style={{
+						color: Colors[currentTheme].forgotPassword
+					}}>Shop</Text>
 				</Button>
-				<Button icon={"medal-outline"}
+				<Button
+					icon={() => <MaterialCommunityIcons
+						name="medal-outline"
+						size={24}
+						color={Colors[currentTheme].forgotPassword} />}
 					onPress={() => {
 						router.push("../screens/achievements")
-					}}
-				>
-					Achievements
+					}}>
+					<Text style={{
+						color: Colors[currentTheme].forgotPassword
+					}}>Achievements</Text>
 				</Button>
-				<Button icon={"table-eye"}
+				<Button
+					icon={() => <MaterialCommunityIcons
+						name="table-eye"
+						size={24}
+						color={Colors[currentTheme].forgotPassword} />}
 					onPress={() => {
 						router.push("../screens/stats")
-					}}
-				>
-					Stats
+					}}>
+					<Text style={{
+						color: Colors[currentTheme].forgotPassword
+					}}>Stats</Text>
 				</Button>
-
-				<Button onPress={() => {
+				<Button
+					icon={() => <MaterialCommunityIcons
+						name="shopping-outline"
+						size={24}
+						color={Colors[currentTheme].forgotPassword} />}
+					onPress={() => {
 						router.push("../screens/theme")
-					}}>Theme</Button>
-				<Button icon={"delete"}
-					onPress={function () {
+					}}>
+					<Text style={{
+						color: Colors[currentTheme].forgotPassword
+					}}>Theme</Text>
+				</Button>
+				<Button
+					icon={() => <MaterialCommunityIcons
+						name="delete"
+						size={24}
+						color={Colors[currentTheme].forgotPassword} />}
+					onPress={ ()=> {
 						Alert.alert(
 							"Are u sure u want to delete this account?",
 							"This cannot be undone",
@@ -397,9 +427,10 @@ export default function ProfileScreen() {
 								},
 							]
 						)
-					}}
-				>
-					<Text>Delete Account</Text>
+					}}>
+					<Text style={{
+						color: Colors[currentTheme].forgotPassword
+					}}>Delete Account</Text>
 				</Button>
 			</SafeAreaView>
 		</SafeAreaProvider>

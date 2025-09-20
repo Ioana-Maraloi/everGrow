@@ -1,10 +1,12 @@
 import { View, Text, TouchableOpacity } from "react-native"
 import {createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth"
-import {useState} from "react"
+import {useState, useContext} from "react"
 import {TextInput} from "react-native-paper"
 import styles from './utils/styles'
+import { Colors } from './utils/colors'
 import { FIREBASE_AUTH, FIREBASE_APP } from "../firebaseConfig"
 import { doc, getFirestore, setDoc } from 'firebase/firestore'
+import { AuthContext } from "./utils/authContext"
 
 interface Achievement{
     name: string,
@@ -99,6 +101,11 @@ export default function SignUpScreen() {
 	const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
 	const [confirmPassword, setConfirmPassword] = useState('')
+
+	
+	const { theme } = useContext(AuthContext);
+	const currentTheme = (theme === "default" ? "light" : theme) as "light" | "dark";
+	
 	const handleSignUp = async () => {
 		try {
 			const username = email.toLowerCase().split('@')[0]
@@ -161,36 +168,45 @@ export default function SignUpScreen() {
 		}
 	}
 	return (
-		<View style={[styles.container, { alignItems: "center" }]}>
-			<Text style={styles.title}>Create an account</Text>
+		<View style={[styles.container, {
+			alignItems: "center",
+			backgroundColor: Colors[currentTheme].backgroundColor,
+		 }]}>
+			<Text style={[styles.title,
+				{ color: Colors[currentTheme].title }]}>Create an account</Text>
 			<TextInput
-				mode="outlined"
+				mode="flat"
 				label="Email"
-				placeholderTextColor={"gray"}
+				placeholderTextColor={Colors[currentTheme].shadowColor}
 				value={email}
 				onChangeText={(text) => setEmail(text)}
-				style={styles.input}
+				style={[styles.input, {backgroundColor: Colors[currentTheme].inputBackgroundColor}]}
 			/>
 			<TextInput
-				mode="outlined"
+				mode="flat"
 				label="Password"
-				placeholderTextColor={"gray"}
+				placeholderTextColor={Colors[currentTheme].shadowColor}
 				value={password}
 				onChangeText={(text) => setPassword(text)}
 				secureTextEntry={true}
-				style={styles.input}
+				style={[styles.input, {backgroundColor: Colors[currentTheme].inputBackgroundColor}]}
 			/>
 			<TextInput
-				mode="outlined"
+				mode="flat"
 				label="Reconfirm Password"
-				placeholderTextColor={"gray"}
+				placeholderTextColor={Colors[currentTheme].shadowColor}
 				value={confirmPassword}
 				onChangeText={(text) => setConfirmPassword(text)}
 				secureTextEntry={true}
-				style={styles.input}
+				style={[styles.input, {backgroundColor: Colors[currentTheme].inputBackgroundColor}]}
 			/>
-			<TouchableOpacity style={styles.loginButton} onPress={handleSignUp}>
-			<Text style={styles.text}>Sign Up</Text>
+			<TouchableOpacity
+				style={[styles.loginButton, {backgroundColor: Colors[currentTheme].loginButton}]}
+				onPress={handleSignUp}>
+			<Text style={{
+				fontSize: 15,
+				color: Colors[currentTheme].buttonText
+			}}>Sign Up</Text>
 		</TouchableOpacity>
 		</View>
 	)

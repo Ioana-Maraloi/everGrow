@@ -7,9 +7,9 @@ import { doc, getFirestore, setDoc, collection, getDoc } from 'firebase/firestor
 import { Divider, Button, TextInput } from 'react-native-paper';
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context'
 import { navigate } from "expo-router/build/global-state/routing"
-import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth"
+import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail, signInWithCredential } from "firebase/auth"
 import styles from './utils/styles'
-
+import { Colors } from './utils/colors'
 const auth = getAuth()
 
 const androidClientId = "187288304608-ikpu55agkm548m52u01th9j295bvfdbm.apps.googleusercontent.com"
@@ -22,7 +22,11 @@ export default function LoginScreen() {
 	const [password, setPassword] = React.useState('')
 
 	const db = getFirestore(FIREBASE_APP)
-	const usersCollectionRef = collection(db, 'users')
+
+	const { theme } = useContext(AuthContext);
+	const currentTheme = (theme === "default" ? "light" : theme) as "light" | "dark";
+
+
 	const handleResetPassword = function () {
 		try {
 			sendPasswordResetEmail(auth, email).then(() => {
@@ -76,36 +80,46 @@ export default function LoginScreen() {
 
 	return (
 		<SafeAreaProvider >
-			<SafeAreaView style={[styles.container, { alignItems: "center" }]}>
+			<SafeAreaView style={[styles.container, {
+				alignItems: "center",
+				backgroundColor: Colors[currentTheme].backgroundColor,
+			}]}>
 				<Image source={require("../assets/trees/logo.png")}
 					style={{ width: 100, height: 100 }}>
 				</Image>
-				<Text style={styles.title}>Welcome</Text>
+				<Text style={[styles.title,
+				{ color: Colors[currentTheme].title }]}>Welcome</Text>
 				<TextInput
-					mode="outlined"
+					mode="flat"
 					label="Email"
-					placeholderTextColor={styles.colors.shadowColor}
+					placeholderTextColor={Colors[currentTheme].shadowColor}
 					onChangeText={(text) => setEmail(text)}
-					style={styles.input} />
+					style={[styles.input, {backgroundColor: Colors[currentTheme].inputBackgroundColor}]} />
 				<TextInput
-					mode="outlined"
+					mode="flat"
 					label="Password"
-					placeholderTextColor={styles.colors.shadowColor}
+					placeholderTextColor={Colors[currentTheme].shadowColor}
 					onChangeText={(text) => setPassword(text)}
 					secureTextEntry={true}
-					style={styles.input} />
+					style={[styles.input, {backgroundColor: Colors[currentTheme].inputBackgroundColor}]} />
 				<TouchableOpacity
-					style={styles.loginButton}
+					style={[styles.loginButton, {backgroundColor: Colors[currentTheme].loginButton}]}
 					onPress={handleLogin}>
-					<Text style={styles.startText}>Log in</Text>
+					<Text style={{
+						fontSize: 15,
+						color: Colors[currentTheme].buttonText
+					}}>Log in</Text>
 				</TouchableOpacity>
 				<TouchableOpacity
-					style={styles.loginButton}
+					style={[styles.loginButton, {backgroundColor: Colors[currentTheme].loginButton}]}
 					onPress={function () { navigate("/signUp") }}>
-					<Text style={styles.startText}>Don&apos;t have an account yet? Sign up</Text>
+					<Text style={{
+						fontSize: 15,
+						color: Colors[currentTheme].buttonText
+					}}>Don&apos;t have an account yet? Sign up</Text>
 				</TouchableOpacity>
 				<Button onPress={handleResetPassword}>
-					<Text style={styles.forgotPasswordText}>Reset password</Text>
+					<Text style={[styles.forgotPasswordText, {color: Colors[currentTheme].forgotPassword}]}>Reset password</Text>
 				</Button>
 
 				<View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 10, width: "80%" }}>
@@ -113,7 +127,8 @@ export default function LoginScreen() {
 						height: 1, backgroundColor: 'gray', marginVertical: 5,
 						flex: 1
 					}} />
-					<Text style={{ marginHorizontal: 10, color: 'gray' }}>or</Text>
+					<Text style={{ marginHorizontal: 10,  fontSize: 15,
+						color: Colors[currentTheme].text }}>or</Text>
 					<Divider style={{ flex: 1, height: 1, backgroundColor: 'gray' }} />
 				</View>
 

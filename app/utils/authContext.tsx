@@ -6,6 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { getAuth } from "firebase/auth"
 import { doc, getFirestore, getDoc, deleteDoc, getDocs , collection} from 'firebase/firestore'
 import { getFunctions, httpsCallable } from "firebase/functions";
+import { useColorScheme } from "react-native";
 
 const db = getFirestore(FIREBASE_APP)
 const functions = getFunctions();
@@ -19,8 +20,9 @@ type AuthState = {
     email: string
     photoURL: string
     displayName: string
-    // uid: string
-    xp: number
+    xp: number,
+    theme: string,
+    chooseTheme:(mode:string) =>void
 }
 
 export const AuthContext = createContext<AuthState>({
@@ -28,28 +30,26 @@ export const AuthContext = createContext<AuthState>({
     isReady: false,
     xp: 0,
     email: '',
-    // password: '',
     photoURL: '',
     displayName: '',
-    // uid: '',
-    // providerId: '',
     logIn: (email : string, password: string) => {},
     logOut: () => { },
-    deleteAccount: () => {},
+    deleteAccount: () => { },
+    theme: "",
+    chooseTheme: (mode:string) =>{},
 })
 
 const authStoageKey = 'authState'
+const themeStorageKey = 'appTheme'
 
 export function AuthProvider({ children }: PropsWithChildren) {
     const [email, setEmail] = useState('')
-    // const [password, setPassword] = useState('')
     const [photoURL, setPhotoURL] = useState('')
     const [displayName, setDisplayName] = useState('')
-    // const [uid, setUid] = useState('')
-    // const [providerId, setProviderId] = useState('')
     const [xp, setXp] = useState(0)
     const [isLoggedIn, setIsLoggedIn] = useState(false)
     const [isReady, setIsReady] = useState(false)
+    const [theme, setTheme] = useState('light')
     const router = useRouter()
     const storeAuthState = async (newState: { isLoggedIn: boolean }) => {
         try {
@@ -64,6 +64,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
         const username = email.split('@')[0]
         const docRef = doc(db, "users", username)
         const docSnap = await getDoc(docRef)
+
         if (docSnap.exists()) {
             setIsLoggedIn(true)
             const data = docSnap.data()
@@ -75,6 +76,15 @@ export function AuthProvider({ children }: PropsWithChildren) {
         }
         setXp(xp)
     }
+
+const chooseTheme = async (mode: string) => {
+    setTheme(mode)
+    try {
+        await AsyncStorage.setItem(themeStorageKey, mode)
+    } catch (error) {
+        console.error("Failed to save theme:", error)
+    }
+}
 
     const logOut = () => {
         setIsLoggedIn(false)
@@ -178,6 +188,23 @@ export function AuthProvider({ children }: PropsWithChildren) {
             }
             setIsReady(true)
         }
+        const loadTheme = async () => {
+        try {
+            const savedTheme = await AsyncStorage.getItem(themeStorageKey)
+            if (savedTheme) {
+                setTheme(savedTheme)
+            } else {
+                // dacă nu există, folosim tema sistemului
+                const systemTheme = useColorScheme() ?? 'light'
+                setTheme(systemTheme)
+            }
+        } catch (error) {
+            const systemTheme = useColorScheme() ?? 'light'
+            setTheme(systemTheme)
+            console.error("Failed to load theme from storage:", error)
+        }
+    }
+    loadTheme()
         getAuthFromStorage()
         }, [])
     
@@ -186,15 +213,14 @@ export function AuthProvider({ children }: PropsWithChildren) {
             isLoggedIn,
             isReady,
             email,
-            // password,
             photoURL,
             displayName,
-            // uid,
-            // providerId,
             xp,
             logIn,
             logOut,
-            deleteAccount
+            deleteAccount, 
+            theme,
+            chooseTheme
         }}>
             {children}
         </AuthContext.Provider>

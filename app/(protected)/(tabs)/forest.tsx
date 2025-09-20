@@ -2,6 +2,7 @@ import { View, Text, Image, ImageBackground, Alert, Modal, Pressable } from "rea
 import { Button, SegmentedButtons } from "react-native-paper"
 import styles from '../../utils/styles'
 import images from "../../utils/images"
+import { Colors } from '../../utils/colors'
 
 import React, { useState, useContext, useEffect } from "react"
 import { ScrollView } from "react-native-gesture-handler"
@@ -13,6 +14,8 @@ import { collection, doc, getFirestore, updateDoc, setDoc, getDocs, query, onSna
 
 import { AuthContext } from "../../utils/authContext"
 import { getExpoGoProjectConfig } from "expo"
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+
 // https://jennpixel.itch.io/free-flower-pack-12-icons?download
 // https://anokolisa.itch.io/free-pixel-art-asset-pack-topdown-tileset-rpg-16x16-sprites
 
@@ -246,6 +249,12 @@ export default function ForestScreen() {
 	const [displayBadge, setDisplayBadge] = useState("AfirstSeed")
 	const [xp, SetXp] = useState(0)
 
+	
+		
+			const { theme } = useContext(AuthContext);
+			const currentTheme = (theme === "default" ? "light" : theme) as "light" | "dark";
+		
+	
 
 	const [succesful, setSuccesful] = useState(false)
 	const db = getFirestore(FIREBASE_APP)
@@ -531,7 +540,9 @@ export default function ForestScreen() {
     }
 	return (
 		<SafeAreaProvider>
-			<SafeAreaView style={styles.container}>
+			<SafeAreaView  style={[styles.container, {
+				backgroundColor: Colors[currentTheme].backgroundColor,
+			}]}>
 				{/* display today's trees  */}
 				{showForest && (
 					<View>
@@ -543,10 +554,15 @@ export default function ForestScreen() {
 							},
 						]}>
 						</View>
-						<Button icon={"pine-tree"} onPress={() => {
+						<Button style={[
+							styles.loginButton, {
+								backgroundColor: Colors[currentTheme].addTaskButton
+                    }]}
+                        icon={() => <MaterialCommunityIcons name="pine-tree" size={24} color={Colors[currentTheme].forgotPassword} />}
+							onPress={() => {
 							setShowForest(false)
 						}}>
-							<Text>Plant another tree to today&apos;s forest</Text>
+							<Text style={{ color: Colors[currentTheme].forgotPassword }}>Plant another tree to today&apos;s forest</Text>
 						</Button>
 					</View>
 				)}
@@ -556,18 +572,25 @@ export default function ForestScreen() {
 						{/* render the choices for the trees and the time */}
 						{!isPlaying && (
 							<View>
-								<Button>
-									<Text onPress={() => { setShowForest(true) }}>Show today&apos;s forest!</Text>
+								<Button style={[
+									styles.loginButton, {
+										backgroundColor: Colors[currentTheme].addTaskButton
+                   					}]}>
+									<Text style={{ color: Colors[currentTheme].forgotPassword }} onPress={() => { setShowForest(true) }}>Show today&apos;s forest!</Text>
 								</Button>
 
-								<Button style={styles.loginButton} onPress={() => {
+								<Button style={[
+									styles.loginButton, {
+                        				backgroundColor: Colors[currentTheme].addTaskButton
+									}]}
+									onPress={() => {
 									if (showTreesOptionssOptions)
 										setshowTreesOptionssOptions(false)
 									else
 										setshowTreesOptionssOptions(true)
 
 								}}>
-									<Text style={styles.startText}>Choose Tree!</Text>
+									<Text style={{ color: Colors[currentTheme].forgotPassword }}>Choose Tree</Text>
 								</Button>
 
 								{showTreesOptionssOptions && (
@@ -597,13 +620,17 @@ export default function ForestScreen() {
 										/>
 									</ScrollView>
 								)}
-								<Button style={styles.loginButton} onPress={function () {
+								<Button style={[
+									styles.loginButton, {
+										backgroundColor: Colors[currentTheme].addTaskButton
+									}]}
+									onPress={function () {
 									if (showTimeOptions)
 										setshowTimeOptions(false)
 									else
 										setshowTimeOptions(true)
 								}}>
-									<Text style={styles.startText}>Choose Time</Text>
+									<Text style={{ color: Colors[currentTheme].forgotPassword }}>Choose Time</Text>
 								</Button>
 								{showTimeOptions && (
 									<ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
@@ -651,8 +678,11 @@ export default function ForestScreen() {
 
 
 						{!isPlaying &&
-							(<Button style={styles.loginButton} onPress={function () { setIsPlaying(true) }}>
-								<Text style={styles.startText}>Plant Tree</Text>
+							(<Button style={[
+							styles.loginButton, {
+								backgroundColor: Colors[currentTheme].addTaskButton
+						}]} onPress={function () { setIsPlaying(true) }}>
+								<Text style={{ color: Colors[currentTheme].forgotPassword }}>Plant Tree</Text>
 							</Button>)}
 						{isPlaying && (
 							<Button style={styles.loginButton} onPress={function () {

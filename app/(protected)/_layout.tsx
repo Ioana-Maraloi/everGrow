@@ -1,21 +1,21 @@
-import { useContext } from "react";
-import { Redirect, Stack } from "expo-router";
-import { AuthContext } from "../utils/authContext";
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { useContext } from "react"
+import { Redirect, Stack } from "expo-router"
+import { AuthContext } from "../utils/authContext"
+import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { View, Text } from 'react-native'
 import styles from "../utils/styles"
 import { MaterialCommunityIcons } from "@expo/vector-icons"
 
 export default function ProtectedLayout() {
 
-    const authState = useContext(AuthContext);
-    console.log("Auth State:", authState);
+    const authState = useContext(AuthContext)
+    console.log("Auth State:", authState)
 
     if (!authState.isReady) {
-        return null; // or a loading spinner
+        return null 
     } 
     if (!authState.isLoggedIn) {
-        return <Redirect href="/login" />;
+        return <Redirect href="/login" />
     }
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>
@@ -68,14 +68,14 @@ export default function ProtectedLayout() {
                     title:"Stats"
 
                 }} />
- <Stack.Screen name="screens/theme" options={{
+                <Stack.Screen name="screens/theme" options={{
                     headerShown: true,
                     headerBackTitle: "Profile",
                     headerStyle: {
                         backgroundColor: "#9EBC8A"
                     },
                     headerTintColor: "#000000ff",
-                    title:"Stats celalalt"
+                    title:"Theme"
 
                 }} />
             </Stack>
