@@ -323,32 +323,42 @@ export default function TodoScreen() {
                     style={[styles.loginButton, {
                         backgroundColor: Colors[currentTheme].addTaskButton
                     }]}
-                        icon={() => <MaterialCommunityIcons name="note-edit-outline" size={24} color={Colors[currentTheme].forgotPassword} />}
+                        icon={() => <MaterialCommunityIcons name="note-edit-outline" size={24} color={Colors[currentTheme].addTask} />}
                     onPress={() => {
                         if (displayAddButtons)
                             setDisplayAddButtons(false)
                         else
                             setDisplayAddButtons(true)
                     }}>
-                    <Text style={{ color: Colors[currentTheme].forgotPassword }}>Add Task for Today!</Text>
+                    <Text style={{ color: Colors[currentTheme].addTask }}>Add Task for Today!</Text>
                 </Button>)}
                 {displayAddButtons && (<Button
                     style={[styles.loginButton, {
                         backgroundColor: Colors[currentTheme].addTaskButton
                     }]}
-                        icon={() => <MaterialCommunityIcons name="order-bool-descending-variant" size={24} color={Colors[currentTheme].forgotPassword} />}
+                        icon={() => <MaterialCommunityIcons name="order-bool-descending-variant" size={24} color={Colors[currentTheme].addTask} />}
                     onPress={() => {
                         if (displayAddButtons)
                             setDisplayAddButtons(false)
                         else
                             setDisplayAddButtons(true)
                     }}>
-                    <Text style={{ color: Colors[currentTheme].forgotPassword }}>See today&apos;s tasks</Text>
+                    <Text style={{ color: Colors[currentTheme].addTask }}>See today&apos;s tasks</Text>
                 </Button>)}
                 {displayAddButtons && (
                     <View style={[styles.container, { alignItems: "center" }]}>
-                        <TextInput style={styles.input} mode="outlined" label="title" onChangeText={setTitle} />
-                        <TextInput style={styles.input} mode="outlined" label="description" onChangeText={setDescription} />
+                        <TextInput
+                            style={[styles.input,
+                                { backgroundColor: Colors[currentTheme].inputBackgroundColor }]}
+                            mode="flat"
+                            label="title"
+                            onChangeText={setTitle} />
+                        <TextInput
+                            style={[styles.input,
+                                { backgroundColor: Colors[currentTheme].inputBackgroundColor }]}
+                            mode="flat"
+                            label="description"
+                            onChangeText={setDescription} />
 
                         <SegmentedButtons style={{
                             alignContent: "center",
@@ -373,8 +383,12 @@ export default function TodoScreen() {
                                     label: "High"
                                 },]}>
                         </SegmentedButtons>
-                        <Button style={styles.loginButton} onPress={() => { setShow(true) }}>
-                            <Text style={styles.startText}>Add Deadline</Text>
+                        <Button style={[styles.loginButton, {
+                        backgroundColor: Colors[currentTheme].addTaskButton
+                    }]} onPress={() => { setShow(true) }}>
+                            <Text style={[styles.startText, {
+                                color: Colors[currentTheme].addTask
+                            }]}>Add Deadline</Text>
                         </Button>
                         {show && (
                             <DateTimePicker minimumDate={today}
@@ -383,8 +397,14 @@ export default function TodoScreen() {
                                 onChange={onChange}
                             />
                         )}
-                        <Button onPress={addTodo} style={styles.loginButton} mode="contained" disabled={!title || !description || !deadline}>
-                            <Text style={styles.startText}>Add Task</Text>
+                        <Button onPress={addTodo} style={[styles.loginButton, {
+                        backgroundColor: Colors[currentTheme].addTaskButton
+                        }]}
+                            mode="contained" disabled={!title || !description || !deadline}>
+                            <Text
+                                 style={[styles.startText, {
+                                color: Colors[currentTheme].addTask
+                            }]}>Add Task</Text>
                         </Button>
                     </View>
                 )}

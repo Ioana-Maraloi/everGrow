@@ -2,6 +2,7 @@ import { View, Text, FlatList, Alert } from "react-native"
 import { Button } from "react-native-paper"
 import styles from '../../utils/styles'
 import images from "../../utils/images"
+import { Colors } from '../../utils/colors'
 
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context'
 import { AuthContext } from "../../utils/authContext" 
@@ -62,6 +63,10 @@ export default function Shop() {
     const authState = useContext(AuthContext)
     const [treesAvailable, setTreesAvailable] = useState<Tree[]>([])
 
+    
+    const { theme } = useContext(AuthContext)
+    const currentTheme = (theme === "default" ? "light" : theme) as "light" | "dark"
+            
     const buyProduct = async (tree: Tree) => {
         if (tree.price > authState.xp) {
             alert("You don`t have enough coins!")
@@ -144,7 +149,9 @@ export default function Shop() {
     }
     return (
         <SafeAreaProvider>
-            <SafeAreaView style={styles.container}>
+            <SafeAreaView  style={[styles.container, {
+				backgroundColor: Colors[currentTheme].backgroundColor,
+			}]}>
                 <Text style = {styles.text}>Buy new trees:</Text>
                 {treesAvailable.length === 0 ?
                     (<View>

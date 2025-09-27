@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
 		fontWeight: "bold",
 		textAlign: "center",
 		fontSize: 20,
-		color: "#003829",
+		// color: "#003829",
 	},
 	forgotPasswordText: {
 		fontWeight: "normal",

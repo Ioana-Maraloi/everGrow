@@ -1,6 +1,8 @@
 import { View, Text, Modal, Pressable } from "react-native"
 import { Button, TextInput, List, Surface, IconButton } from "react-native-paper"
 import styles from '../../utils/styles'
+import { Colors } from '../../utils/colors'
+
 import { FIREBASE_APP } from "../../../firebaseConfig"
 import { collection, doc, getFirestore,updateDoc, increment, setDoc, getDocs, query, onSnapshot, deleteDoc, getDoc } from 'firebase/firestore'
 import { AuthContext } from "../../utils/authContext"
@@ -27,9 +29,9 @@ interface Friend{
     }
 }
 function formatCamelCase(str: string): string {
-  const withoutPrefix = str.slice(1);
-  const spaced = withoutPrefix.replace(/([A-Z])/g, ' $1').trim();
-  return spaced.charAt(0).toUpperCase() + spaced.slice(1).toLowerCase();
+  const withoutPrefix = str.slice(1)
+  const spaced = withoutPrefix.replace(/([A-Z])/g, ' $1').trim()
+  return spaced.charAt(0).toUpperCase() + spaced.slice(1).toLowerCase()
 }
 export default function Friends() {
     const db = getFirestore(FIREBASE_APP)
@@ -41,16 +43,20 @@ export default function Friends() {
 
     // send requests    
     const [friendReqestsSend, setFriendRequestsSend] = useState<Friend[]>([])
-    const [expandedSend, setExpandedSend] = useState(false);
-    const handlePressSend = () => setExpandedSend(!expandedSend);
+    const [expandedSend, setExpandedSend] = useState(false)
+    const handlePressSend = () => setExpandedSend(!expandedSend)
     // received requests
     const [friendReqestsReceived, setFriendRequestsRecived] = useState<Friend[]>([])
-    const [expandedReceived, setExpandedReceived] = useState(false);
-    const handlePressReceived = () => setExpandedReceived(!expandedReceived);
+    const [expandedReceived, setExpandedReceived] = useState(false)
+    const handlePressReceived = () => setExpandedReceived(!expandedReceived)
     
 
-    const [modalVisible, setModalVisible] = useState(false);
+    const [modalVisible, setModalVisible] = useState(false)
     const [displayBadge, setDisplayBadge] = useState("ImakingFriends")
+    
+    const { theme } = useContext(AuthContext)
+    const currentTheme = (theme === "default" ? "light" : theme) as "light" | "dark"
+        
     
     const addingFriend = async (username:string) => {
         try {
@@ -276,7 +282,9 @@ export default function Friends() {
         }
     }
         return (
-            <View style={styles.container}>
+            <View  style={[styles.container, {
+				backgroundColor: Colors[currentTheme].backgroundColor,
+			}]}>
                 <ScrollView showsVerticalScrollIndicator={false}>
                     {/* prieteniii */}
                      <View>
@@ -370,7 +378,13 @@ export default function Friends() {
                     </View>
 
                     {/* adaug prieteni */}
-                    <Button onPress={() => { setAddFriend(!addFriend)}}>Add new friend</Button>
+                    <Button style={[styles.loginButton, {
+                        backgroundColor: Colors[currentTheme].addTaskButton
+                    }]}
+                        icon={() => <MaterialIcons name="person-add" size={24} color={Colors[currentTheme].addTask} />}
+                        onPress={() => { setAddFriend(!addFriend) }}>
+                        <Text style={{ color: Colors[currentTheme].addTask }}> Add new friend</Text>
+                       </Button>
                     {addFriend && (
                         <View>
                             <TextInput style = {styles.input} mode = "outlined" label ="username" onChangeText={setFriendUsername}></TextInput>
@@ -393,7 +407,7 @@ export default function Friends() {
                     transparent={true}
                     visible={modalVisible}
                     onRequestClose={() => {
-                        setModalVisible(!modalVisible);
+                        setModalVisible(!modalVisible)
                     }}>
                     <View style={styles.centeredView}>
                         <View style={styles.modalView}>

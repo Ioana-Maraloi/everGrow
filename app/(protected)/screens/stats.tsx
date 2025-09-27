@@ -2,6 +2,7 @@ import { View, Text, Dimensions, ScrollView } from "react-native"
 import { useContext, useEffect, useState } from 'react'
 import { AuthContext } from "../../utils/authContext"
 import styles from '../../utils/styles'
+import { Colors } from '../../utils/colors'
 import { FIREBASE_APP } from "../../../firebaseConfig"
 import { LineChart, PieChart, ContributionGraph, } from "react-native-chart-kit"
 import { doc, getDoc, getFirestore, onSnapshot } from 'firebase/firestore'
@@ -15,6 +16,11 @@ export default function Stats() {
     const db = getFirestore(FIREBASE_APP)
     const authState = useContext(AuthContext)
 
+          
+    const { theme } = useContext(AuthContext)
+    const currentTheme = (theme === "default" ? "light" : theme) as "light" | "dark"
+            
+    
     const [totalTreesPlanted, setTotalTreesPlanted] = useState(0)
     const [treesDead, setTreesDead] = useState(0)
     const [totalFocusedTime, setTotalFocusedTime] = useState(0)
@@ -192,7 +198,7 @@ export default function Stats() {
     }
     return (
         <ScrollView style={{
-            backgroundColor: '#faf8e7ff',
+                backgroundColor: Colors[currentTheme].backgroundColor,
         }}>
             <Text style={{
                 marginVertical: 10,

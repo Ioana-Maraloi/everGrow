@@ -18,6 +18,7 @@ export const Colors = {
         tabsActive: "#faf8e7ff",
         tabsInactive: "041d16ff",
         colorTitleTab:"#123524",
+        addTask: "#003829"
 
     },
     dark: {
@@ -36,6 +37,7 @@ export const Colors = {
         colorTabsBottom: "#132820",
         tabsActive: "#9FC87E",
         tabsInactive: "#2F5249",
-        colorTitleTab:"#9FC87E",
+        colorTitleTab: "#9FC87E",
+        addTask: "#003829"
     },
 }

@@ -79,7 +79,7 @@ export default function LoginScreen() {
 	}
 
 	return (
-		<SafeAreaProvider >
+		<SafeAreaProvider>
 			<SafeAreaView style={[styles.container, {
 				alignItems: "center",
 				backgroundColor: Colors[currentTheme].backgroundColor,

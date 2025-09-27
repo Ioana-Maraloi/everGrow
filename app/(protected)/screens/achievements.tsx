@@ -2,6 +2,7 @@ import { View, Text, FlatList } from "react-native"
 import { Surface } from "react-native-paper"
 import styles from '../../utils/styles'
 import images from "../../utils/images"
+import { Colors } from '../../utils/colors'
 
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context'
 import { AuthContext } from "../../utils/authContext" 
@@ -96,9 +97,9 @@ interface Achievement{
     description: string
 }
 function formatCamelCase(str: string): string {
-  const withoutPrefix = str.slice(1);
-  const spaced = withoutPrefix.replace(/([A-Z])/g, ' $1').trim();
-  return spaced.charAt(0).toUpperCase() + spaced.slice(1).toLowerCase();
+  const withoutPrefix = str.slice(1)
+  const spaced = withoutPrefix.replace(/([A-Z])/g, ' $1').trim()
+  return spaced.charAt(0).toUpperCase() + spaced.slice(1).toLowerCase()
 }
 export default function Achievements() {
 
@@ -107,6 +108,10 @@ export default function Achievements() {
     const [achievements, setAchievements] = useState<Achievement[]>([])
     const [achievementsCompleted, setAchievementsCompleted] = useState<Achievement[]>([])
     
+    
+    const { theme } = useContext(AuthContext)
+    const currentTheme = (theme === "default" ? "light" : theme) as "light" | "dark"
+            
     const getAchievements = async () => {
         try {
             const achievementsList = await getDocs(collection(db, "users", authState.displayName, "achievements", "notDone", 'notDoneList'))
@@ -164,7 +169,9 @@ export default function Achievements() {
     })
     return (
         <SafeAreaProvider >
-            <SafeAreaView style={styles.container}>
+            <SafeAreaView style={[styles.container, {
+				backgroundColor: Colors[currentTheme].backgroundColor,
+			}]}>
                 <Text style = {styles.text}>Complete achievements to earn xp!</Text>
                 <ScrollView showsVerticalScrollIndicator={false}>
                     {achievements.length == 0 ? (
