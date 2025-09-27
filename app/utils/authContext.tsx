@@ -5,12 +5,11 @@ import { useRouter } from 'expo-router'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { getAuth } from "firebase/auth"
 import { doc, getFirestore, getDoc, deleteDoc, getDocs , collection} from 'firebase/firestore'
-import { getFunctions, httpsCallable } from "firebase/functions";
-import { useColorScheme } from "react-native";
+import { getFunctions, httpsCallable } from "firebase/functions"
+import { useColorScheme } from "react-native"
 
 const db = getFirestore(FIREBASE_APP)
-const functions = getFunctions();
-
+const functions = getFunctions()
 type AuthState = {
     isLoggedIn: boolean
     isReady: boolean
@@ -92,15 +91,15 @@ const chooseTheme = async (mode: string) => {
         router.replace("/login")
     }
     // function deleteAtPath(path:string) {
-    // const deleteFn = httpsCallable(functions, 'recursiveDelete');
+    // const deleteFn = httpsCallable(functions, 'recursiveDelete')
     // deleteFn({ path: path })
     //     .then(function(result:any) {
-    //         console.log('Delete success: ' + JSON.stringify(result));
+    //         console.log('Delete success: ' + JSON.stringify(result))
     //     })
     //     .catch(function(err:any) {
-    //         console.log('Delete failed, see console,');
-    //         console.warn(err);
-    //     });
+    //         console.log('Delete failed, see console,')
+    //         console.warn(err)
+    //     })
     // }
 
 

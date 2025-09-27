@@ -11,7 +11,7 @@ import { ImageBackground } from "expo-image"
 import { collection, doc, getDoc, getFirestore, setDoc, getDocs, Timestamp, query, where, onSnapshot, deleteDoc, updateDoc, increment } from 'firebase/firestore'
 import { ScrollView, Swipeable } from "react-native-gesture-handler"
 // https://www.youtube.com/watch?v=nZwrxeUHtOQ&ab_channel=MissCoding
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons"
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context'
 interface Todo {
@@ -61,11 +61,11 @@ export default function TodoScreen() {
 
 
 
-    const { theme } = useContext(AuthContext);
-    const currentTheme = (theme === "default" ? "light" : theme) as "light" | "dark";
+    const { theme } = useContext(AuthContext)
+    const currentTheme = (theme === "default" ? "light" : theme) as "light" | "dark"
 
 
-    const [modalVisible, setModalVisible] = useState(false);
+    const [modalVisible, setModalVisible] = useState(false)
     const [displayBadge, setDisplayBadge] = useState("ImakingFriends")
 
 
@@ -103,7 +103,7 @@ export default function TodoScreen() {
                 let lastCheckin = docSnap.data().lastCheckin
                 let streakVal = docSnap.data().streak
 
-                const [lastCheckinDay, lastCheckinMonth, lastCheckinYear] = lastCheckin.split("-").map(Number);
+                const [lastCheckinDay, lastCheckinMonth, lastCheckinYear] = lastCheckin.split("-").map(Number)
                 let today = new Date()
                 let todayDay = today.getDate()
                 let todayMonth = today.getMonth() + 1
@@ -224,7 +224,7 @@ export default function TodoScreen() {
     }
     useEffect(() => {
         try {
-            const q = query(collection(db, "users", authState.displayName, "tasks", "stats", todayString), where("completed", "==", false));
+            const q = query(collection(db, "users", authState.displayName, "tasks", "stats", todayString), where("completed", "==", false))
             const unsubscribe = onSnapshot(q, (snapshot) => {
                 snapshot.docChanges().forEach((change) => {
                     if (change.type === "added") {
@@ -460,7 +460,7 @@ export default function TodoScreen() {
                     transparent={true}
                     visible={modalVisible}
                     onRequestClose={() => {
-                        setModalVisible(!modalVisible);
+                        setModalVisible(!modalVisible)
                     }}>
                     <View style={styles.centeredView}>
                         <View style={styles.modalView}>
