@@ -172,9 +172,7 @@ export default function Friends() {
     const getFriendRequestsSend = async () => {
         try {
             const requestsList = await getDocs(collection(db, "users", authState.displayName, "friends", "friendRequestsSend", "requestsSend"))
-            if (requestsList.empty) {
-                console.log("FARA CERERI")
-            } else {
+            if (!requestsList.empty) {
                 const items: Friend[] = requestsList.docs.map(doc => {
                     const data = doc.data()
                     return {
@@ -182,7 +180,6 @@ export default function Friends() {
                     } as Friend
                 })
                 setFriendRequestsSend(items)
-                console.log("LISTAREQ",friendReqestsSend)
             }
         } catch (error) {
             console.log(error)
@@ -191,10 +188,7 @@ export default function Friends() {
     const getFriendRequestsRecived = async () => {
         try {
             const requestsList = await getDocs(collection(db, "users", authState.displayName, "friends", "friendRequestsReceived", "requestsReceived"))
-            if (requestsList.empty) {
-                console.log("FARA CERERI PRIMITE")
-
-            } else {
+            if (!requestsList.empty) {
                 const items: Friend[] = requestsList.docs.map(doc => {
                     const data = doc.data()
                     return {
@@ -202,7 +196,6 @@ export default function Friends() {
                     } as Friend
                 })
                 setFriendRequestsRecived(items)
-                console.log("LISTAREQ",friendReqestsReceived)
             }
         } catch (error) {
             console.log(error)
@@ -251,7 +244,6 @@ export default function Friends() {
                     username: authState.displayName
                 }
                 await setDoc(myRef, me)
-                console.log("friend confirmed")
                 setFriendRequestsRecived((prev) => prev.filter((f) => f.username !== username))
             } 
         } catch (error) {
@@ -262,7 +254,6 @@ export default function Friends() {
         try {
             await deleteDoc(doc(db, "users", authState.displayName, "friends", "friendRequestsReceived", "requestsReceived", username))
             await deleteDoc(doc(db, "users", username, "friends", "friendRequestsSend", "requestsSend", authState.displayName))
-            console.log("request deleted")
             setFriendRequestsRecived((prev) => prev.filter((f) => f.username !== username))
 
         } catch (error) {
@@ -273,9 +264,7 @@ export default function Friends() {
         try {
             await deleteDoc(doc(db, "users", authState.displayName, "friends", "friendRequestsSend", "requestsSend", username))
             await deleteDoc(doc(db, "users", username, "friends", "friendRequestsReceived", "requestsReceived", authState.displayName))
-
-            console.log("request deleted")
-                setFriendRequestsRecived((prev) => prev.filter((f) => f.username !== username))
+            setFriendRequestsRecived((prev) => prev.filter((f) => f.username !== username))
 
         } catch (error) {
             console.log(error)

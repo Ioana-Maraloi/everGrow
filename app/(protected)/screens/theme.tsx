@@ -11,10 +11,8 @@ export default function Theme() {
 	const [value, setValue] = useState('default')
 	const {theme, chooseTheme} = useContext(AuthContext)	  
 	const currentTheme = (theme === "default" ? "light" : theme) as "light" | "dark"
-			
 		
 	const handleChange = (newValue: string) => {
-		console.log(newValue)
 		setValue(newValue)
 		chooseTheme(newValue)
 	}

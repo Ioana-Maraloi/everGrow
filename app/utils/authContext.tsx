@@ -105,7 +105,6 @@ const chooseTheme = async (mode: string) => {
 
     const deleteAccount = async () => {
         try {
-            console.log("Deleting account...")
             const auth = getAuth()
             const user = auth.currentUser
             console.log("Deleting account for user:", user?.email)

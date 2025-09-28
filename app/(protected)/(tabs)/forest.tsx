@@ -263,9 +263,7 @@ export default function ForestScreen() {
 	const getTrees = async () => {
 		try {
 			const treesList = await getDocs(collection(db, "users", authState.displayName, "trees", "ownedTrees", 'ownedTreesList'))
-			if (treesList.empty) {
-				// console.log("No purchased trees yet")
-			} else {
+			if (!treesList.empty) {
 				const items: Tree[] = treesList.docs.map(doc => {
 					const data = doc.data()
 					return {
@@ -697,7 +695,6 @@ export default function ForestScreen() {
 									{
 										text: 'Confirm',
 										onPress: () => {
-											console.log('OK Pressed')
 											setIsPlaying(false)
 											setWasStopped(true)
 											setModalVisible(true)

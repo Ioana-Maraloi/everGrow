@@ -15,9 +15,9 @@ import { MaterialCommunityIcons } from "@expo/vector-icons"
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context'
 interface Todo {
-    description: string;
-    title: string;
-    completed: boolean;
+    description: string,
+    title: string,
+    completed: boolean,
     deadline: Timestamp,
     createdAt: string,
     priority: string
@@ -280,7 +280,6 @@ export default function TodoScreen() {
             })
             const todayStatsSnap = await getDoc(todayStatsRef)
             if (!todayStatsSnap.exists()) {
-                console.log("error setting the daily task stats")
                 return
             }
             const numberTasksToday = todayStatsSnap.data().tasksCompleted

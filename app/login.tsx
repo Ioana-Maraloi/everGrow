@@ -34,17 +34,13 @@ export default function LoginScreen() {
 			})
 
 		} catch (error: any) {
-			console.log(error.code)
-			const code = error.code.split("/")[1]
-			alert(`Reset password failed: ${code}`)
+			console.log(error)
 		}
 
 	}
 	const handleLogin = async () => {
 		try {
 			await signInWithEmailAndPassword(FIREBASE_AUTH, email.toLowerCase(), password)
-			console.log('Login successful!')
-
 			// const myDoc = {
 			// 	email: email.toLowerCase(),
 			// 	username: email.toLowerCase().split('@')[0],
@@ -72,9 +68,7 @@ export default function LoginScreen() {
 			authState.logIn(email.toLowerCase(), password, xp)
 
 		} catch (error: any) {
-			console.log(error.code)
-			const code = error.code.split("/")[1]
-			alert(`Login failed: ${code}`)
+			console.log(error)
 		}
 	}
 
@@ -145,7 +139,7 @@ export default function LoginScreen() {
 									AppleAuthentication.AppleAuthenticationScope.EMAIL,
 								],
 							})
-							console.log(credential)
+
 							// authState.email = AppleAuthentication.AppleAuthenticationScope.EMAIL
 
 

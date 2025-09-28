@@ -53,7 +53,6 @@ export default function ProfileScreen() {
 		"-" +
 		yearToday.toString().padStart(2, "0")
 
-	console.log("Auth State:", authState)
 
 	// for today's tasks
 	const [oneHourFocusDone, setOneHourFocusDone] = useState(false)
@@ -236,12 +235,10 @@ export default function ProfileScreen() {
 							size={100}
 							source={require("../../../assets/trees/logo.png")}
 						/>
-						{/* </TouchableOpacity> */}
 						<View style={[styles.cardRow, { marginTop: 5 }]}>
 							<Button
 								onPress={() => {
 									setVisible(true)
-									console.log("apas")
 								}}
 							>
 								<Text style={styles.name}>{authState.displayName} </Text>
@@ -628,13 +625,11 @@ export default function ProfileScreen() {
 									[
 										{
 											text: "Cancel",
-											onPress: () => console.log("Cancel Pressed"),
 											style: "cancel",
 										},
 										{
 											text: "Confirm",
 											onPress: () => {
-												console.log("OK Pressed")
 												authState.deleteAccount()
 											},
 										},
