@@ -1,5 +1,5 @@
-import { Stack } from "expo-router"
-import { AuthProvider, AuthContext } from "./utils/authContext"
+import { Stack } from "expo-router";
+import { AuthProvider, AuthContext } from "./utils/authContext";
 import { Colors } from "./utils/colors"
 export default function RootLayout() {
 	const currentTheme = "light"

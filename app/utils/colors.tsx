@@ -5,7 +5,6 @@ export const Colors = {
         buttonText: "#faf8e7ff",
         title: "#000000ff",
         backgroundColor: '#faf8e7ff',
-        // FAF6E3
         inputBackgroundColor: '#E7EFC7',
         shadowColor: '#007052',
         forgotPassword: "#003829",

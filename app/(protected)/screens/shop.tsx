@@ -152,10 +152,10 @@ export default function Shop() {
             <SafeAreaView  style={[styles.container, {
 				backgroundColor: Colors[currentTheme].backgroundColor,
 			}]}>
-                <Text style = {styles.text}>Buy new trees:</Text>
+                <Text style={[ styles.text, {color:  Colors[currentTheme].colorTitleTab} ]}>Buy new trees:</Text>
                 {treesAvailable.length === 0 ?
                     (<View>
-                        <Text>No more trees to buy!</Text>
+                        <Text style={{ color: Colors[currentTheme].colorTitleTab }}>No more trees to buy!</Text>
                     </View>)
                     :
                     (<FlatList
@@ -167,9 +167,7 @@ export default function Shop() {
                                     style={{ justifyContent: "center",}}
                                     onPress={() => {
                                         buyProduct(item)
-                                        console.log(item.name)
                                     }}>
-                                    
                                     <View style={{  width: 100, height: 100, justifyContent: 'center',alignItems: "center" }}>
                                             <ImageBackground
                                                 source={getTreePicture(item.name)}

@@ -103,8 +103,8 @@ export default function SignUpScreen() {
 	const [confirmPassword, setConfirmPassword] = useState('')
 
 	
-	const { theme } = useContext(AuthContext)
-	const currentTheme = (theme === "default" ? "light" : theme) as "light" | "dark"
+	const { theme } = useContext(AuthContext);
+	const currentTheme = (theme === "default" ? "light" : theme) as "light" | "dark";
 	
 	const handleSignUp = async () => {
 		try {

@@ -204,6 +204,7 @@ export default function Stats() {
                 marginVertical: 10,
                 textAlign: "center",
                 fontSize: 16,
+                color:  Colors[currentTheme].colorTitleTab
             }}>Tree status overview</Text>
             <PieChart
                 data={data}
@@ -222,7 +223,8 @@ export default function Stats() {
             <Text style={{
                 marginVertical: 10,
                 textAlign: "center",
-                fontSize: 16
+                fontSize: 16,
+                color:  Colors[currentTheme].colorTitleTab
             }}>Hours focused in the past week</Text>
             <LineChart
                 data={data7Days}
@@ -240,7 +242,8 @@ export default function Stats() {
             <Text style={{
                 marginVertical: 10,
                 textAlign: "center",
-                fontSize: 16
+                fontSize: 16,
+                color:  Colors[currentTheme].colorTitleTab
             }}>Daily task activity over the past 90 days</Text>
             <ContributionGraph
                 values={commitsData}

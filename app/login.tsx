@@ -4,7 +4,7 @@ import { FIREBASE_AUTH, FIREBASE_APP } from "../firebaseConfig"
 import { AuthContext } from "./utils/authContext"
 import * as AppleAuthentication from 'expo-apple-authentication'
 import { doc, getFirestore, setDoc, collection, getDoc } from 'firebase/firestore'
-import { Divider, Button, TextInput } from 'react-native-paper'
+import { Divider, Button, TextInput } from 'react-native-paper';
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context'
 import { navigate } from "expo-router/build/global-state/routing"
 import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail, signInWithCredential } from "firebase/auth"
@@ -23,8 +23,8 @@ export default function LoginScreen() {
 
 	const db = getFirestore(FIREBASE_APP)
 
-	const { theme } = useContext(AuthContext)
-	const currentTheme = (theme === "default" ? "light" : theme) as "light" | "dark"
+	const { theme } = useContext(AuthContext);
+	const currentTheme = (theme === "default" ? "light" : theme) as "light" | "dark";
 
 
 	const handleResetPassword = function () {
@@ -61,7 +61,7 @@ export default function LoginScreen() {
 			const userSnap = await getDoc(userRef)
 			if (!userSnap.exists()) {
 				console.log("error at getting the user doc.")
-				return
+				return;
 			}
 			const xp = userSnap.data().xp
 
@@ -147,7 +147,7 @@ export default function LoginScreen() {
 							const userSnap = await getDoc(userRef)
 							if (!userSnap.exists()) {
 								console.log("error at getting the user doc.")
-								return
+								return;
 							}
 							const xp = userSnap.data().xp
 							authState.logIn(email, password, xp)

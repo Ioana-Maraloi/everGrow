@@ -2,15 +2,14 @@ import { View, Text, Modal, Pressable } from "react-native"
 import { Button, TextInput, List, Surface, IconButton } from "react-native-paper"
 import styles from '../../utils/styles'
 import { Colors } from '../../utils/colors'
-
+import images from "../../utils/images"
 import { FIREBASE_APP } from "../../../firebaseConfig"
 import { collection, doc, getFirestore,updateDoc, increment, setDoc, getDocs, query, onSnapshot, deleteDoc, getDoc } from 'firebase/firestore'
 import { AuthContext } from "../../utils/authContext"
 import React, {useContext, useState, useEffect } from 'react'
 import { ScrollView } from "react-native-gesture-handler"
-import { MaterialIcons } from "@expo/vector-icons"
+import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons"
 import { ImageBackground } from "expo-image"
-import images from "../../utils/images"
 
 interface Friend{
     username: string,
@@ -276,14 +275,13 @@ export default function Friends() {
 			}]}>
                 <ScrollView showsVerticalScrollIndicator={false}>
                     {/* prieteniii */}
-                     <View>
-                        <Text style={styles.text}>Friends:</Text>
-                    </View>
                     {
                         friends.length === 0 ?
                             (
                                 <View style={{ flex: 1, alignItems: "center" }}>
-                                    <Text>No friends yet! Send friend requests to connect</Text>
+                                    <Text style={{
+									color: Colors[currentTheme].colorTitleTab
+							}}>No friends yet! Send friend requests to connect</Text>
                                 </View>) : (
                                 friends?.map((friend, key) => (
                                     <View key={key}>
@@ -296,49 +294,56 @@ export default function Friends() {
                                     </View>
                                 ))
                             )}
-
                     <View>
                         <List.Section title="">
                             <List.Accordion title='Sent Requests'
+                                style={{
+                                    backgroundColor: 'purple',
+                                }}
                                 expanded={expandedSend}
                                 onPress={handlePressSend}>
                                 {
                                     friendReqestsSend.length === 0 ?
                                         (
                                             <View style={{ flex: 1, alignItems: "center" }}>
-                                                <Text>No requests sent</Text>
-                                            </View>) :
-                                        (friendReqestsSend?.map((friend, key) => (
-                                            <View key={key}>
-                                        <Surface style={styles.surfaceCard}>
-                                        <View style={styles.cardRow}>
-                                            <Text style={styles.cardTitle}>{friend.username}</Text>
-                                            <View style={styles.confirmDelete}>
-                                            <IconButton
-                                                icon={() => (
-                                                    <MaterialIcons name="delete" size={32} color="red" />
-                                                )}
-                                                size={32}
-                                                onPress={() => deleteFriendRequestSent(friend.username)} />
+                                                <Text style={{ color: Colors[currentTheme].colorTitleTab }}>
+                                                    No requests sent</Text>
                                             </View>
-                                        </View>
-                                </Surface>
+                                        ) : (
+                                            friendReqestsSend?.map((friend, key) => (
+                                            <View key={key}>
+                                                <Surface style={styles.surfaceCard}>
+                                                <View style={styles.cardRow}>
+                                                    <Text style={styles.cardTitle}>{friend.username}</Text>
+                                                    <View style={styles.confirmDelete}>
+                                                    <IconButton
+                                                        icon={() => (
+                                                            <MaterialIcons name="delete" size={32} color="red" />
+                                                        )}
+                                                        size={32}
+                                                        onPress={() => deleteFriendRequestSent(friend.username)} />
+                                                </View>
+                                            </View>
+                                            </Surface>
                                 </View>
                                 )))
                                     }
                             </List.Accordion>
                         </List.Section>
                     </View>
-
                      <View>
                         <List.Section title="">
                             <List.Accordion title='Received Requests'
+                                theme={{colors: {background: 'orange'}}}
+                                style={{ backgroundColor: 'white', marginBottom: 20 }}
                                 expanded={expandedReceived}
                                 onPress={handlePressReceived}>
                                 {friendReqestsReceived.length === 0 ? 
                                     (
                                         <View style={{ flex: 1, alignItems: "center" }}>
-                                            <Text>No friend requests received</Text>
+                                            <Text style={ {
+									color: Colors[currentTheme].colorTitleTab
+							}}>No friend requests received</Text>
                                         </View>) :
                                     (friendReqestsReceived?.map((friend, key) => (
                                     <View key={key}>
@@ -370,17 +375,24 @@ export default function Friends() {
                     <Button style={[styles.loginButton, {
                         backgroundColor: Colors[currentTheme].addTaskButton
                     }]}
-                        icon={() => <MaterialIcons name="person-add" size={24} color={Colors[currentTheme].addTask} />}
+                        icon={() =>
+                            <MaterialCommunityIcons name="playlist-plus" size={24} color={Colors[currentTheme].addTask} />}
                         onPress={() => { setAddFriend(!addFriend) }}>
                         <Text style={{ color: Colors[currentTheme].addTask }}> Add new friend</Text>
                        </Button>
                     {addFriend && (
                         <View>
-                            <TextInput style = {styles.input} mode = "outlined" label ="username" onChangeText={setFriendUsername}></TextInput>
-                            <Button disabled={!friendUsername} onPress={() => {
+                            <TextInput style = {styles.input} mode = "flat" label ="username" onChangeText={setFriendUsername}></TextInput>
+                            <Button  style={[styles.loginButton, {
+                        backgroundColor: Colors[currentTheme].addTaskButton
+                            }]}
+                                icon={() => <MaterialIcons name="person-add" size={24} color={Colors[currentTheme].addTask} />}
+                                disabled={!friendUsername} onPress={() => {
                                 setAddFriend(false)
                                 addingFriend(friendUsername)
-                            }}>add</Button>
+                                }}>
+                                <Text style={{ color: Colors[currentTheme].addTask }}>Add</Text>
+                            </Button>
                         </View>  
                     )}
                 </ScrollView>

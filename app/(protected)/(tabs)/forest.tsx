@@ -14,7 +14,7 @@ import { collection, doc, getFirestore, updateDoc, setDoc, getDocs, query, onSna
 
 import { AuthContext } from "../../utils/authContext"
 import { getExpoGoProjectConfig } from "expo"
-import { MaterialCommunityIcons } from "@expo/vector-icons"
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 // https://jennpixel.itch.io/free-flower-pack-12-icons?download
 // https://anokolisa.itch.io/free-pixel-art-asset-pack-topdown-tileset-rpg-16x16-sprites
@@ -243,7 +243,7 @@ export default function ForestScreen() {
 	const [modalVisible, setModalVisible] = useState(false)
 	const [modalVisibleAchievement, setModalVisibleaAchievement] = useState(false)
 
-	  const [key, setKey] = useState(0)
+	  const [key, setKey] = useState(0);
 
 
 	const [displayBadge, setDisplayBadge] = useState("AfirstSeed")
@@ -251,8 +251,8 @@ export default function ForestScreen() {
 
 	
 		
-	const { theme } = useContext(AuthContext)
-	const currentTheme = (theme === "default" ? "light" : theme) as "light" | "dark"
+	const { theme } = useContext(AuthContext);
+	const currentTheme = (theme === "default" ? "light" : theme) as "light" | "dark";
 		
 	
 
@@ -524,9 +524,9 @@ export default function ForestScreen() {
 		}
 	}
 	function formatCamelCase(str: string): string {
-		const withoutPrefix = str.slice(1)
-		const spaced = withoutPrefix.replace(/([A-Z])/g, ' $1').trim()
-		return spaced.charAt(0).toUpperCase() + spaced.slice(1).toLowerCase()
+		const withoutPrefix = str.slice(1);
+		const spaced = withoutPrefix.replace(/([A-Z])/g, ' $1').trim();
+		return spaced.charAt(0).toUpperCase() + spaced.slice(1).toLowerCase();
 	}
 	    const getPictureSize = (name: string) =>{
         if (name === "redMushroom" || name ==="blueMushroom" || name ==="flower")
@@ -715,7 +715,7 @@ export default function ForestScreen() {
 					transparent={true}
 					visible={modalVisible}
 					onRequestClose={() => {
-						setModalVisible(!modalVisible)
+						setModalVisible(!modalVisible);
 					}}>
 					<View style={styles.centeredView}>
 						{/* the tree is succesfully planted */}
@@ -765,7 +765,7 @@ export default function ForestScreen() {
 					transparent={true}
 					visible={modalVisibleAchievement}
 					onRequestClose={() => {
-						setModalVisible(!modalVisibleAchievement)
+						setModalVisible(!modalVisibleAchievement);
 					}}>
 					<View style={styles.centeredView}>
 						<View style={styles.modalView}>

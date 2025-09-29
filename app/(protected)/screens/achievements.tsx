@@ -172,11 +172,11 @@ export default function Achievements() {
             <SafeAreaView style={[styles.container, {
 				backgroundColor: Colors[currentTheme].backgroundColor,
 			}]}>
-                <Text style = {styles.text}>Complete achievements to earn xp!</Text>
+                <Text  style={[ styles.text, {color:  Colors[currentTheme].colorTitleTab} ]}>Complete achievements to earn xp!</Text>
                 <ScrollView showsVerticalScrollIndicator={false}>
                     {achievements.length == 0 ? (
                         <View>
-                            <Text style={styles.text}>No more achievements to complete! Congratulations</Text>
+                            <Text  style={[ styles.text, {color:  Colors[currentTheme].colorTitleTab} ]}>No more achievements to complete! Congratulations</Text>
                         </View>
                     ) : (
                             achievements?.map((achievement, key) => (
@@ -198,7 +198,7 @@ export default function Achievements() {
                     }
                     {achievementsCompleted.length == 0 ? (
                         <View>
-                            <Text style={styles.text}>No achievments completed yet!</Text>
+                            <Text  style={[ styles.text, {color:  Colors[currentTheme].colorTitleTab} ]}>No achievments completed yet!</Text>
                         </View>
                     ) : (
                             achievementsCompleted?.map((achievement, key) => (

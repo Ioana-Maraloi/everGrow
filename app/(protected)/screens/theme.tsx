@@ -19,20 +19,21 @@ export default function Theme() {
 	return <View style={{
 		flex: 1,
 		justifyContent: 'center',
-		alignItems: 'flex-start',
+		alignItems: 'center',
 		padding: 20,
 		backgroundColor: Colors[currentTheme].backgroundColor,	
 	}}>
-		<Text style={styles.title}>Choose App Theme</Text>
+		<Text style={[styles.title,
+				{ color: Colors[currentTheme].colorTitleTab }]}>Choose App Theme</Text>
 		<RadioButton.Group onValueChange={handleChange} value={value}>
 			<View style={styles.radioRow}>
 				<RadioButton value="default" />
 				<MaterialCommunityIcons
 					name="theme-light-dark"
 					size={20}
-					color="black"
+					color={Colors[currentTheme].colorTitleTab}
 				/>
-				<Text>Default</Text>
+				<Text style={{ color: Colors[currentTheme].colorTitleTab }}>Default</Text>
 
 			</View>
 			<View style={styles.radioRow}>
@@ -40,18 +41,18 @@ export default function Theme() {
 				<MaterialCommunityIcons
 					name="lightbulb-on"
 					size={20}
-					color="black"
+					color={Colors[currentTheme].colorTitleTab}
 				/>
-				<Text>Light</Text>
+				<Text style={{ color: Colors[currentTheme].colorTitleTab }}>Light</Text>
 			</View>
 			<View style={styles.radioRow}>
 				<RadioButton value="dark" />
 				<MaterialCommunityIcons
 					name="lightbulb-outline"
 					size={20}
-					color="black"
+					color={Colors[currentTheme].colorTitleTab}
 				/>
-				<Text>Dark</Text>
+				<Text style={{ color: Colors[currentTheme].colorTitleTab }}>Dark</Text>
 			</View>
 		</RadioButton.Group>
 	</View>

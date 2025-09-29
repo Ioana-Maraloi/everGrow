@@ -16,9 +16,9 @@ export default function TabsLayout() {
 	const [streak, setStreak] = useState(0)
 	const db = getFirestore(FIREBASE_APP)
 	
-	const { theme } = useContext(AuthContext)
-	const currentTheme = (theme === "default" ? "light" : theme) as "light" | "dark"
-
+	const { theme } = useContext(AuthContext);
+	const currentTheme = (theme === "default" ? "light" : theme) as "light" | "dark";
+	
 	const setTheStreak = async () => {
 		try {
 			const statsRef = doc(db, 'users', authState.displayName, 'trees', 'stats')
