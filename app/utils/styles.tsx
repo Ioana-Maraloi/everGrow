@@ -115,14 +115,14 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 	},
 	surfaceCard: {
-		backgroundColor: "#E7EFC7",
+		backgroundColor: "#afca98ff",
 		marginBottom: 18,
 		borderRadius: 18,
-		shadowColor: "#000",
-		shadowOffset: { width: 0, height: 2 },
-		shadowOpacity: 0.08,
-		shadowRadius: 8,
-		elevation: 4
+		// shadowColor: "#000",
+		// shadowOffset: { width: 0, height: 2 },
+		// shadowOpacity: 0.08,
+		// shadowRadius: 8,
+		// elevation: 4
 	},
 	cardContent: {
 		padding: 20,
@@ -177,7 +177,7 @@ const styles = StyleSheet.create({
 	},
 	streakText: {
 		marginLeft: 6,
-		marginRight: 6,
+		marginRight: 2,
 		color: "#ff9800",
 		fontWeight: "bold",
 		fontSize: 14,

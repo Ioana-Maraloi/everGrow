@@ -4,19 +4,19 @@ import styles from '../../utils/styles'
 import { Colors } from '../../utils/colors'
 import images from "../../utils/images"
 import { FIREBASE_APP } from "../../../firebaseConfig"
-import { collection, doc, getFirestore,updateDoc, increment, setDoc, getDocs, query, onSnapshot, deleteDoc, getDoc } from 'firebase/firestore'
+import { collection, doc, getFirestore, updateDoc, increment, setDoc, getDocs, query, onSnapshot, deleteDoc, getDoc } from 'firebase/firestore'
 import { AuthContext } from "../../utils/authContext"
-import React, {useContext, useState, useEffect } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 import { ScrollView } from "react-native-gesture-handler"
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons"
 import { ImageBackground } from "expo-image"
 
-interface Friend{
+interface Friend {
     username: string,
     streak: number,
     xp: number
 }
- function getBadgePicture(label: string) {
+function getBadgePicture(label: string) {
     if (label === "makingFriends") {
         return images.makingFriends
     }
@@ -28,9 +28,9 @@ interface Friend{
     }
 }
 function formatCamelCase(str: string): string {
-  const withoutPrefix = str.slice(1)
-  const spaced = withoutPrefix.replace(/([A-Z])/g, ' $1').trim()
-  return spaced.charAt(0).toUpperCase() + spaced.slice(1).toLowerCase()
+    const withoutPrefix = str.slice(1)
+    const spaced = withoutPrefix.replace(/([A-Z])/g, ' $1').trim()
+    return spaced.charAt(0).toUpperCase() + spaced.slice(1).toLowerCase()
 }
 export default function Friends() {
     const db = getFirestore(FIREBASE_APP)
@@ -48,16 +48,15 @@ export default function Friends() {
     const [friendReqestsReceived, setFriendRequestsRecived] = useState<Friend[]>([])
     const [expandedReceived, setExpandedReceived] = useState(false)
     const handlePressReceived = () => setExpandedReceived(!expandedReceived)
-    
 
     const [modalVisible, setModalVisible] = useState(false)
     const [displayBadge, setDisplayBadge] = useState("ImakingFriends")
-    
+
     const { theme } = useContext(AuthContext)
     const currentTheme = (theme === "default" ? "light" : theme) as "light" | "dark"
-        
-    
-    const addingFriend = async (username:string) => {
+
+
+    const addingFriend = async (username: string) => {
         try {
             const friendDoc = doc(db, "users", username)
             const friendDocSnap = await getDoc(friendDoc)
@@ -79,21 +78,21 @@ export default function Friends() {
             console.log(error)
         }
     }
-    
-        const addXp = async (xp: number) => {
-            try {
-                authState.xp += xp
-                const userRef = doc(db, "users", authState.displayName)
-                await updateDoc(userRef,
-                    {
-                    xp:increment(xp)
+
+    const addXp = async (xp: number) => {
+        try {
+            authState.xp += xp
+            const userRef = doc(db, "users", authState.displayName)
+            await updateDoc(userRef,
+                {
+                    xp: increment(xp)
                 })
-            
-            } catch (error) {
-                console.log(error)
-            }
+
+        } catch (error) {
+            console.log(error)
         }
-        
+    }
+
     const getFriendList = async () => {
         try {
             const friendList = await getDocs(collection(db, "users", authState.displayName, "friends", "actualFriends", "friendList"))
@@ -103,10 +102,25 @@ export default function Friends() {
                 const items: Friend[] = friendList.docs.map(doc => {
                     const data = doc.data()
                     return {
-                        username: data.username,                        
+                        username: data.username,
                     } as Friend
                 })
+                for (let i = 0; i < items.length; i++) {
+                    console.log("friend:", items[i].username)
+                    const friendDoc = doc(db, "users", items[i].username)
+                    const friendDocSnap = await getDoc(friendDoc)
+                    if (friendDocSnap.exists()) {
+                        const data = friendDocSnap.data()
+                        items[i].streak = data.streak
+                        items[i].xp = data.xp
+                    } else {
+                        items[i].streak = 0
+                        items[i].xp = 0
+                    }
+                }
                 setFriends(items)
+                console.log("friends:", friends)
+                // achievements
                 if (friends.length === 1) {
                     const badgeFriendDoc = doc(db, "users", authState.displayName, "achievements", "notDone", 'notDoneList', "ImakingFriends")
                     const badgeMakingFriendsSnap = await getDoc(badgeFriendDoc)
@@ -118,9 +132,9 @@ export default function Friends() {
 
                         const badgeFriendDone = doc(db, "users", authState.displayName, "achievements", "done", 'doneList', "ImakingFriends")
                         const badgeFriendInfo = {
-                			name: "ImakingFriends",
-			                description: "Add your first friend",
-			                xp: 20,
+                            name: "ImakingFriends",
+                            description: "Add your first friend",
+                            xp: 20,
                         }
                         await setDoc(badgeFriendDone, badgeFriendInfo)
                     }
@@ -136,9 +150,9 @@ export default function Friends() {
 
                         const badgeFriendDone = doc(db, "users", authState.displayName, "achievements", "done", 'doneList', "JsocialButterfly")
                         const badgeFriendInfo = {
-                			name: "JsocialButterfly",
-			                description: "Add 5 friends",
-			                xp: 50,
+                            name: "JsocialButterfly",
+                            description: "Add 5 friends",
+                            xp: 50,
                         }
                         await setDoc(badgeFriendDone, badgeFriendInfo)
                     }
@@ -154,14 +168,14 @@ export default function Friends() {
 
                         const badgeFriendDone = doc(db, "users", authState.displayName, "achievements", "done", 'doneList', "Ktree-mendousFriends")
                         const badgeFriendInfo = {
-                			name: "Ktree-mendousFriends",
-			                description: "Add 10 friends",
-			                xp: 100,
+                            name: "Ktree-mendousFriends",
+                            description: "Add 10 friends",
+                            xp: 100,
                         }
                         await setDoc(badgeFriendDone, badgeFriendInfo)
                     }
                 }
-                
+
 
             }
         } catch (error) {
@@ -175,7 +189,7 @@ export default function Friends() {
                 const items: Friend[] = requestsList.docs.map(doc => {
                     const data = doc.data()
                     return {
-                        username: data.username,                        
+                        username: data.username,
                     } as Friend
                 })
                 setFriendRequestsSend(items)
@@ -191,7 +205,7 @@ export default function Friends() {
                 const items: Friend[] = requestsList.docs.map(doc => {
                     const data = doc.data()
                     return {
-                        username: data.username,                        
+                        username: data.username,
                     } as Friend
                 })
                 setFriendRequestsRecived(items)
@@ -201,30 +215,30 @@ export default function Friends() {
         }
     }
     useEffect(() => {
-            try {
-                const q = query(collection(db, "users", authState.displayName, "friends", "actualFriends", "friendList"))
-                const listenFriends = onSnapshot(q, (snapshot) => {
-                    getFriendList()
-                })
-                const qReqSend = query(collection(db, "users", authState.displayName, "friends", "friendRequestsSend", "requestsSend"))
-                const listenSend = onSnapshot(qReqSend, (snapshot) => {
-                    getFriendRequestsSend()
-                })
-                const qReqRecived = query(collection(db, "users", authState.displayName, "friends", "friendRequestsReceived", "requestsReceived"))
-                const listenReceived = onSnapshot(qReqRecived, (snapshot) => {
-                    getFriendRequestsRecived()
-                })
-                return () => {
-                    listenSend()
-                    listenFriends()
-                    listenReceived()
-                }  
+        try {
+            const q = query(collection(db, "users", authState.displayName, "friends", "actualFriends", "friendList"))
+            const listenFriends = onSnapshot(q, (snapshot) => {
+                getFriendList()
+            })
+            const qReqSend = query(collection(db, "users", authState.displayName, "friends", "friendRequestsSend", "requestsSend"))
+            const listenSend = onSnapshot(qReqSend, (snapshot) => {
+                getFriendRequestsSend()
+            })
+            const qReqRecived = query(collection(db, "users", authState.displayName, "friends", "friendRequestsReceived", "requestsReceived"))
+            const listenReceived = onSnapshot(qReqRecived, (snapshot) => {
+                getFriendRequestsRecived()
+            })
+            return () => {
+                listenSend()
+                listenFriends()
+                listenReceived()
             }
-            catch (error) {
-                console.log(error)
-            }
-     }, )
-    
+        }
+        catch (error) {
+            console.log(error)
+        }
+    },)
+
     const confirmFriendRequest = async (username: string) => {
         try {
             await deleteDoc(doc(db, "users", authState.displayName, "friends", "friendRequestsReceived", "requestsReceived", username))
@@ -244,7 +258,7 @@ export default function Friends() {
                 }
                 await setDoc(myRef, me)
                 setFriendRequestsRecived((prev) => prev.filter((f) => f.username !== username))
-            } 
+            }
         } catch (error) {
             console.log(error)
         }
@@ -269,164 +283,219 @@ export default function Friends() {
             console.log(error)
         }
     }
-        return (
-            <View  style={[styles.container, {
-				backgroundColor: Colors[currentTheme].backgroundColor,
-			}]}>
-                <ScrollView showsVerticalScrollIndicator={false}>
-                    {/* prieteniii */}
-                    {
-                        friends.length === 0 ?
-                            (
-                                <View style={{ flex: 1, alignItems: "center" }}>
-                                    <Text style={{
-									color: Colors[currentTheme].colorTitleTab
-							}}>No friends yet! Send friend requests to connect</Text>
-                                </View>) : (
-                                friends?.map((friend, key) => (
-                                    <View key={key}>
-                                        <Surface style={styles.surfaceCard}>
-                                            <View style={styles.cardContent}>
-                                                <Text style={styles.cardTitle}>{friend.username}</Text>
+
+    return (
+        <View style={[styles.container, {
+            backgroundColor: Colors[currentTheme].backgroundColor,
+        }]}>
+            <ScrollView showsVerticalScrollIndicator={false}>
+                {/* prieteniii */}
+                {
+                    friends.length === 0 ?
+                        (
+                            <View style={{ flex: 1, alignItems: "center" }}>
+                                <Text style={{
+                                    color: Colors[currentTheme].colorTitleTab
+                                }}>No friends yet! Send friend requests to connect</Text>
+                            </View>) : (
+                            friends?.map((friend, key) => (
+                                <View key={key}>
+                                    <Surface style={[styles.surfaceCard, {padding: 10}]}>
+                                        <View style={[styles.cardRow]}>
+                                            <Text style={styles.cardTitle}>{friend.username}</Text>
+                                            <View style = {[styles.confirmDelete]}>
+                                            
+                                                <View style={styles.moneyDisplay}>
+						                            <Text style={styles.streakText}>{friend.streak}</Text>
+						                            <MaterialCommunityIcons name = "fire" size={18}
+							                            color={"#ff9800"}>
+						                            </MaterialCommunityIcons>
+                                                </View>
+                                                
+                                                <View style={styles.moneyDisplay}>
+						                    <Text style= {styles.streakText}>{friend.xp} </Text>
+						                    <MaterialCommunityIcons
+							                    name="currency-usd"
+							                    size={18}
+							                    color={"#3f8a1aff"}>
+						                    </MaterialCommunityIcons>
+                                            </View>
                                             </View>
                                         
-                                        </Surface>
-                                    </View>
-                                ))
-                            )}
-                    <View>
-                        <List.Section title="">
+                                        </View>
+                                    </Surface>
+                                </View>
+                            ))
+                        )}
+                <View style={{
+                    overflow: 'hidden',
+                    backgroundColor: Colors[currentTheme].backgroundColor
+                }}>
+                    <List.Section title="" style={{
+                        overflow: 'hidden',
+                        backgroundColor: Colors[currentTheme].backgroundColor
+                    }}>
+                        <View style={{
+                            borderRadius: 10,
+                            overflow: 'hidden',
+                            backgroundColor: Colors[currentTheme].inputBackgroundColor,
+                            marginVertical: 10,
+                        }}>
                             <List.Accordion title='Sent Requests'
                                 style={{
-                                    backgroundColor: 'purple',
+                                    backgroundColor: Colors[currentTheme].inputBackgroundColor,
                                 }}
                                 expanded={expandedSend}
                                 onPress={handlePressSend}>
                                 {
                                     friendReqestsSend.length === 0 ?
                                         (
-                                            <View style={{ flex: 1, alignItems: "center" }}>
+                                            <View style={{
+                                                backgroundColor: Colors[currentTheme].backgroundColor,
+                                                flex: 1,
+                                                alignItems: "center",
+                                                overflow: 'hidden'
+                                            }}>
                                                 <Text style={{ color: Colors[currentTheme].colorTitleTab }}>
                                                     No requests sent</Text>
                                             </View>
                                         ) : (
                                             friendReqestsSend?.map((friend, key) => (
-                                            <View key={key}>
-                                                <Surface style={styles.surfaceCard}>
+                                                <View style={{
+                                                    backgroundColor: Colors[currentTheme].backgroundColor,
+                                                }}
+                                                    key={key}>
+                                                    <Surface style={styles.surfaceCard}>
+                                                        <View style={styles.cardRow}>
+                                                            <Text style={styles.cardTitle}>{friend.username}</Text>
+                                                            <View style={styles.confirmDelete}>
+                                                                <IconButton
+                                                                    icon={() => (
+                                                                        <MaterialIcons name="delete" size={32} color="red" />
+                                                                    )}
+                                                                    size={32}
+                                                                    onPress={() => deleteFriendRequestSent(friend.username)} />
+                                                            </View>
+                                                        </View>
+                                                    </Surface>
+                                                </View>
+                                            )))
+                                }
+                            </List.Accordion>
+                        </View>
+                    </List.Section>
+                </View>
+                <View style={{
+                    overflow: 'hidden',
+                    backgroundColor: Colors[currentTheme].backgroundColor
+                }}>
+                    <List.Section title="" style={{
+                        overflow: 'hidden',
+                        backgroundColor: Colors[currentTheme].backgroundColor
+                    }}>
+                        <View style={{
+                            borderRadius: 10,
+                            overflow: 'hidden',
+                            backgroundColor: Colors[currentTheme].inputBackgroundColor,
+                            // marginVertical: 10,
+                        }}>
+                            <List.Accordion title='Received Requests'
+                                style={{
+                                    backgroundColor: Colors[currentTheme].inputBackgroundColor,
+                                }}
+                                expanded={expandedReceived}
+                                onPress={handlePressReceived}>
+                                {friendReqestsReceived.length === 0 ?
+                                    (
+                                        <View style={{
+                                            backgroundColor: Colors[currentTheme].backgroundColor,
+                                            flex: 1,
+                                            alignItems: "center",
+                                            overflow: 'hidden'
+                                        }}>
+                                            <Text style={{
+                                                color: Colors[currentTheme].colorTitleTab
+                                            }}>No friend requests received</Text>
+                                        </View>) :
+                                    (friendReqestsReceived?.map((friend, key) => (
+                                        <View key={key}
+                                        style={{
+                                                    backgroundColor: Colors[currentTheme].backgroundColor,
+                                                }}>
+                                            <Surface style={styles.surfaceCard}>
                                                 <View style={styles.cardRow}>
                                                     <Text style={styles.cardTitle}>{friend.username}</Text>
                                                     <View style={styles.confirmDelete}>
-                                                    <IconButton
-                                                        icon={() => (
-                                                            <MaterialIcons name="delete" size={32} color="red" />
-                                                        )}
-                                                        size={32}
-                                                        onPress={() => deleteFriendRequestSent(friend.username)} />
+                                                        <IconButton
+                                                            icon={() => (
+                                                                <MaterialIcons name="check-circle-outline" size={32} color="green" />
+                                                            )}
+                                                            size={32}
+                                                            onPress={() => confirmFriendRequest(friend.username)} />
+                                                        <IconButton
+                                                            icon={() => (
+                                                                <MaterialIcons name="clear" size={32} color="red" />
+                                                            )}
+                                                            size={32}
+                                                            onPress={() => deleteFriendRequest(friend.username)} />
+                                                    </View>
                                                 </View>
-                                            </View>
                                             </Surface>
-                                </View>
-                                )))
-                                    }
+                                        </View>)))}
                             </List.Accordion>
-                        </List.Section>
-                    </View>
-                     <View>
-                        <List.Section title="">
-                            <List.Accordion title='Received Requests'
-                                theme={{colors: {background: 'orange'}}}
-                                style={{ backgroundColor: 'white', marginBottom: 20 }}
-                                expanded={expandedReceived}
-                                onPress={handlePressReceived}>
-                                {friendReqestsReceived.length === 0 ? 
-                                    (
-                                        <View style={{ flex: 1, alignItems: "center" }}>
-                                            <Text style={ {
-									color: Colors[currentTheme].colorTitleTab
-							}}>No friend requests received</Text>
-                                        </View>) :
-                                    (friendReqestsReceived?.map((friend, key) => (
-                                    <View key={key}>
-                                    <Surface style={styles.surfaceCard}>
-                                        <View style={styles.cardRow}>
-                                            <Text style={styles.cardTitle}>{friend.username}</Text>
-                                            <View style={styles.confirmDelete}>
-                                            <IconButton
-                                                icon={() => (
-                                                    <MaterialIcons name="check-circle-outline" size={32} color="green" />
-                                                )}
-                                                size={32}
-                                                onPress={() => confirmFriendRequest(friend.username)} />
-                                            <IconButton
-                                                icon={() => (
-                                                    <MaterialIcons name="clear" size={32} color="red" />
-                                                )}
-                                                size={32}
-                                                onPress={() => deleteFriendRequest(friend.username)}/>
-                                            </View>
-                                        </View>
-                                </Surface>
-                                </View>)))}
-                            </List.Accordion>
-                        </List.Section>
-                    </View>
+                        </View>
+                    </List.Section>
+                </View>
 
-                    {/* adaug prieteni */}
-                    <Button style={[styles.loginButton, {
-                        backgroundColor: Colors[currentTheme].addTaskButton
-                    }]}
-                        icon={() =>
-                            <MaterialCommunityIcons name="playlist-plus" size={24} color={Colors[currentTheme].addTask} />}
-                        onPress={() => { setAddFriend(!addFriend) }}>
-                        <Text style={{ color: Colors[currentTheme].addTask }}> Add new friend</Text>
-                       </Button>
-                    {addFriend && (
-                        <View>
-                            <TextInput style = {styles.input} mode = "flat" label ="username" onChangeText={setFriendUsername}></TextInput>
-                            <Button  style={[styles.loginButton, {
-                        backgroundColor: Colors[currentTheme].addTaskButton
-                            }]}
-                                icon={() => <MaterialIcons name="person-add" size={24} color={Colors[currentTheme].addTask} />}
-                                disabled={!friendUsername} onPress={() => {
+                {/* adaug prieteni */}
+                <Button style={[styles.loginButton, {
+                    backgroundColor: Colors[currentTheme].addTaskButton
+                }]}
+                    icon={() =>
+                        <MaterialCommunityIcons name="playlist-plus" size={24} color={Colors[currentTheme].addTask} />}
+                    onPress={() => { setAddFriend(!addFriend) }}>
+                    <Text style={{ color: Colors[currentTheme].addTask }}> Add new friend</Text>
+                </Button>
+                {addFriend && (
+                    <View>
+                        <TextInput style={styles.input} mode="flat" label="username" onChangeText={setFriendUsername}></TextInput>
+                        <Button style={[styles.loginButton, {
+                            backgroundColor: Colors[currentTheme].addTaskButton
+                        }]}
+                            icon={() => <MaterialIcons name="person-add" size={24} color={Colors[currentTheme].addTask} />}
+                            disabled={!friendUsername} onPress={() => {
                                 setAddFriend(false)
                                 addingFriend(friendUsername)
-                                }}>
-                                <Text style={{ color: Colors[currentTheme].addTask }}>Add</Text>
-                            </Button>
-                        </View>  
-                    )}
-                </ScrollView>
-                {/* <Button onPress={() => {
-                    setModalVisible(true)
+                            }}>
+                            <Text style={{ color: Colors[currentTheme].addTask }}>Add</Text>
+                        </Button>
+                    </View>
+                )}
+            </ScrollView>
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={() => {
+                    setModalVisible(!modalVisible)
                 }}>
-                    <Text>show modal</Text>
-                </Button> */}
-                
-                
-                <Modal
-                    animationType="slide"
-                    transparent={true}
-                    visible={modalVisible}
-                    onRequestClose={() => {
-                        setModalVisible(!modalVisible)
-                    }}>
-                    <View style={styles.centeredView}>
-                        <View style={styles.modalView}>
-                            <Text style={styles.modalText}>Achievement unlocked!</Text>
-                            <ImageBackground
-                                source={getBadgePicture(displayBadge.slice(1))}
-                                style={{ width: 100, height: 100, justifyContent: 'center', alignItems: 'center', marginRight:10 }}
-                                resizeMode="stretch">
-                            </ImageBackground>  
-                            <Text style = {styles.modalText}>{formatCamelCase(displayBadge)}</Text>
+                <View style={styles.centeredView}>
+                    <View style={styles.modalView}>
+                        <Text style={styles.modalText}>Achievement unlocked!</Text>
+                        <ImageBackground
+                            source={getBadgePicture(displayBadge.slice(1))}
+                            style={{ width: 100, height: 100, justifyContent: 'center', alignItems: 'center', marginRight: 10 }}
+                            resizeMode="stretch">
+                        </ImageBackground>
+                        <Text style={styles.modalText}>{formatCamelCase(displayBadge)}</Text>
                         <Pressable
                             style={[styles.button, styles.buttonClose]}
                             onPress={() => setModalVisible(!modalVisible)}>
                             <Text style={styles.textStyle}>Dismiss</Text>
                         </Pressable>
-                        </View>
                     </View>
-                </Modal>
+                </View>
+            </Modal>
         </View>
-        )
+    )
 }

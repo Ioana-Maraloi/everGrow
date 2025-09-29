@@ -10,6 +10,7 @@ import { navigate } from "expo-router/build/global-state/routing"
 import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail, signInWithCredential } from "firebase/auth"
 import styles from './utils/styles'
 import { Colors } from './utils/colors'
+import images from "./utils/images"
 const auth = getAuth()
 
 const androidClientId = "187288304608-ikpu55agkm548m52u01th9j295bvfdbm.apps.googleusercontent.com"
@@ -78,7 +79,7 @@ export default function LoginScreen() {
 				alignItems: "center",
 				backgroundColor: Colors[currentTheme].backgroundColor,
 			}]}>
-				<Image source={require("../assets/trees/logo.png")}
+				<Image source={images.icon}
 					style={{ width: 100, height: 100 }}>
 				</Image>
 				<Text style={[styles.title,

@@ -572,7 +572,8 @@ export default function ForestScreen() {
 							<View>
 								<Button style={[styles.loginButton, {
 									backgroundColor: Colors[currentTheme].addTaskButton
-								}]}>
+								}]}
+									icon={() => <MaterialCommunityIcons name="forest" size={24} color={Colors[currentTheme].addTask} />}>			
 									<Text  style={{ color: Colors[currentTheme].addTask }} onPress={() => { setShowForest(true) }}>Show today&apos;s forest!</Text>
 								</Button>
 
@@ -626,7 +627,9 @@ export default function ForestScreen() {
 										setshowTimeOptions(false)
 									else
 										setshowTimeOptions(true)
-								}}>
+									}}
+									icon={() => <MaterialCommunityIcons name="clock-edit-outline" size={24} color={Colors[currentTheme].addTask} />}
+							>
 									<Text  style={{ color: Colors[currentTheme].addTask }}>Choose Time</Text>
 								</Button>
 								{showTimeOptions && (

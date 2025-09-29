@@ -1,4 +1,6 @@
 export default {
+
+    icon: require("../../assets/icon.png"),
     // basic trees
     treeModel1Green3 : require("../../assets/trees/model1/green/Size_03.png"),
     treeModel1Green4 : require("../../assets/trees/model1/green/Size_04.png"),

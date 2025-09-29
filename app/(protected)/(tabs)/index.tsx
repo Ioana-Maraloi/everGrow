@@ -11,7 +11,7 @@ import { ImageBackground } from "expo-image"
 import { collection, doc, getDoc, getFirestore, setDoc, getDocs, Timestamp, query, where, onSnapshot, deleteDoc, updateDoc, increment } from 'firebase/firestore'
 import { ScrollView, Swipeable } from "react-native-gesture-handler"
 // https://www.youtube.com/watch?v=nZwrxeUHtOQ&ab_channel=MissCoding
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons"
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context'
 interface Todo {
@@ -59,13 +59,14 @@ export default function TodoScreen() {
     const [displayAddButtons, setDisplayAddButtons] = useState(false)
     const [todos, setTodos] = useState<Todo[]>([])
 
+    const [todosOld, setTodosOld] = useState<Todo[]>([])
 
 
-    const { theme } = useContext(AuthContext);
-    const currentTheme = (theme === "default" ? "light" : theme) as "light" | "dark";
+    const { theme } = useContext(AuthContext)
+    const currentTheme = (theme === "default" ? "light" : theme) as "light" | "dark"
 
 
-    const [modalVisible, setModalVisible] = useState(false);
+    const [modalVisible, setModalVisible] = useState(false)
     const [displayBadge, setDisplayBadge] = useState("ImakingFriends")
 
 
@@ -77,7 +78,18 @@ export default function TodoScreen() {
     }
 
     const db = getFirestore(FIREBASE_APP)
+    function getYesterday(dateString: string): string {
+        const [day, month, year] = dateString.split("-").map(Number)
 
+        const today = new Date(year, month - 1, day)
+        today.setDate(today.getDate() - 1)
+
+        const yDay = today.getDate().toString().padStart(2, "0")
+        const yMonth = (today.getMonth() + 1).toString().padStart(2, "0")
+        const yYear = today.getFullYear()
+
+        return `${yDay}-${yMonth}-${yYear}`
+    }
     const addXp = async (xp: number) => {
         try {
             authState.xp += xp
@@ -103,7 +115,7 @@ export default function TodoScreen() {
                 let lastCheckin = docSnap.data().lastCheckin
                 let streakVal = docSnap.data().streak
 
-                const [lastCheckinDay, lastCheckinMonth, lastCheckinYear] = lastCheckin.split("-").map(Number);
+                const [lastCheckinDay, lastCheckinMonth, lastCheckinYear] = lastCheckin.split("-").map(Number)
                 let today = new Date()
                 let todayDay = today.getDate()
                 let todayMonth = today.getMonth() + 1
@@ -206,6 +218,7 @@ export default function TodoScreen() {
 
         }
     }
+
     const fetchTodos = async () => {
         try {
             const q = query(
@@ -218,13 +231,67 @@ export default function TodoScreen() {
                 ...doc.data()
             })) as Todo[]
             setTodos(items)
+
         } catch (error) {
             console.error(error)
         }
     }
+
     useEffect(() => {
         try {
-            const q = query(collection(db, "users", authState.displayName, "tasks", "stats", todayString), where("completed", "==", false));
+            let isMounted = true 
+            const oldTodos: Todo[] = []
+            const oldUnsubscribes: (() => void)[] = []
+            // past 10 day tasks
+            const fetchOldTodos = async () => {
+                try {
+                    let today = todayString
+                    for (let i = 1; i <= 10; i++) {
+                        const previousDayString = getYesterday(today)
+
+                        // fetch initial tasks for the day
+                        const qOld = query(
+                            collection(db, "users", authState.displayName, "tasks", "stats", previousDayString),
+                            where("completed", "==", false)
+                        )
+                        const todosOldSnapshot = await getDocs(qOld)
+                        const itemsOld: Todo[] = todosOldSnapshot.docs.map(doc => ({
+                            ...doc.data(),
+                            createdAt: previousDayString 
+                        })) as Todo[]
+
+                        oldTodos.push(...itemsOld)
+
+                        const unsubscribe = onSnapshot(qOld, (snapshot) => {
+                            snapshot.docChanges().forEach((change) => {
+                                if (!isMounted) return
+                                if (change.type === "added") {
+                                    setTodosOld(prev => [...prev, { ...(change.doc.data() as Todo), createdAt: previousDayString }])
+                                }
+                                if (change.type === "removed") {
+                                    setTodosOld(prev => prev.filter(t => t.title !== change.doc.id || t.createdAt !== previousDayString))
+                                }
+                                if (change.type === "modified") {
+                                    setTodosOld(prev => prev.map(t => {
+                                        if (t.title === change.doc.id && t.createdAt === previousDayString) {
+                                            return { ...(change.doc.data() as Todo), createdAt: previousDayString }
+                                        }
+                                        return t
+                                    }))
+                                }
+                            })
+                        })
+                        oldUnsubscribes.push(unsubscribe)
+                        today = previousDayString
+                    }
+                    if (isMounted) setTodosOld(oldTodos)
+                } catch (error) {
+                    console.error(error)
+                }
+            }
+            fetchOldTodos()
+            // today tasks
+            const q = query(collection(db, "users", authState.displayName, "tasks", "stats", todayString), where("completed", "==", false))
             const unsubscribe = onSnapshot(q, (snapshot) => {
                 snapshot.docChanges().forEach((change) => {
                     if (change.type === "added") {
@@ -238,15 +305,15 @@ export default function TodoScreen() {
                     }
                 })
             })
-            // fetchTodos()
             return () => {
+                isMounted = false
                 unsubscribe()
             }
-        }
-        catch (error) {
+        } catch (error) {
             console.log(error)
         }
-    })
+    }, [])
+
     const handleDeleteAction = async (name: string) => {
         try {
             await deleteDoc(doc(db, "users", authState.displayName, "tasks", "stats", todayString, name))
@@ -268,7 +335,6 @@ export default function TodoScreen() {
         try {
             await deleteDoc(doc(db, "users", authState.displayName, "tasks", "stats", todayString, name))
             const statsRef = doc(db, 'users', username!, 'tasks', 'stats')
-
             await updateDoc(statsRef, {
                 tasksCompleted: increment(1),
                 tasksBeingDone: increment(-1)
@@ -294,7 +360,41 @@ export default function TodoScreen() {
         } catch (error: any) {
             console.log(error)
         }
+    }
+    const handleDeleteActionOld = async (name: string, createdAt: string) => {
+        try {
+            await deleteDoc(doc(db, "users", authState.displayName, "tasks", "stats", createdAt, name))
+            const statsRef = doc(db, 'users', username!, 'tasks', 'stats')
 
+            await updateDoc(statsRef, {
+                tasksDeleted: increment(1),
+                tasksBeingDone: increment(-1)
+            })
+            const todayStatsRef = doc(db, 'users', username!, 'tasks', 'stats', createdAt, "statsToday")
+            await updateDoc(todayStatsRef, {
+                tasksBeingDone: increment(-1),
+            })
+        } catch (error: any) {
+            console.log(error)
+        }
+    }
+
+    const handleCompleteActionOld = async (name: string, createdAt: string) => {
+        try {
+            await deleteDoc(doc(db, "users", authState.displayName, "tasks", "stats", createdAt, name))
+            const statsRef = doc(db, 'users', username!, 'tasks', 'stats')
+            await updateDoc(statsRef, {
+                tasksCompleted: increment(1),
+                tasksBeingDone: increment(-1)
+            })
+            const createdAtStatsRef = doc(db, 'users', username!, 'tasks', 'stats', createdAt, "statsToday")
+            await updateDoc(createdAtStatsRef, {
+                tasksCompleted: increment(1),
+                tasksBeingDone: increment(-1),
+            })
+        } catch (error: any) {
+            console.log(error)
+        }
     }
     const renderRightActions = () => {
         return <View style={styles.swipeActionRight}>
@@ -322,7 +422,7 @@ export default function TodoScreen() {
                     style={[styles.loginButton, {
                         backgroundColor: Colors[currentTheme].addTaskButton
                     }]}
-                        icon={() => <MaterialCommunityIcons name="note-edit-outline" size={24} color={Colors[currentTheme].addTask} />}
+                    icon={() => <MaterialCommunityIcons name="note-edit-outline" size={24} color={Colors[currentTheme].addTask} />}
                     onPress={() => {
                         if (displayAddButtons)
                             setDisplayAddButtons(false)
@@ -335,7 +435,7 @@ export default function TodoScreen() {
                     style={[styles.loginButton, {
                         backgroundColor: Colors[currentTheme].addTaskButton
                     }]}
-                        icon={() => <MaterialCommunityIcons name="order-bool-descending-variant" size={24} color={Colors[currentTheme].addTask} />}
+                    icon={() => <MaterialCommunityIcons name="order-bool-descending-variant" size={24} color={Colors[currentTheme].addTask} />}
                     onPress={() => {
                         if (displayAddButtons)
                             setDisplayAddButtons(false)
@@ -348,13 +448,13 @@ export default function TodoScreen() {
                     <View style={[styles.container, { alignItems: "center" }]}>
                         <TextInput
                             style={[styles.input,
-                                { backgroundColor: Colors[currentTheme].inputBackgroundColor }]}
+                            { backgroundColor: Colors[currentTheme].inputBackgroundColor }]}
                             mode="flat"
                             label="title"
                             onChangeText={setTitle} />
                         <TextInput
                             style={[styles.input,
-                                { backgroundColor: Colors[currentTheme].inputBackgroundColor }]}
+                            { backgroundColor: Colors[currentTheme].inputBackgroundColor }]}
                             mode="flat"
                             label="description"
                             onChangeText={setDescription} />
@@ -383,8 +483,9 @@ export default function TodoScreen() {
                                 },]}>
                         </SegmentedButtons>
                         <Button style={[styles.loginButton, {
-                        backgroundColor: Colors[currentTheme].addTaskButton
-                    }]} onPress={() => { setShow(true) }}>
+                            backgroundColor: Colors[currentTheme].addTaskButton
+                        }]}
+                            onPress={() => { setShow(true) }}>
                             <Text style={[styles.startText, {
                                 color: Colors[currentTheme].addTask
                             }]}>Add Deadline</Text>
@@ -397,13 +498,13 @@ export default function TodoScreen() {
                             />
                         )}
                         <Button onPress={addTodo} style={[styles.loginButton, {
-                        backgroundColor: Colors[currentTheme].addTaskButton
+                            backgroundColor: Colors[currentTheme].addTaskButton
                         }]}
                             mode="contained" disabled={!title || !description || !deadline}>
                             <Text
-                                 style={[styles.startText, {
-                                color: Colors[currentTheme].addTask
-                            }]}>Add Task</Text>
+                                style={[styles.startText, {
+                                    color: Colors[currentTheme].addTask
+                                }]}>Add Task</Text>
                         </Button>
                     </View>
                 )}
@@ -452,6 +553,65 @@ export default function TodoScreen() {
                                     </Surface>
                                 </Swipeable>
                             )))}
+
+                        {/* todos from previous 10 days */}
+                        {todosOld.length === 0 ? (
+                            <Text style={styles.text}>No todos from previous 10 days! Well done</Text>
+                        ) : (
+                            todosOld?.map((todoOld, key) => (
+                                <Swipeable
+                                    ref={(ref) => {
+                                        swipeableRefs.current[todoOld.title] = ref
+                                    }}
+                                    key={key}
+                                    overshootLeft={false}
+                                    overshootRight={false}
+                                    renderLeftActions={renderLeftActions}
+                                    renderRightActions={renderRightActions}
+                                    onSwipeableOpen={(direction) => {
+                                        if (direction === "left") {
+                                            handleDeleteActionOld(todoOld.title, todoOld.createdAt)
+                                        }
+                                        if (direction === "right")
+                                            handleCompleteActionOld(todoOld.title, todoOld.createdAt)
+                                        swipeableRefs.current[todoOld.title]?.close()
+                                    }}>
+
+                                    <Surface style={[styles.card, { opacity: 0.6 }]}>
+                                        <View style={{
+                                            flexDirection: "row",
+                                            justifyContent: "space-between",
+                                            alignItems: "center",
+                                            marginBottom: 4,
+                                        }}>
+                                            <Text style={styles.cardTitle}>{todoOld.title}</Text>
+                                            <View style={{ alignItems: "center", marginBottom: 4, flexDirection: "row" }}>
+                                                <MaterialCommunityIcons name="calendar-clock"
+                                                    size={20}
+                                                    color={"red"}>
+                                                </MaterialCommunityIcons>
+                                                <Text style={[styles.cardDeadline, { color: "red", fontWeight: "bold" }]}>{todoOld.deadline.toDate().toLocaleDateString("en-GB")}</Text>
+                                            </View>
+                                        </View>
+                                        <View style={{
+                                            flexDirection: "row",
+                                            justifyContent: "space-between",
+                                            alignItems: "center",
+                                            marginBottom: 4,
+                                        }}>
+                                            <Text style={styles.cardDescription}>{todoOld.description}</Text>
+                                            <View style={{ alignItems: "center", marginBottom: 4, flexDirection: "row" }}>
+                                                <MaterialCommunityIcons name="calendar-clock"
+                                                    size={20}
+                                                    color={"#000000ff"}>
+                                                </MaterialCommunityIcons>
+                                                <Text style={styles.cardDeadline}>Created at: {todoOld.createdAt.replaceAll("-", "/")}</Text>
+
+                                            </View>
+                                        </View>
+                                    </Surface>
+                                </Swipeable>
+                            )))}
                     </ScrollView>
                 )}
                 <Modal
@@ -459,7 +619,7 @@ export default function TodoScreen() {
                     transparent={true}
                     visible={modalVisible}
                     onRequestClose={() => {
-                        setModalVisible(!modalVisible);
+                        setModalVisible(!modalVisible)
                     }}>
                     <View style={styles.centeredView}>
                         <View style={styles.modalView}>
