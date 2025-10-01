@@ -78,9 +78,12 @@ export default function Stats() {
             const dateToday = new Date().getDate()
             const monthToday = new Date().getMonth() + 1
             const yearToday = new Date().getFullYear()
-            const todayString = dateToday.toString().padStart(2, "0") + "-" + monthToday.toString().padStart(2, "0") + "-" + yearToday.toString().padStart(2, "0")
+            const todayString = dateToday.toString().padStart(2, "0") + "-" +
+                monthToday.toString().padStart(2, "0") + "-" +
+                yearToday.toString().padStart(2, "0")
 
-            const todayRef = doc(db, "users", authState.displayName, "trees", "stats", todayString, "stats")
+            const todayRef = doc(db, "users", authState.displayName, "trees",
+                "stats", todayString, "stats")
             const todaySnap = await getDoc(todayRef)
             let values: number[] = []
             let days: string[] = []
@@ -93,7 +96,8 @@ export default function Stats() {
             let dayString = todayString
             for (let i: number = 0; i < 6; i++) {
                 let yesterdayString = getYesterday(dayString)
-                const yesterdayRef = doc(db, "users", authState.displayName, "trees", "stats", yesterdayString, "statsToday")
+                const yesterdayRef = doc(db, "users", authState.displayName,
+                    "trees", "stats", yesterdayString, "statsToday")
                 const yesterdaySnap = await getDoc(yesterdayRef)
                 // console.log(yesterdayString)
                 if (yesterdaySnap.exists()) {
@@ -111,8 +115,11 @@ export default function Stats() {
             // setpast7Days(days)
             setpast7Days(days.map(d => d.slice(0, 5)))
 
-            const todayStringRev = yearToday.toString().padStart(2, "0") + "-" + monthToday.toString().padStart(2, "0") + "-" + dateToday.toString().padStart(2, "0")
-            const todayRefCommits = doc(db, "users", authState.displayName, "tasks", "stats", todayString, "statsToday")
+            const todayStringRev = yearToday.toString().padStart(2, "0") + "-"
+                + monthToday.toString().padStart(2, "0") + "-" +
+                dateToday.toString().padStart(2, "0")
+            const todayRefCommits = doc(db, "users", authState.displayName,
+                "tasks", "stats", todayString, "statsToday")
             const todayCommitsSnap = await getDoc(todayRefCommits)
             let countToday = 0
             if (todayCommitsSnap.exists()) {
@@ -127,7 +134,8 @@ export default function Stats() {
             let dayStringCommit = todayString
             for (let i: number = 0; i < 30; i++) {
                 let yesterdayStringCommit = getYesterday(dayStringCommit)
-                const yesterdayRefsCommit = doc(db, "users", authState.displayName, "tasks", "stats", yesterdayStringCommit, "statsToday")
+                const yesterdayRefsCommit = doc(db, "users", authState.displayName,
+                    "tasks", "stats", yesterdayStringCommit, "statsToday")
                 const yesterdayCommitsSnap = await getDoc(yesterdayRefsCommit)
                 let count = 0
                 if (yesterdayCommitsSnap.exists()) {
@@ -151,10 +159,12 @@ export default function Stats() {
     }
     useEffect(() => {
         try {
-            const listen = onSnapshot(doc(db, "users", authState.displayName, "trees", "stats"), (doc) => {
+            const listen = onSnapshot(doc(db, "users", authState.displayName,
+                "trees", "stats"), (doc) => {
                 setTotalTrees()
             })
-            const listen2 = onSnapshot(doc(db, "users", authState.displayName, "tasks", "stats"), (doc) => {
+            const listen2 = onSnapshot(doc(db, "users", authState.displayName,
+                "tasks", "stats"), (doc) => {
                 setTotalTrees()
             })
             return () => {

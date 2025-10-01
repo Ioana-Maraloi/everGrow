@@ -1,24 +1,20 @@
-import { View, Text, Image, ImageBackground, Alert, Modal, Pressable } from "react-native"
+import { View, Text, Image, ImageBackground, Alert, Modal, Pressable, TouchableOpacity } from "react-native"
 import { Button, SegmentedButtons } from "react-native-paper"
-import styles from '../../utils/styles'
-import images from "../../utils/images"
-import { Colors } from '../../utils/colors'
-
 import React, { useState, useContext, useEffect } from "react"
 import { ScrollView } from "react-native-gesture-handler"
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context'
 import { CountdownCircleTimer } from 'react-native-countdown-circle-timer'
-
 import { FIREBASE_APP } from "../../../firebaseConfig"
 import { collection, doc, getFirestore, updateDoc, setDoc, getDocs, query, onSnapshot, deleteDoc, getDoc, increment } from 'firebase/firestore'
-
 import { AuthContext } from "../../utils/authContext"
-import { getExpoGoProjectConfig } from "expo"
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+// icons
+import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons"
+// styling
+import styles from '../../utils/styles'
+import images from "../../utils/images"
+import { Colors } from '../../utils/colors'
 
-// https://jennpixel.itch.io/free-flower-pack-12-icons?download
-// https://anokolisa.itch.io/free-pixel-art-asset-pack-topdown-tileset-rpg-16x16-sprites
-
+import Animated, { useSharedValue, withSpring, useAnimatedStyle } from 'react-native-reanimated'
 function getTreePicture(label: string, remainingTime: number, startTime: number) {
 	// model 1
 	if (label === "treeModel1Green") {
@@ -69,7 +65,7 @@ function getTreePicture(label: string, remainingTime: number, startTime: number)
 		return images.treeModel1Yellow5
 	}
 	// model 2
-		if (label === "treeModel2Blue") {
+	if (label === "treeModel2Blue") {
 		if (remainingTime === -1 && startTime === -1)
 			return images.treeModel2Blue5
 
@@ -168,7 +164,7 @@ function getTreePicture(label: string, remainingTime: number, startTime: number)
 	if (label === "blueMushroom") {
 		return images.blueMushroom
 	}
-		if (label === "flower") {
+	if (label === "flower") {
 		return images.flower
 	}
 	if (label === "greenBush") {
@@ -212,7 +208,7 @@ function getBadgePicture(label: string) {
 	if (label === "legendaryStreak") {
 		return images.legendaryStreak
 	}
-		if (label === "focusBunny") {
+	if (label === "focusBunny") {
 		return images.focusBunny
 	}
 	if (label === "clockWizzard") {
@@ -243,18 +239,64 @@ export default function ForestScreen() {
 	const [modalVisible, setModalVisible] = useState(false)
 	const [modalVisibleAchievement, setModalVisibleaAchievement] = useState(false)
 
-	  const [key, setKey] = useState(0);
+	const [key, setKey] = useState(0)
 
 
 	const [displayBadge, setDisplayBadge] = useState("AfirstSeed")
 	const [xp, SetXp] = useState(0)
 
-	
-		
-	const { theme } = useContext(AuthContext);
-	const currentTheme = (theme === "default" ? "light" : theme) as "light" | "dark";
-		
-	
+
+
+	const { theme } = useContext(AuthContext)
+	const currentTheme = (theme === "default" ? "light" : theme) as "light" | "dark"
+
+
+	const [containerWidth, setContainerWidth] = useState(0)
+	const [containerHeight, setContainerHeight] = useState(0)
+
+	// planting a tree in the garden
+	const [plantIt, setPlantIt] = useState(false)
+	const translateX = useSharedValue(0)
+	const translateY = useSharedValue(0)
+	let square = 50
+	const handlePressRight = () => {
+		console.log(translateX.value, translateY.value)
+		if (translateX.value + 20 > containerWidth /2 - square) {
+			console.log("out of bounds")
+		} else {
+			translateX.value = withSpring(translateX.value + 20)
+			// console.log(translateX.value, translateY.value)
+		}
+	}
+	const handlePressLeft = () => {
+		console.log(translateX.value, translateY.value)
+		if (translateX.value - 20 < - containerWidth/2 + square) {
+			console.log("out of bounds")
+		} else {
+			translateX.value = withSpring(translateX.value - 20)
+			// console.log(translateX.value, translateY.value)
+		}
+	}
+	const handlePressUp = () => {
+		console.log(translateX.value, translateY.value)
+		if (translateY.value - 20 < containerHeight/2 + square) {
+			console.log("out of bounds")
+		} else {
+			translateY.value = withSpring(translateY.value - 20)
+			// console.log(translateX.value, translateY.value)
+		}
+
+	}
+	const handlePressDown = () => {
+					console.log(translateX.value, translateY.value)
+
+		if (translateY.value + 20 > containerHeight - square) {
+			console.log("out of bounds")
+		} else {
+			translateY.value = withSpring(translateY.value + 20)
+			// console.log(translateX.value, translateY.value)
+		}
+	}
 
 	const [succesful, setSuccesful] = useState(false)
 	const db = getFirestore(FIREBASE_APP)
@@ -375,14 +417,14 @@ export default function ForestScreen() {
 					authState.xp += xp
 
 					const userRef = doc(db, "users", authState.displayName)
-					await updateDoc(userRef,{
-						xp:increment(xp)
+					await updateDoc(userRef, {
+						xp: increment(xp)
 					})
 
 					const dateToday = new Date().getDate()
 					const monthToday = new Date().getMonth() + 1
 					const yearToday = new Date().getFullYear()
-				    const todayString = dateToday.toString().padStart(2, "0") + "-" + monthToday.toString().padStart(2, "0") + "-" + yearToday.toString().padStart(2, "0")
+					const todayString = dateToday.toString().padStart(2, "0") + "-" + monthToday.toString().padStart(2, "0") + "-" + yearToday.toString().padStart(2, "0")
 
 					const badgeDone = doc(db, "users", authState.displayName, "achievements", "done", "doneList", name)
 					const badgeInfo = {
@@ -398,7 +440,7 @@ export default function ForestScreen() {
 			console.log(error)
 		}
 	}
-		const checkTimeAchievementUnlocked = async (timePlanted: number, name: string, count: number) => {
+	const checkTimeAchievementUnlocked = async (timePlanted: number, name: string, count: number) => {
 		try {
 			if (timePlanted >= count) {
 				const badgeDoc = doc(db, "users", authState.displayName, "achievements", "notDone", "notDoneList", name)
@@ -415,14 +457,14 @@ export default function ForestScreen() {
 					authState.xp += xp
 
 					const userRef = doc(db, "users", authState.displayName)
-					await updateDoc(userRef,{
-						xp:increment(xp)
+					await updateDoc(userRef, {
+						xp: increment(xp)
 					})
 
 					const dateToday = new Date().getDate()
 					const monthToday = new Date().getMonth() + 1
 					const yearToday = new Date().getFullYear()
-				    const todayString = dateToday.toString().padStart(2, "0") + "-" + monthToday.toString().padStart(2, "0") + "-" + yearToday.toString().padStart(2, "0")
+					const todayString = dateToday.toString().padStart(2, "0") + "-" + monthToday.toString().padStart(2, "0") + "-" + yearToday.toString().padStart(2, "0")
 
 					const badgeDone = doc(db, "users", authState.displayName, "achievements", "done", "doneList", name)
 					const badgeInfo = {
@@ -450,20 +492,21 @@ export default function ForestScreen() {
 					treesDead: increment(1),
 				}
 			)
-			
-		} catch(error) {
+
+		} catch (error) {
 			console.log(error)
 		}
 	}
 	const completedPlant = async (duration: number, choiceTree: string) => {
 		try {
-			setKey(key+1)
+			setKey(key + 1)
 			setDurations("60")
 			setModalVisible(true)
 			setSuccesful(true)
 			authState.xp += duration
 			setIsPlaying(false)
 			SetXp(duration)
+			setPlantIt(true)
 
 			const userRef = doc(db, "users", authState.displayName)
 			const userSnap = await getDoc(userRef)
@@ -489,7 +532,7 @@ export default function ForestScreen() {
 
 			checkTimeAchievementUnlocked(totalFocusedTime + duration, "focusBunny", 9)
 			checkTimeAchievementUnlocked(totalFocusedTime + duration, "clockWizzard", 99)
-			checkTimeAchievementUnlocked(totalFocusedTime+ duration, "concentrationMaster", 299)
+			checkTimeAchievementUnlocked(totalFocusedTime + duration, "concentrationMaster", 299)
 
 			// receive achievement for 
 			await updateDoc(countRef,
@@ -503,272 +546,304 @@ export default function ForestScreen() {
 			const monthToday = new Date().getMonth() + 1
 			const yearToday = new Date().getFullYear()
 			const todayString = dateToday.toString().padStart(2, "0") + "-" + monthToday.toString().padStart(2, "0") + "-" + yearToday.toString().padStart(2, "0")
-			
+
 			const todayRef = doc(db, "users", authState.displayName, "trees", "stats", todayString, "statsToday")
 			const todaySnap = await getDoc(todayRef)
 			if (!todaySnap.exists()) {
 				const statsInfo = {
-						treesPlantedToday: 1,
-						timeFocusedToday: duration,
-					}
-					await setDoc(todayRef, statsInfo)
+					treesPlantedToday: 1,
+					timeFocusedToday: duration,
+				}
+				await setDoc(todayRef, statsInfo)
 			} else {
-				await updateDoc(todayRef, 
+				await updateDoc(todayRef,
 					{
 						treesPlantedToday: increment(1),
 						timeFocusedToday: increment(duration)
-				})
+					})
 			}
 		} catch (error) {
 			console.log(error)
 		}
 	}
 	function formatCamelCase(str: string): string {
-		const withoutPrefix = str.slice(1);
-		const spaced = withoutPrefix.replace(/([A-Z])/g, ' $1').trim();
-		return spaced.charAt(0).toUpperCase() + spaced.slice(1).toLowerCase();
+		const withoutPrefix = str.slice(1)
+		const spaced = withoutPrefix.replace(/([A-Z])/g, ' $1').trim()
+		return spaced.charAt(0).toUpperCase() + spaced.slice(1).toLowerCase()
 	}
-	    const getPictureSize = (name: string) =>{
-        if (name === "redMushroom" || name ==="blueMushroom" || name ==="flower")
-            return 0.5
-        if (name === "greenBush" || name ==="orangeBush")
-            return 0.75
-        return 1
-        
-    }
+	const getPictureSize = (name: string) => {
+		if (name === "redMushroom" || name === "blueMushroom" || name === "flower")
+			return 0.5
+		if (name === "greenBush" || name === "orangeBush")
+			return 0.75
+		return 1
+
+	}
+	const animatedStyles = useAnimatedStyle(() => ({
+		transform: [{
+			translateX: withSpring(translateX.value),
+		}, { translateY: withSpring(translateY.value) },
+		],
+	}))
 	return (
 		<SafeAreaProvider>
-			<SafeAreaView  style={[styles.container, {
+			<SafeAreaView style={[styles.container, {
 				backgroundColor: Colors[currentTheme].backgroundColor,
 			}]}>
 				{/* display today's trees  */}
-				{showForest && (
-					<View>
-						<View style={[
-							styles.box,
-							{
-								alignContent: "center", alignSelf: "center",
-								transform: [{ rotateX: '60deg' }, { rotateZ: '40deg' }],
-							},
-						]}>
-						</View>
-						<Button style={[
-							styles.loginButton, {
-								backgroundColor: Colors[currentTheme].addTaskButton
-                    }]}
-                        icon={() => <MaterialCommunityIcons name="pine-tree" size={24} color={Colors[currentTheme].addTask} />}
-							onPress={() => {
-							setShowForest(false)
-						}}>
-							<Text  style={{ color: Colors[currentTheme].addTask }}>Plant another tree today</Text>
-						</Button>
-					</View>
-				)}
-				{/* select how the next tree will look like */}
-				{!showForest &&
-					<ScrollView showsVerticalScrollIndicator={false}>
-						{/* render the choices for the trees and the time */}
-						{!isPlaying && (
-							<View>
-								<Button style={[styles.loginButton, {
+				{!plantIt && (<View>
+					{showForest && (
+						<View>
+							<View style={[
+								styles.box,
+								{
+									alignContent: "center", alignSelf: "center",
+									transform: [{ rotateX: '60deg' }, { rotateZ: '40deg' }],
+								},
+							]}>
+							</View>
+							<Button style={[
+								styles.loginButton, {
 									backgroundColor: Colors[currentTheme].addTaskButton
 								}]}
-									icon={() => <MaterialCommunityIcons name="forest" size={24} color={Colors[currentTheme].addTask} />}>			
-									<Text  style={{ color: Colors[currentTheme].addTask }} onPress={() => { setShowForest(true) }}>Show today&apos;s forest!</Text>
-								</Button>
-
-								<Button style={[
-									styles.loginButton, {
-                        				backgroundColor: Colors[currentTheme].addTaskButton
-									}]}
-									onPress={() => {
-									if (showTreesOptionssOptions)
-										setshowTreesOptionssOptions(false)
-									else
-										setshowTreesOptionssOptions(true)
-
+								icon={() => <MaterialCommunityIcons name="pine-tree" size={24} color={Colors[currentTheme].addTask} />}
+								onPress={() => {
+									setShowForest(false)
 								}}>
-									<Text  style={{ color: Colors[currentTheme].addTask }}>Choose Tree</Text>
-								</Button>
+								<Text style={{ color: Colors[currentTheme].addTask }}>Plant another tree today</Text>
+							</Button>
+						</View>
+					)}
+					{/* select how the next tree will look like */}
+					{!showForest &&
+						<ScrollView showsVerticalScrollIndicator={false}>
+							{/* render the choices for the trees and the time */}
+							{!isPlaying && (
+								<View>
+									{/* button to display today's forest */}
+									<Button style={[styles.loginButton, {
+										backgroundColor: Colors[currentTheme].addTaskButton
+									}]}
+										icon={() => <MaterialCommunityIcons name="forest" size={24} color={Colors[currentTheme].addTask} />}
+										onPress={() => { setShowForest(true) }}>
+										<Text style={{ color: Colors[currentTheme].addTask }}>Show today&apos;s forest!</Text>
+									</Button>
+									{/* button to choose the type of tree */}
+									<Button style={[
+										styles.loginButton, {
+											backgroundColor: Colors[currentTheme].addTaskButton
+										}]}
+										icon={() => <MaterialIcons name="photo-library" size={24} color={Colors[currentTheme].addTask} />}
+										onPress={() => {
+											if (showTreesOptionssOptions)
+												setshowTreesOptionssOptions(false)
+											else
+												setshowTreesOptionssOptions(true)
+										}}>
+										<Text style={{ color: Colors[currentTheme].addTask }}>Choose Tree</Text>
+									</Button>
 
-								{showTreesOptionssOptions && (
-									<ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-										<SegmentedButtons style={{
-											alignContent: "center",
-											width: "90%",
-											alignSelf: "center",
-											height: 100,
-										}}
-											
-											value={choiceTree}
-											onValueChange={setChoiceTree}
-											buttons={treesAvailable.map((tree) => (
-												{
-													value: tree.name,
-													icon: () => {
-														return <Image source={getTreePicture(tree.name, -1, -1)}
-															style={{ width:90, height: 90, justifyContent: "center", alignItems: "center", transform:[{scale:getPictureSize(tree.name)}] }}
-															resizeMode="stretch"			
+									{showTreesOptionssOptions && (
+										<ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+											<SegmentedButtons style={{
+												alignContent: "center",
+												width: "90%",
+												alignSelf: "center",
+												height: 100,
+											}}
+												value={choiceTree}
+												onValueChange={setChoiceTree}
+												buttons={treesAvailable.map((tree) => (
+													{
+														value: tree.name,
+														icon: () => {
+															return <Image source={getTreePicture(tree.name, -1, -1)}
+																style={{ width: 90, height: 90, justifyContent: "center", alignItems: "center", transform: [{ scale: getPictureSize(tree.name) }] }}
+																resizeMode="stretch"
 															/>
-													
-													}
 
-												}))
-											}
-										/>
-									</ScrollView>
-								)}
-								<Button style={[
+														}
+
+													}))
+												}
+											/>
+										</ScrollView>
+									)}
+									{/* button to choose the time */}
+									<Button style={[
+										styles.loginButton, {
+											backgroundColor: Colors[currentTheme].addTaskButton
+										}]}
+										onPress={function () {
+											if (showTimeOptions)
+												setshowTimeOptions(false)
+											else
+												setshowTimeOptions(true)
+										}}
+										icon={() => <MaterialCommunityIcons name="clock-edit-outline" size={24} color={Colors[currentTheme].addTask} />}
+									>
+										<Text style={{ color: Colors[currentTheme].addTask }}>Choose Time</Text>
+									</Button>
+									{showTimeOptions && (
+										<ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+											<SegmentedButtons style={{
+												alignContent: "center",
+												width: "90%",
+												alignSelf: "center"
+											}}
+												value={duration}
+												onValueChange={setDurations}
+												buttons={[
+													{ value: "10", label: "10" },
+													{ value: '30', label: '30' },
+													{ value: '45', label: '45' },
+													{ value: '60', label: '60' },
+													{ value: '90', label: '90' },
+													{ value: '100', label: '100' },
+													{ value: '120', label: '120' },
+													{ value: '150', label: '150' },
+													{ value: '180', label: '180' },
+												]}
+											/>
+										</ScrollView>
+									)}
+								</View>
+							)}
+
+							{/* if the tree is being planted, only display the timer */}
+							<View
+								style={{ alignSelf: 'center', marginTop: 20 }}>
+								<CountdownCircleTimer
+									size={250}
+									key={key}
+									isPlaying={isPlaying}
+									duration={parseInt(duration)}
+									colors={['#004777', '#F7B801', '#A30000', '#A30000']}
+									onComplete={
+										() => {
+											completedPlant(parseInt(duration), choiceTree)
+										}}
+									colorsTime={[7, 5, 2, 0]}>
+									{renderTime}
+								</CountdownCircleTimer>
+							</View>
+
+
+							{!isPlaying &&
+								(<Button style={[
 									styles.loginButton, {
 										backgroundColor: Colors[currentTheme].addTaskButton
 									}]}
-									onPress={function () {
-									if (showTimeOptions)
-										setshowTimeOptions(false)
-									else
-										setshowTimeOptions(true)
-									}}
-									icon={() => <MaterialCommunityIcons name="clock-edit-outline" size={24} color={Colors[currentTheme].addTask} />}
-							>
-									<Text  style={{ color: Colors[currentTheme].addTask }}>Choose Time</Text>
+									onPress={function () { setIsPlaying(true) }}
+									icon={() => <MaterialCommunityIcons name="seed-outline" size={24} color={Colors[currentTheme].addTask} />}
+								>
+									<Text style={{ color: Colors[currentTheme].addTask }}>Plant Tree</Text>
+								</Button>)}
+							{isPlaying && (
+								<Button style={styles.loginButton} onPress={function () {
+									Alert.alert('Are you sure you want to stop?', 'Your tree will not grow fully', [
+										{
+											text: 'Cancel',
+											onPress: () => {
+												// setModalVisible(true)
+												// setSuccesful(false)
+											},
+											style: 'cancel',
+										},
+										{
+											text: 'Confirm',
+											onPress: () => {
+												setIsPlaying(false)
+												setWasStopped(true)
+												setModalVisible(true)
+												setSuccesful(false)
+												treeDeath()
+											}
+										},
+									])
+								}}>
+									<Text style={styles.startText}>Stop</Text>
 								</Button>
-								{showTimeOptions && (
-									<ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-										<SegmentedButtons style={{
-											alignContent: "center",
-											width: "90%",
-											alignSelf: "center"
-										}}
-											value={duration}
-											onValueChange={setDurations}
-											buttons={[
-												{ value: "10", label: "10" },
-												{ value: '30', label: '30' },
-												{ value: '45', label: '45' },
-												{ value: '60', label: '60' },
-												{ value: '90', label: '90' },
-												{ value: '100', label: '100' },
-												{ value: '120', label: '120' },
-												{ value: '150', label: '150' },
-												{ value: '180', label: '180' },
-											]}
-										/>
-									</ScrollView>
-								)}
-							</View>
-						)}
+							)}
+						</ScrollView>
+					}
+					{/* modal for when a tree is succesfully planted */}
 
-						{/* if the tree is being planted, only display the timer */}
-						<View
-							style={{ alignSelf: 'center', marginTop: 20 }}>
-							<CountdownCircleTimer
-								size={250}
-								key = {key}
-								isPlaying={isPlaying}
-								duration={parseInt(duration)}
-								colors={['#004777', '#F7B801', '#A30000', '#A30000']}
-								onComplete={
-									() => {
-										completedPlant(parseInt(duration), choiceTree)
-									}}
-								colorsTime={[7, 5, 2, 0]}>
-								{renderTime}
-							</CountdownCircleTimer>
+				</View>)}
+
+
+				{plantIt && (
+					<View style={{ flex: 1, justifyContent: 'space-between' }}					
+						>
+						<View style={{
+							borderWidth: 2, borderColor: "blue",
+							justifyContent: 'center', alignItems: 'center'
+						}}
+						>	
+							<View
+								onLayout={(event) => {
+								const { width, height } = event.nativeEvent.layout
+								setContainerWidth(width)
+								setContainerHeight(height)
+								console.log("Container size:", width, height)
+							}}
+								style={[
+								styles.box,
+								{
+									// alignContent: "center", alignSelf: "center",
+									transform: [{ rotateX: '60deg' }, { rotateZ: '40deg' }],
+								},
+									, {
+										borderWidth: 2, borderColor: "pink",
+										justifyContent: 'center', alignItems: 'center',
+									overflow: 'hidden',}
+							]}>
+								<Animated.View style={[styles.box2, animatedStyles]} />
+
+							</View>
 						</View>
 
 
-						{!isPlaying &&
-							(<Button style={[
-							styles.loginButton, {
-								backgroundColor: Colors[currentTheme].addTaskButton
-						}]} onPress={function () { setIsPlaying(true) }}>
-								<Text  style={{ color: Colors[currentTheme].addTask }}>Plant Tree</Text>
-							</Button>)}
-						{isPlaying && (
-							<Button style={styles.loginButton} onPress={function () {
-								Alert.alert('Are you sure you want to stop?', 'Your tree will not grow fully', [
-									{
-										text: 'Cancel',
-										onPress: () => {
-											// setModalVisible(true)
-											// setSuccesful(false)
-										},
-										style: 'cancel',
-									},
-									{
-										text: 'Confirm',
-										onPress: () => {
-											setIsPlaying(false)
-											setWasStopped(true)
-											setModalVisible(true)
-											setSuccesful(false)
-											treeDeath()
-										}
-									},
-								])
-							}}>
-								<Text style={styles.startText}>Stop</Text>
-							</Button>
-						)}
-					</ScrollView>
-				}
-				{/* modal for when a tree is succesfully planted */}
-				<Modal
-					animationType="slide"
-					transparent={true}
-					visible={modalVisible}
-					onRequestClose={() => {
-						setModalVisible(!modalVisible);
-					}}>
-					<View style={styles.centeredView}>
-						{/* the tree is succesfully planted */}
-						{succesful && (<View style={styles.modalView}>
-							<Text style={styles.modalText}>Congratulations! You planted a tree</Text>
-							<ImageBackground
-								// source={require("../../../assets/ayrton.jpg")}
-								source={getTreePicture(choiceTree, -1, -1)}
-								style={{ width: 100, height: 100, justifyContent: 'center', alignItems: 'center', marginRight: 10 }}
-								resizeMode="stretch">
-							</ImageBackground>
-							<Text style={styles.modalText}>You earned {xp} coins</Text>
-							<Pressable
-								style={[styles.button, styles.buttonClose]}
-								onPress={() => {
-									setChoiceTree("treeModel1Green")
-									setSuccesful(false)
-									setModalVisible(!modalVisible)
-								}}>
-								<Text style={styles.textStyle}>Dismiss</Text>
-							</Pressable>
-						</View>)}
-						{/* the tree dies */}
-						{!succesful && (<View style={styles.modalView}>
-							<Text style={styles.modalText}>Your tree died!</Text>
-							<ImageBackground
-								source={images.treeModel1Dead}
-								style={{ width: 100, height: 100, justifyContent: 'center', alignItems: 'center', marginRight: 10 }}
-								resizeMode="stretch">
-							</ImageBackground>
-							<Pressable
-								style={[styles.button, styles.buttonClose]}
-								onPress={() => {
-									setSuccesful(false)
-									setChoiceTree("treeModel1Green")
-									setModalVisible(!modalVisible)
+						<View style={{
+							width: 150,
+							height: 150,
+							alignSelf: 'center',
+							backgroundColor: 'lightgrey',
+							overflow: 'hidden',
+							justifyContent: 'center',
+							alignItems: 'center',
+						}}>
 
-								}}>
-								<Text style={styles.textStyle}>Dismiss</Text>
-							</Pressable>
-						</View>)}
-					</View>
-				</Modal>
+
+							<TouchableOpacity style={{ marginBottom: 20 }} onPress={handlePressUp}>
+								<MaterialCommunityIcons name="arrow-up-thick" size={30} color={Colors[currentTheme].addTask} />
+							</TouchableOpacity>
+							<View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20, width: 100 }}>
+								<TouchableOpacity onPress={handlePressLeft}>
+									<MaterialCommunityIcons name="arrow-left-thick" size={30} color={Colors[currentTheme].addTask} />
+								</TouchableOpacity>
+								<TouchableOpacity onPress={handlePressRight}>
+									<MaterialCommunityIcons name="arrow-right-thick" size={30} color={Colors[currentTheme].addTask} />
+								</TouchableOpacity>
+							</View>
+							<TouchableOpacity onPress={handlePressDown}>
+								<MaterialCommunityIcons name="arrow-down-thick" size={30} color={Colors[currentTheme].addTask} />
+							</TouchableOpacity>
+							<TouchableOpacity onPress={() => { setPlantIt(false) }}>
+								<View>
+									<Text>Plant it</Text>
+								</View>
+							</TouchableOpacity>
+						</View>
+					</View>)}
+
 				{/* modal for displaying a congratulations message for achieving an award */}
 				<Modal
 					animationType="slide"
 					transparent={true}
 					visible={modalVisibleAchievement}
 					onRequestClose={() => {
-						setModalVisible(!modalVisibleAchievement);
+						setModalVisible(!modalVisibleAchievement)
 					}}>
 					<View style={styles.centeredView}>
 						<View style={styles.modalView}>

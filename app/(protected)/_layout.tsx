@@ -3,20 +3,13 @@ import { Redirect, Stack } from "expo-router"
 import { AuthContext } from "../utils/authContext"
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { View, Text } from 'react-native'
+import { MaterialCommunityIcons } from "@expo/vector-icons"
 import styles from "../utils/styles"
 import { Colors } from '../utils/colors'
-import { MaterialCommunityIcons } from "@expo/vector-icons"
-
-
 export default function ProtectedLayout() {
-
     const authState = useContext(AuthContext)
-    console.log("Auth State:", authState)
-    
-	const { theme } = useContext(AuthContext);
-	const currentTheme = (theme === "default" ? "light" : theme) as "light" | "dark";	
-
-
+	const { theme } = useContext(AuthContext)
+	const currentTheme = (theme === "default" ? "light" : theme) as "light" | "dark";
     if (!authState.isReady) {
         return null 
     } 

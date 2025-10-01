@@ -1,18 +1,16 @@
-import { View, Text, FlatList } from "react-native"
+import { View, Text } from "react-native"
 import { Surface } from "react-native-paper"
-import styles from '../../utils/styles'
-import images from "../../utils/images"
-import { Colors } from '../../utils/colors'
-
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context'
 import { AuthContext } from "../../utils/authContext" 
 import React, { useState, useContext, useEffect } from "react"
 import { ImageBackground } from "expo-image"
-
 import { FIREBASE_APP } from "../../../firebaseConfig"
 import {collection, getFirestore, getDocs, query, onSnapshot} from 'firebase/firestore'
 import { ScrollView } from "react-native-gesture-handler"
-// https://www.flaticon.com/packs/awards-129?k=1757068106473&log-in=google
+
+import styles from '../../utils/styles'
+import images from "../../utils/images"
+import { Colors } from '../../utils/colors'
 
 function getBadgePicture(label: string, done:boolean) {
     // focus
@@ -37,7 +35,6 @@ function getBadgePicture(label: string, done:boolean) {
         return images.forestGuardianNotDone
     }
     // hour focus
-
     if (label === "focusBunny") {
          if(done)
             return images.focusBunny

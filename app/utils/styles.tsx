@@ -315,6 +315,11 @@ const styles = StyleSheet.create({
 		fontSize: 14,
 		color: '#555',
 	},
+	box2: {
+		height: 50,
+		width: 50,
+		backgroundColor: '#43266fff',
+	}
 })
 
 export default styles

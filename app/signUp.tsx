@@ -2,19 +2,19 @@ import { View, Text, TouchableOpacity } from "react-native"
 import {createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth"
 import {useState, useContext} from "react"
 import {TextInput} from "react-native-paper"
-import styles from './utils/styles'
-import { Colors } from './utils/colors'
 import { FIREBASE_AUTH, FIREBASE_APP } from "../firebaseConfig"
 import { doc, getFirestore, setDoc } from 'firebase/firestore'
 import { AuthContext } from "./utils/authContext"
-
+import styles from './utils/styles'
+import { Colors } from './utils/colors'
 interface Achievement{
     name: string,
 	description: string,
 	xp: number
 }
 
-let basicTrees = ["treeModel1Green", "treeModel1LightGreen", "treeModel1Orange", "treeModel1Yellow"]
+let basicTrees = ["treeModel1Green", "treeModel1LightGreen", "treeModel1Orange",
+	"treeModel1Yellow"]
 let trees = ["treeModel2Blue", "treeModel2Green", "treeModel2Turquoise",
 	"treeModel3Green", "treeModel3LightGreen", "treeModel3Orange", "treeModel3Red"]
 let plants = ["redMushroom", "blueMushroom", "flower", "greenBush", "orangeBush"]
@@ -103,8 +103,8 @@ export default function SignUpScreen() {
 	const [confirmPassword, setConfirmPassword] = useState('')
 
 	
-	const { theme } = useContext(AuthContext);
-	const currentTheme = (theme === "default" ? "light" : theme) as "light" | "dark";
+	const { theme } = useContext(AuthContext)
+	const currentTheme = (theme === "default" ? "light" : theme) as "light" | "dark"
 	
 	const handleSignUp = async () => {
 		try {
@@ -136,7 +136,8 @@ export default function SignUpScreen() {
 			})
 			// adaug copacii disponibili
 			for (let i = 0; i < basicTrees.length; i++) {
-				const treeRef = doc(db, "users",  username, "trees", "ownedTrees", "ownedTreesList", basicTrees[i])
+				const treeRef = doc(db, "users", username, "trees",
+					"ownedTrees", "ownedTreesList", basicTrees[i])
 				const treeObj = {
 					name: basicTrees[i],
 				}
@@ -144,7 +145,8 @@ export default function SignUpScreen() {
 			}
 
 			for (let i = 0; i < trees.length; i++) {
-				const treeRef = doc(db, "users",  username, "trees", "notOwnedTrees", "notOwnedTreesList", trees[i])
+				const treeRef = doc(db, "users", username, "trees",
+					"notOwnedTrees", "notOwnedTreesList", trees[i])
 				const treeObj = {
 					name: trees[i],
 					price: 200
@@ -152,7 +154,8 @@ export default function SignUpScreen() {
 				await setDoc(treeRef, treeObj)
 			}
 			for (let i = 0; i < plants.length; i++) {
-				const plantRef = doc(db, "users",  username, "trees", "notOwnedTrees", "notOwnedTreesList", plants[i])
+				const plantRef = doc(db, "users", username, "trees",
+					"notOwnedTrees", "notOwnedTreesList", plants[i])
 				const plantObj = {
 					name: plants[i],
 					price: 300
@@ -160,7 +163,8 @@ export default function SignUpScreen() {
 				await setDoc(plantRef, plantObj)
 			}
 			for (let i = 0; i < achievements.length; i++) {
-				const achievementRef = doc(db, "users",  username, "achievements", "notDone", "notDoneList", achievements[i].name)
+				const achievementRef = doc(db, "users", username,
+					"achievements", "notDone", "notDoneList", achievements[i].name)
 				await setDoc(achievementRef, achievements[i])
 			}
 		} catch (error: any) {
@@ -180,7 +184,8 @@ export default function SignUpScreen() {
 				placeholderTextColor={Colors[currentTheme].shadowColor}
 				value={email}
 				onChangeText={(text) => setEmail(text)}
-				style={[styles.input, {backgroundColor: Colors[currentTheme].inputBackgroundColor}]}
+				style={[styles.input,
+				{ backgroundColor: Colors[currentTheme].inputBackgroundColor }]}
 			/>
 			<TextInput
 				mode="flat"
@@ -189,7 +194,8 @@ export default function SignUpScreen() {
 				value={password}
 				onChangeText={(text) => setPassword(text)}
 				secureTextEntry={true}
-				style={[styles.input, {backgroundColor: Colors[currentTheme].inputBackgroundColor}]}
+				style={[styles.input,
+				{ backgroundColor: Colors[currentTheme].inputBackgroundColor }]}
 			/>
 			<TextInput
 				mode="flat"
@@ -198,10 +204,12 @@ export default function SignUpScreen() {
 				value={confirmPassword}
 				onChangeText={(text) => setConfirmPassword(text)}
 				secureTextEntry={true}
-				style={[styles.input, {backgroundColor: Colors[currentTheme].inputBackgroundColor}]}
+				style={[styles.input,
+				{ backgroundColor: Colors[currentTheme].inputBackgroundColor }]}
 			/>
 			<TouchableOpacity
-				style={[styles.loginButton, {backgroundColor: Colors[currentTheme].loginButton}]}
+				style={[styles.loginButton,
+				{ backgroundColor: Colors[currentTheme].loginButton }]}
 				onPress={handleSignUp}>
 			<Text style={{
 				fontSize: 15,

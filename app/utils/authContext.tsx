@@ -5,11 +5,11 @@ import { useRouter } from 'expo-router'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { getAuth } from "firebase/auth"
 import { doc, getFirestore, getDoc, deleteDoc, getDocs , collection} from 'firebase/firestore'
-import { getFunctions, httpsCallable } from "firebase/functions";
-import { useColorScheme } from "react-native";
+import { getFunctions, httpsCallable } from "firebase/functions"
+import { useColorScheme } from "react-native"
 
 const db = getFirestore(FIREBASE_APP)
-const functions = getFunctions();
+const functions = getFunctions()
 
 type AuthState = {
     isLoggedIn: boolean

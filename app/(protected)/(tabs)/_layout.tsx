@@ -1,23 +1,22 @@
 import { Tabs } from "expo-router"
 import { View, Text } from 'react-native'
-import styles from "../../utils/styles"
-import { Colors } from '../../utils/colors'
-
 import { AuthContext } from "../../utils/authContext"
 import {useContext, useState} from 'react'
 import { MaterialCommunityIcons } from "@expo/vector-icons"
 import { useEffect } from "react"
 import { doc, getDoc, getFirestore, onSnapshot } from 'firebase/firestore'
 import { FIREBASE_APP } from "../../../firebaseConfig"
-
+// styling
+import styles from "../../utils/styles"
+import { Colors } from '../../utils/colors'
 export default function TabsLayout() {
 	const authState = useContext(AuthContext)
 	const [xp, setXp] = useState(0)
 	const [streak, setStreak] = useState(0)
 	const db = getFirestore(FIREBASE_APP)
 	
-	const { theme } = useContext(AuthContext);
-	const currentTheme = (theme === "default" ? "light" : theme) as "light" | "dark";
+	const { theme } = useContext(AuthContext)
+	const currentTheme = (theme === "default" ? "light" : theme) as "light" | "dark"
 	
 	const setTheStreak = async () => {
 		try {

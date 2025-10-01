@@ -1,8 +1,5 @@
 import { View, Text, Modal, Pressable } from "react-native"
 import { Button, TextInput, List, Surface, IconButton } from "react-native-paper"
-import styles from '../../utils/styles'
-import { Colors } from '../../utils/colors'
-import images from "../../utils/images"
 import { FIREBASE_APP } from "../../../firebaseConfig"
 import { collection, doc, getFirestore, updateDoc, increment, setDoc, getDocs, query, onSnapshot, deleteDoc, getDoc } from 'firebase/firestore'
 import { AuthContext } from "../../utils/authContext"
@@ -11,6 +8,9 @@ import { ScrollView } from "react-native-gesture-handler"
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons"
 import { ImageBackground } from "expo-image"
 
+import styles from '../../utils/styles'
+import { Colors } from '../../utils/colors'
+import images from "../../utils/images"
 interface Friend {
     username: string,
     streak: number,

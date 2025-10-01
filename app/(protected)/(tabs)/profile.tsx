@@ -1,75 +1,51 @@
-import {
-	Text,
-	Alert,
-	View,
-	Modal,
-	Pressable,
-	TouchableOpacity,
-} from "react-native";
-import { Button, Avatar, TextInput } from "react-native-paper";
-import { useContext, useState, useEffect } from "react";
-import { AuthContext } from "../../utils/authContext";
-import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
-import styles from "../../utils/styles";
-import images from "../../utils/images";
-import { Colors } from "../../utils/colors";
+import {Text, Alert, View, Modal, Pressable} from "react-native"
+import { Button, Avatar } from "react-native-paper"
+import { useContext, useState, useEffect } from "react"
+import { AuthContext } from "../../utils/authContext"
+import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context"
 
-import { useRouter } from "expo-router";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { FIREBASE_APP } from "../../../firebaseConfig";
-import {
-	collection,
-	doc,
-	getDoc,
-	getFirestore,
-	setDoc,
-	getDocs,
-	Timestamp,
-	query,
-	where,
-	onSnapshot,
-	deleteDoc,
-	updateDoc,
-	increment,
-} from "firebase/firestore";
-import { ImageBackground } from "expo-image";
-import { Color } from "three/src/Three.Core.js";
+import { useRouter } from "expo-router"
+import { MaterialCommunityIcons } from "@expo/vector-icons"
+import { FIREBASE_APP } from "../../../firebaseConfig"
+import {doc, getDoc,getFirestore, onSnapshot} from "firebase/firestore"
 
-// https://www.freepik.com/serie/133741891
+
+import styles from "../../utils/styles"
+import images from "../../utils/images"
+import { Colors } from "../../utils/colors"
+
+import { ImageBackground } from "expo-image"
 export default function ProfileScreen() {
-	const [visible, setVisible] = useState(false);
+	const [visible, setVisible] = useState(false)
 
-	const authState = useContext(AuthContext);
-	const router = useRouter();
+	const authState = useContext(AuthContext)
+	const router = useRouter()
 
-	const dateToday = new Date().getDate();
-	const monthToday = new Date().getMonth() + 1;
-	const yearToday = new Date().getFullYear();
+	const dateToday = new Date().getDate()
+	const monthToday = new Date().getMonth() + 1
+	const yearToday = new Date().getFullYear()
 
 	const todayString =
 		dateToday.toString().padStart(2, "0") +
 		"-" +
 		monthToday.toString().padStart(2, "0") +
 		"-" +
-		yearToday.toString().padStart(2, "0");
+		yearToday.toString().padStart(2, "0")
 
-	console.log("Auth State:", authState);
 
 	// for today's tasks
-	const [oneHourFocusDone, setOneHourFocusDone] = useState(false);
-	const [threeHourFocusDone, setThreeHourFocusDone] = useState(false);
-	const [threeTasksDone, setThreeTasksDone] = useState(false);
-	const [fiveTasksDone, setFiveTasksDone] = useState(false);
-	const [taskBefore12Done, setTaskBefore12Done] = useState(false);
+	const [oneHourFocusDone, setOneHourFocusDone] = useState(false)
+	const [threeHourFocusDone, setThreeHourFocusDone] = useState(false)
+	const [threeTasksDone, setThreeTasksDone] = useState(false)
+	const [fiveTasksDone, setFiveTasksDone] = useState(false)
+	const [taskBefore12Done, setTaskBefore12Done] = useState(false)
 	// for displaying info about today's tasks
-	const [dailyAchievementModal, setdailyAchievementModal] = useState(false);
-	const [pictureDisplayModal, setPictureDisplayModal] = useState("");
-	const db = getFirestore(FIREBASE_APP);
+	const [dailyAchievementModal, setdailyAchievementModal] = useState(false)
+	const [pictureDisplayModal, setPictureDisplayModal] = useState("")
+	const db = getFirestore(FIREBASE_APP)
 
-	const { theme } = useContext(AuthContext);
-	const currentTheme = (theme === "default" ? "light" : theme) as
-		| "light"
-		| "dark";
+	const { theme } = useContext(AuthContext)
+	const currentTheme = (theme === "default" ? "light" : theme) as  "light" | "dark"
 
 	const checkTasks = async () => {
 		try {
@@ -81,23 +57,23 @@ export default function ProfileScreen() {
 				"stats",
 				todayString,
 				"statsToday"
-			);
-			const tasksStatsSnap = await getDoc(tasksStatsRef);
+			)
+			const tasksStatsSnap = await getDoc(tasksStatsRef)
 			if (!tasksStatsSnap.exists()) {
-				setThreeTasksDone(false);
-				setFiveTasksDone(false);
-				setTaskBefore12Done(false);
+				setThreeTasksDone(false)
+				setFiveTasksDone(false)
+				setTaskBefore12Done(false)
 			} else {
-				const tasksCompleted = tasksStatsSnap.data().tasksCompleted;
+				const tasksCompleted = tasksStatsSnap.data().tasksCompleted
 				if (tasksCompleted >= 3) {
-					setThreeTasksDone(true);
+					setThreeTasksDone(true)
 				}
 				if (tasksCompleted >= 5) {
-					setFiveTasksDone(true);
+					setFiveTasksDone(true)
 				}
-				const firstCompleted = tasksStatsSnap.data().firstCompleted;
+				const firstCompleted = tasksStatsSnap.data().firstCompleted
 				if (firstCompleted <= 12) {
-					setTaskBefore12Done(true);
+					setTaskBefore12Done(true)
 				}
 			}
 
@@ -109,24 +85,24 @@ export default function ProfileScreen() {
 				"stats",
 				todayString,
 				"statsToday"
-			);
-			const treesStatsSnap = await getDoc(treesStatsRef);
+			)
+			const treesStatsSnap = await getDoc(treesStatsRef)
 			if (!treesStatsSnap.exists()) {
-				setOneHourFocusDone(false);
-				setThreeHourFocusDone(false);
+				setOneHourFocusDone(false)
+				setThreeHourFocusDone(false)
 			} else {
-				const timeCompleted = treesStatsSnap.data().todayCompleted;
+				const timeCompleted = treesStatsSnap.data().todayCompleted
 				if (timeCompleted >= 60) {
-					setOneHourFocusDone(true);
+					setOneHourFocusDone(true)
 				}
 				if (timeCompleted >= 180) {
-					setThreeHourFocusDone(true);
+					setThreeHourFocusDone(true)
 				}
 			}
 		} catch (error) {
-			console.log(error);
+			console.log(error)
 		}
-	};
+	}
 	useEffect(() => {
 		try {
 			const listen1 = onSnapshot(
@@ -140,9 +116,9 @@ export default function ProfileScreen() {
 					"statsToday"
 				),
 				(doc) => {
-					checkTasks();
+					checkTasks()
 				}
-			);
+			)
 			const listen2 = onSnapshot(
 				doc(
 					db,
@@ -154,76 +130,76 @@ export default function ProfileScreen() {
 					"statsToday"
 				),
 				(doc) => {
-					checkTasks();
+					checkTasks()
 				}
-			);
+			)
 			return () => {
-				listen1();
-				listen2();
-			};
+				listen1()
+				listen2()
+			}
 		} catch (error) {
-			console.log(error);
+			console.log(error)
 		}
-	});
+	})
 
 	const getOneHourFocusPicture = () => {
 		if (oneHourFocusDone === true) {
-			return images.oneHourFocus;
+			return images.oneHourFocus
 		}
-		return images.oneHourFocusNotDone;
-	};
+		return images.oneHourFocusNotDone
+	}
 	const getThreeHoursFocusPicture = () => {
-		if (threeHourFocusDone) return images.threeHourFocus;
-		return images.threeHourFocusNotDone;
-	};
+		if (threeHourFocusDone) return images.threeHourFocus
+		return images.threeHourFocusNotDone
+	}
 	const getThreeTasksDonePicture = () => {
-		if (threeTasksDone) return images.taskStreak3;
-		return images.taskStreak3NotDone;
-	};
+		if (threeTasksDone) return images.taskStreak3
+		return images.taskStreak3NotDone
+	}
 	const getFiveTasksDonePicture = () => {
-		if (fiveTasksDone) return images.taskStreak5;
-		return images.taskStreak5NotDone;
-	};
+		if (fiveTasksDone) return images.taskStreak5
+		return images.taskStreak5NotDone
+	}
 	const getTaskBefore12DonePicture = () => {
-		if (taskBefore12Done) return images.taskBefore12;
-		return images.taskBefore12NotDone;
-	};
+		if (taskBefore12Done) return images.taskBefore12
+		return images.taskBefore12NotDone
+	}
 	const getPictureForModal = (namePicture: string) => {
-		if (namePicture === "oneHourFocus") return getOneHourFocusPicture();
-		if (namePicture === "threeHourFocus") return getThreeHoursFocusPicture();
-		if (namePicture === "taskStreak3") return getThreeTasksDonePicture();
-		if (namePicture === "taskStreak5") return getFiveTasksDonePicture();
-		if (namePicture === "taskBefore12") return getTaskBefore12DonePicture();
-	};
+		if (namePicture === "oneHourFocus") return getOneHourFocusPicture()
+		if (namePicture === "threeHourFocus") return getThreeHoursFocusPicture()
+		if (namePicture === "taskStreak3") return getThreeTasksDonePicture()
+		if (namePicture === "taskStreak5") return getFiveTasksDonePicture()
+		if (namePicture === "taskBefore12") return getTaskBefore12DonePicture()
+	}
 	const getTextforModal = (namePicture: string) => {
-		if (namePicture === "oneHourFocus") return "Little Oak";
-		if (namePicture === "threeHourFocus") return "Deep Roots";
-		if (namePicture === "taskStreak3") return "Mini Checklist";
-		if (namePicture === "taskStreak5") return "Task Master";
-		if (namePicture === "taskBefore12") return "Early Bird";
-	};
+		if (namePicture === "oneHourFocus") return "Little Oak"
+		if (namePicture === "threeHourFocus") return "Deep Roots"
+		if (namePicture === "taskStreak3") return "Mini Checklist"
+		if (namePicture === "taskStreak5") return "Task Master"
+		if (namePicture === "taskBefore12") return "Early Bird"
+	}
 	const getDescriptionModal = (namePicture: string) => {
 		if (namePicture === "oneHourFocus") {
-			if (oneHourFocusDone) return "You earned this badge";
-			return "Focus for one hour to earn this badge";
+			if (oneHourFocusDone) return "You earned this badge"
+			return "Focus for one hour to earn this badge"
 		}
 		if (namePicture === "threeHourFocus") {
-			if (oneHourFocusDone) return "You earned this badge";
-			return "Focus for three hours to earn this badge";
+			if (oneHourFocusDone) return "You earned this badge"
+			return "Focus for three hours to earn this badge"
 		}
 		if (namePicture === "taskStreak3") {
-			if (oneHourFocusDone) return "You earned this badge";
-			return "Complete 3 tasks today to earn this badge";
+			if (oneHourFocusDone) return "You earned this badge"
+			return "Complete 3 tasks today to earn this badge"
 		}
 		if (namePicture === "taskStreak5") {
-			if (oneHourFocusDone) return "You earned this badge";
-			return "Complete 5 tasks today to earn this badge";
+			if (oneHourFocusDone) return "You earned this badge"
+			return "Complete 5 tasks today to earn this badge"
 		}
 		if (namePicture === "taskBefore12") {
-			if (taskBefore12Done) return "You earned this badge";
-			return "Complete a task before 12AM to earn this badge";
+			if (taskBefore12Done) return "You earned this badge"
+			return "Complete a task before 12AM to earn this badge"
 		}
-	};
+	}
 	return (
 		<SafeAreaProvider>
 			<SafeAreaView
@@ -240,8 +216,7 @@ export default function ProfileScreen() {
 						<View style={[styles.cardRow, { marginTop: 5 }]}>
 							<Button
 								onPress={() => {
-									setVisible(true);
-									console.log("apas");
+									setVisible(true)
 								}}
 							>
 								<Text style={styles.name}>{authState.displayName} </Text>
@@ -271,8 +246,8 @@ export default function ProfileScreen() {
 
 							<Button
 								onPress={() => {
-									setPictureDisplayModal("oneHourFocus");
-									setdailyAchievementModal(true);
+									setPictureDisplayModal("oneHourFocus")
+									setdailyAchievementModal(true)
 								}}
 							>
 								<ImageBackground
@@ -289,8 +264,8 @@ export default function ProfileScreen() {
 							</Button>
 							<Button
 								onPress={() => {
-									setPictureDisplayModal("threeHourFocus");
-									setdailyAchievementModal(true);
+									setPictureDisplayModal("threeHourFocus")
+									setdailyAchievementModal(true)
 								}}
 							>
 								<ImageBackground
@@ -307,8 +282,8 @@ export default function ProfileScreen() {
 							</Button>
 							<Button
 								onPress={() => {
-									setPictureDisplayModal("taskStreak3");
-									setdailyAchievementModal(true);
+									setPictureDisplayModal("taskStreak3")
+									setdailyAchievementModal(true)
 								}}
 							>
 								<ImageBackground
@@ -325,8 +300,8 @@ export default function ProfileScreen() {
 							</Button>
 							<Button
 								onPress={() => {
-									setPictureDisplayModal("taskStreak5");
-									setdailyAchievementModal(true);
+									setPictureDisplayModal("taskStreak5")
+									setdailyAchievementModal(true)
 								}}
 							>
 								<ImageBackground
@@ -343,8 +318,8 @@ export default function ProfileScreen() {
 							</Button>
 							<Button
 								onPress={() => {
-									setPictureDisplayModal("taskBefore12");
-									setdailyAchievementModal(true);
+									setPictureDisplayModal("taskBefore12")
+									setdailyAchievementModal(true)
 								}}
 							>
 								<ImageBackground
@@ -366,7 +341,7 @@ export default function ProfileScreen() {
 				{/* other pages */}
 				<View style={{ flex: 1 }}>
 					<View style={{ flex: 1, marginVertical: 2 }}>
-					<Button
+						<Button
 							icon={() => (
 								<MaterialCommunityIcons
 									name="logout"
@@ -384,7 +359,7 @@ export default function ProfileScreen() {
 								Log out
 							</Text>
 						</Button>
-						</View>
+					</View>
 					<View style={{ flex: 1, marginVertical: 2 }}>
 						<Button
 							icon={() => (
@@ -395,7 +370,7 @@ export default function ProfileScreen() {
 								/>
 							)}
 							onPress={() => {
-								router.push("../screens/friends");
+								router.push("../screens/friends")
 							}}
 						>
 							<Text
@@ -419,7 +394,7 @@ export default function ProfileScreen() {
 								/>
 							)}
 							onPress={() => {
-								router.push("../screens/shop");
+								router.push("../screens/shop")
 							}}
 						>
 							<Text
@@ -441,7 +416,7 @@ export default function ProfileScreen() {
 								/>
 							)}
 							onPress={() => {
-								router.push("../screens/achievements");
+								router.push("../screens/achievements")
 							}}
 						>
 							<Text
@@ -463,7 +438,7 @@ export default function ProfileScreen() {
 								/>
 							)}
 							onPress={() => {
-								router.push("../screens/stats");
+								router.push("../screens/stats")
 							}}
 						>
 							<Text
@@ -485,7 +460,7 @@ export default function ProfileScreen() {
 								/>
 							)}
 							onPress={() => {
-								router.push("../screens/theme");
+								router.push("../screens/theme")
 							}}
 						>
 							<Text
@@ -519,12 +494,12 @@ export default function ProfileScreen() {
 										{
 											text: "Confirm",
 											onPress: () => {
-												console.log("OK Pressed");
-												authState.deleteAccount();
+												console.log("OK Pressed")
+												authState.deleteAccount()
 											},
 										},
 									]
-								);
+								)
 							}}
 						>
 							<Text
@@ -562,7 +537,7 @@ export default function ProfileScreen() {
 					transparent={true}
 					visible={dailyAchievementModal}
 					onRequestClose={() => {
-						setdailyAchievementModal(!dailyAchievementModal);
+						setdailyAchievementModal(!dailyAchievementModal)
 					}}
 				>
 					<View
@@ -602,7 +577,7 @@ export default function ProfileScreen() {
 							<Pressable
 								style={[styles.button, styles.buttonClose]}
 								onPress={() => {
-									setdailyAchievementModal(!dailyAchievementModal);
+									setdailyAchievementModal(!dailyAchievementModal)
 								}}
 							>
 								<Text style={styles.textStyle}>Dismiss</Text>
@@ -612,5 +587,5 @@ export default function ProfileScreen() {
 				</Modal>
 			</SafeAreaView>
 		</SafeAreaProvider>
-	);
+	)
 }

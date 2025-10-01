@@ -1,12 +1,11 @@
 import * as React from 'react'
 import { View } from 'react-native'
 import { RadioButton, Text } from 'react-native-paper'
-import styles from '../../utils/styles'
 import { Colors } from '../../utils/colors'
 import { useState, useEffect, useContext } from 'react' 
 import { MaterialCommunityIcons } from "@expo/vector-icons"
 import { AuthContext } from "../../utils/authContext"
-
+import styles from '../../utils/styles'
 export default function Theme() {
 	const [value, setValue] = useState('default')
 	const {theme, chooseTheme} = useContext(AuthContext)	  

@@ -1,16 +1,18 @@
 import { View, Text, FlatList, Alert } from "react-native"
 import { Button } from "react-native-paper"
-import styles from '../../utils/styles'
-import images from "../../utils/images"
-import { Colors } from '../../utils/colors'
-
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context'
 import { AuthContext } from "../../utils/authContext" 
 import React, { useState, useContext, useEffect } from "react"
-
 import { FIREBASE_APP } from "../../../firebaseConfig"
-import { collection, doc, getFirestore,getDoc, updateDoc,increment, setDoc, getDocs, query, onSnapshot, deleteDoc } from 'firebase/firestore'
+import {
+    collection, doc, getFirestore, getDoc, updateDoc, increment,
+    setDoc, getDocs, query, onSnapshot, deleteDoc
+} from 'firebase/firestore'
 import { ImageBackground } from "expo-image"
+
+import styles from '../../utils/styles'
+import images from "../../utils/images"
+import { Colors } from '../../utils/colors'
 
 function getTreePicture(label: string) {
     // trees
