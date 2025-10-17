@@ -207,26 +207,11 @@ export default function ProfileScreen() {
 			>
 				<View style={{ backgroundColor: Colors[currentTheme].header }}>
 					<View style={styles.headerContent}>
-						{/* <TouchableOpacity> */}
 						<Avatar.Image
 							size={100}
 							source={images.icon}
 						/>
-						{/* </TouchableOpacity> */}
-						<View style={[styles.cardRow, { marginTop: 5 }]}>
-							<Button
-								onPress={() => {
-									setVisible(true)
-								}}
-							>
-								<Text style={styles.name}>{authState.displayName} </Text>
-								<MaterialCommunityIcons
-									name="lead-pencil"
-									size={20}
-									color="black"
-								/>
-							</Button>
-						</View>
+						<Text style={styles.name}>{authState.displayName} </Text>
 						<Text style={styles.userInfo}>{authState.email} </Text>
 						<View
 							style={{

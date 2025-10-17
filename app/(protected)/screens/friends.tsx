@@ -1,5 +1,5 @@
-import { View, Text, Modal, Pressable } from "react-native"
-import { Button, TextInput, List, Surface, IconButton } from "react-native-paper"
+import { View, Text, TextInput, Modal, Pressable } from "react-native"
+import { Button, List, Surface, IconButton } from "react-native-paper"
 import { FIREBASE_APP } from "../../../firebaseConfig"
 import { collection, doc, getFirestore, updateDoc, increment, setDoc, getDocs, query, onSnapshot, deleteDoc, getDoc } from 'firebase/firestore'
 import { AuthContext } from "../../utils/authContext"
@@ -106,7 +106,6 @@ export default function Friends() {
                     } as Friend
                 })
                 for (let i = 0; i < items.length; i++) {
-                    console.log("friend:", items[i].username)
                     const friendDoc = doc(db, "users", items[i].username)
                     const friendDocSnap = await getDoc(friendDoc)
                     if (friendDocSnap.exists()) {
@@ -119,7 +118,6 @@ export default function Friends() {
                     }
                 }
                 setFriends(items)
-                console.log("friends:", friends)
                 // achievements
                 if (friends.length === 1) {
                     const badgeFriendDoc = doc(db, "users", authState.displayName, "achievements", "notDone", 'notDoneList', "ImakingFriends")
@@ -354,9 +352,13 @@ export default function Friends() {
                                                 backgroundColor: Colors[currentTheme].backgroundColor,
                                                 flex: 1,
                                                 alignItems: "center",
-                                                overflow: 'hidden'
+                                                overflow: 'hidden',
+                                                borderTopWidth: 10, 
+                                                borderColor: Colors[currentTheme].backgroundColor
                                             }}>
-                                                <Text style={{ color: Colors[currentTheme].colorTitleTab }}>
+                                                <Text style={{
+                                                    color: Colors[currentTheme].colorTitleTab
+                                                }}>
                                                     No requests sent</Text>
                                             </View>
                                         ) : (
@@ -411,7 +413,9 @@ export default function Friends() {
                                             backgroundColor: Colors[currentTheme].backgroundColor,
                                             flex: 1,
                                             alignItems: "center",
-                                            overflow: 'hidden'
+                                            overflow: 'hidden',
+                                            borderTopWidth: 10, 
+                                            borderColor: Colors[currentTheme].backgroundColor
                                         }}>
                                             <Text style={{
                                                 color: Colors[currentTheme].colorTitleTab
@@ -448,17 +452,26 @@ export default function Friends() {
                 </View>
 
                 {/* adaug prieteni */}
-                <Button style={[styles.loginButton, {
-                    backgroundColor: Colors[currentTheme].addTaskButton
-                }]}
-                    icon={() =>
-                        <MaterialCommunityIcons name="playlist-plus" size={24} color={Colors[currentTheme].addTask} />}
-                    onPress={() => { setAddFriend(!addFriend) }}>
-                    <Text style={{ color: Colors[currentTheme].addTask }}> Add new friend</Text>
-                </Button>
+           
+                    <Button style={[styles.loginButton, {
+                        backgroundColor: Colors[currentTheme].addTaskButton
+                    }]}
+                        icon={() =>
+                            <MaterialCommunityIcons name="playlist-plus" size={24} color={Colors[currentTheme].addTask} />}
+                        onPress={() => { setAddFriend(!addFriend) }}>
+                        <Text style={{ color: Colors[currentTheme].addTask }}> Add new friend</Text>
+                    </Button>
+             
                 {addFriend && (
                     <View>
-                        <TextInput style={styles.input} mode="flat" label="username" onChangeText={setFriendUsername}></TextInput>
+                        <TextInput
+                            style={[styles.input,
+                                { backgroundColor: Colors[currentTheme].inputBackgroundColor }]}
+                            placeholder="username"
+                            onChangeText={setFriendUsername}
+                            placeholderTextColor={Colors[currentTheme].shadowColor}
+                        >
+                        </TextInput>
                         <Button style={[styles.loginButton, {
                             backgroundColor: Colors[currentTheme].addTaskButton
                         }]}

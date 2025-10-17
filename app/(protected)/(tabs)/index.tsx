@@ -495,30 +495,33 @@ export default function TodoScreen() {
                             style={[styles.input,
                             { backgroundColor: Colors[currentTheme].inputBackgroundColor }]}
                             placeholder="title"
-                            onChangeText={setTitle} />
+                            onChangeText={setTitle}
+                            placeholderTextColor={Colors[currentTheme].shadowColor}
+                        />
                         <TextInput
                             style={[styles.input,
                             { backgroundColor: Colors[currentTheme].inputBackgroundColor }]}
                             placeholder="description"
-                            onChangeText={setDescription} />
+                            onChangeText={setDescription}
+                            placeholderTextColor={Colors[currentTheme].shadowColor}
+                            
+                        />
 
                          <SegmentedButtons style={{
                             alignContent: "center",
                             width: "80%",
                             alignSelf: "center",
-                            height: 50,
-                            
+                            height: 50,  
+                            borderColor: "#000000ff"
                         }}
-                            
                             value={priority}
                             onValueChange={setPriority}
                             theme={{
                                 colors: {
                                     primary: 'green',
-                                    SecondaryContainer: "black",
-                                    onSecondaryContainer: "green",
-                                    onSurface: "orange",
-                                    borderColor: "red"
+                                    secondaryContainer: '#7be08cff',
+                                    onSecondaryContainer: Colors[currentTheme].addTask,
+                                    // onSurface: "orange",
                                 }
                             }}
                             buttons={[

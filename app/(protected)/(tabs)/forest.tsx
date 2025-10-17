@@ -354,6 +354,7 @@ export default function ForestScreen() {
 	function setDurations(duration: string) {
 		setInitialDuration(duration)
 		setDuration(duration)
+		setWasStopped(false)
 	}
 	const renderTime =
 		({ remainingTime }: { remainingTime: number }) => {
@@ -501,6 +502,8 @@ export default function ForestScreen() {
 	}
 	const treeDeath = async () => {
 		try {
+			setKey(key + 1)
+			setDurations("60")
 			const countRef = doc(db, "users", authState.displayName, "trees", "stats")
 			const countSnap = await getDoc(countRef)
 			if (!countSnap.exists()) {
@@ -626,10 +629,7 @@ export default function ForestScreen() {
 				{/* display today's trees  */}
 				{!plantIt && (<View>
 					{showForest && (
-						<View  style={{
-							borderWidth: 2, borderColor: "blue",
-							// justifyContent: 'center', alignItems: 'center'
-						}}>
+						<View>
 							<View style={[
 								styles.box,
 								{
@@ -652,8 +652,8 @@ export default function ForestScreen() {
 													{ scale: getPictureSize(tree.treeName) }
 												],
 												position: "absolute",
-												top: tree.positionY + containerWidth/ 5 , //90 * getPictureSize(tree.treeName) - containerHeight / 5,
-												left:tree.positionX + containerHeight/5//- 90 * getPictureSize(tree.treeName)+ containerHeight / 5
+												top: tree.positionY + containerWidth / 5 , //90 * getPictureSize(tree.treeName) - containerHeight / 5,
+												left:tree.positionX + containerHeight / 5//- 90 * getPictureSize(tree.treeName)+ containerHeight / 5
 											}}
 											resizeMode="stretch"
 											/>
@@ -711,6 +711,13 @@ export default function ForestScreen() {
 												alignSelf: "center",
 												height: 100,
 											}}
+												theme={{
+														colors: {
+														primary: 'green',
+														secondaryContainer: '#7be08cff',
+														onSecondaryContainer: Colors[currentTheme].addTask,
+													}
+												}}
 												value={choiceTree}
 												onValueChange={setChoiceTree}
 												buttons={treesAvailable.map((tree) => (
@@ -749,6 +756,13 @@ export default function ForestScreen() {
 												width: "90%",
 												alignSelf: "center"
 											}}
+												theme={{
+														colors: {
+														primary: 'green',
+														secondaryContainer: '#7be08cff',
+														onSecondaryContainer: Colors[currentTheme].addTask,
+													}
+												}}
 												value={duration}
 												onValueChange={setDurations}
 												buttons={[
@@ -786,7 +800,6 @@ export default function ForestScreen() {
 								</CountdownCircleTimer>
 							</View>
 
-
 							{!isPlaying &&
 								(<Button style={[
 									styles.loginButton, {
@@ -798,7 +811,12 @@ export default function ForestScreen() {
 									<Text style={{ color: Colors[currentTheme].addTask }}>Plant Tree</Text>
 								</Button>)}
 							{isPlaying && (
-								<Button style={styles.loginButton} onPress={function () {
+								<Button style={[
+										styles.loginButton, {
+											backgroundColor: Colors[currentTheme].addTaskButton
+									}]}
+									onPress={
+										function () {
 									Alert.alert('Are you sure you want to stop?', 'Your tree will not grow fully', [
 										{
 											text: 'Cancel',
@@ -820,7 +838,7 @@ export default function ForestScreen() {
 										},
 									])
 								}}>
-									<Text style={styles.startText}>Stop</Text>
+									<Text  style={{ color: Colors[currentTheme].addTask }}>Stop</Text>
 								</Button>
 							)}
 						</ScrollView>
@@ -858,8 +876,10 @@ export default function ForestScreen() {
 								<Animated.View
 									style={[
 										animatedStyles, {
-										height: containerHeight / 5, width: containerWidth  / 5,
-										borderWidth: 2, borderColor: "red",
+										height: containerHeight / 5,
+										width: containerWidth / 5,
+										borderWidth: 2,
+										borderColor: "red",
 										backgroundColor: "rgba(255,0,0,0.3)",
 									}]}
 
