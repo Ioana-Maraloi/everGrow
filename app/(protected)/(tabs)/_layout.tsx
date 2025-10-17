@@ -90,13 +90,13 @@ export default function TabsLayout() {
 						<MaterialCommunityIcons
 							name="currency-usd"
 							size={18}
-							color={"#66ff00ff"}>
+							color={"#3f8a1aff"}>
 						</MaterialCommunityIcons>
 					</View>
 				),
 				headerLeft: () => (
 					<View style = {styles.moneyDisplay}>
-						<Text style={styles.streakText}>{streak}</Text>
+						<Text style={styles.moneyText}>{streak}</Text>
 						<MaterialCommunityIcons name = "fire" size={18}
 							color={"#ff9800"}>
 						</MaterialCommunityIcons>
