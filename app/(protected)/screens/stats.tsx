@@ -27,7 +27,7 @@ export default function Stats() {
 
     const [past7Days, setpast7Days] = useState<string[]>([])
     const [timeFocusedPast7Days, setTimeFocusedPast7Days] = useState<number[]>([0, 0, 0, 0, 0, 0, 0])
-    const [past90DaysCommits, setPast90DaysCommits] = useState<commitData[]>([])
+    const [past30DaysCommits, setpast30DaysCommits] = useState<commitData[]>([])
     const data = [
         {
             name: "trees planted",
@@ -52,7 +52,7 @@ export default function Stats() {
             }
         ],
     }
-    const commitsData = past90DaysCommits
+    const commitsData = past30DaysCommits
 
     function getYesterday(dateString: string): string {
         const [day, month, year] = dateString.split("-").map(Number)
@@ -126,8 +126,8 @@ export default function Stats() {
                 countToday = todayCommitsSnap.data().tasksCompleted
 
             }
-            let past90DaysCommitsVect: commitData[] = []
-            past90DaysCommitsVect.push({
+            let past30DaysCommitsVect: commitData[] = []
+            past30DaysCommitsVect.push({
                 date: todayStringRev,
                 count: countToday
             })
@@ -145,13 +145,13 @@ export default function Stats() {
                 const month = yesterdayStringCommit.split("-")[1]
                 const year = yesterdayStringCommit.split("-")[2]
                 const yesterdayCommitReverseString = year + "-" + month + "-" + day
-                past90DaysCommitsVect.push({
+                past30DaysCommitsVect.push({
                     date: yesterdayCommitReverseString,
                     count: count
                 })
                 dayStringCommit = yesterdayStringCommit
             }
-            setPast90DaysCommits(past90DaysCommitsVect)
+            setpast30DaysCommits(past30DaysCommitsVect)
         } catch (error) {
             console.log(error)
         }
@@ -182,9 +182,7 @@ export default function Stats() {
         backgroundGradientTo: "#E7EFC7",
         backgroundGradientToOpacity: 0.5,
         color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
-        strokeWidth: 2, // optional, default 3
-        // barPercentage: 0.5,
-        // useShadowColorFromDataset: false // optional
+        strokeWidth: 2, 
     }
     const chartConfigLine = {
         backgroundGradientFromOpacity: 0.5,
@@ -254,7 +252,7 @@ export default function Stats() {
                 textAlign: "center",
                 fontSize: 16,
                 color:  Colors[currentTheme].colorTitleTab
-            }}>Daily task activity over the past 90 days</Text>
+            }}>Daily task activity over the past 30 days</Text>
             <ContributionGraph
                 values={commitsData}
                 endDate={new Date()}

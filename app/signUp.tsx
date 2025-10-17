@@ -1,7 +1,6 @@
-import { View, Text, TouchableOpacity } from "react-native"
+import { View, Text, TouchableOpacity, TextInput } from "react-native"
 import {createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth"
 import {useState, useContext} from "react"
-import {TextInput} from "react-native-paper"
 import { FIREBASE_AUTH, FIREBASE_APP } from "../firebaseConfig"
 import { doc, getFirestore, setDoc } from 'firebase/firestore'
 import { AuthContext } from "./utils/authContext"
@@ -179,8 +178,7 @@ export default function SignUpScreen() {
 			<Text style={[styles.title,
 				{ color: Colors[currentTheme].title }]}>Create an account</Text>
 			<TextInput
-				mode="flat"
-				label="Email"
+				placeholder="Email"
 				placeholderTextColor={Colors[currentTheme].shadowColor}
 				value={email}
 				onChangeText={(text) => setEmail(text)}
@@ -188,8 +186,7 @@ export default function SignUpScreen() {
 				{ backgroundColor: Colors[currentTheme].inputBackgroundColor }]}
 			/>
 			<TextInput
-				mode="flat"
-				label="Password"
+				placeholder="Password"
 				placeholderTextColor={Colors[currentTheme].shadowColor}
 				value={password}
 				onChangeText={(text) => setPassword(text)}
@@ -198,8 +195,7 @@ export default function SignUpScreen() {
 				{ backgroundColor: Colors[currentTheme].inputBackgroundColor }]}
 			/>
 			<TextInput
-				mode="flat"
-				label="Reconfirm Password"
+				placeholder="Reconfirm Password"
 				placeholderTextColor={Colors[currentTheme].shadowColor}
 				value={confirmPassword}
 				onChangeText={(text) => setConfirmPassword(text)}

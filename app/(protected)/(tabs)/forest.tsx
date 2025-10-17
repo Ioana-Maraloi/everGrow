@@ -151,14 +151,6 @@ function getTreePicture(label: string, remainingTime: number, startTime: number)
 		return images.treeModel3Red5
 	}
 	if (label === "redMushroom") {
-		// if (remainingTime === -1 && startTime === -1)
-		// 	return images.redMushroom
-		// if (startTime - remainingTime < startTime / 3) {
-		// 	return images.redMushroom
-		// }
-		// if (startTime - remainingTime < 2 * startTime / 3) {
-		// 	return images.redMushroom
-		// }
 		return images.redMushroom
 	}
 	if (label === "blueMushroom") {
@@ -221,6 +213,12 @@ function getBadgePicture(label: string) {
 interface Tree {
 	name: string
 }
+
+interface TreeLocation {
+	treeName: string,
+	positionX: number,
+	positionY: number
+}
 export default function ForestScreen() {
 	// show choices for tree and time
 	const [showTreesOptionssOptions, setshowTreesOptionssOptions] = useState(false)
@@ -244,7 +242,7 @@ export default function ForestScreen() {
 
 	const [displayBadge, setDisplayBadge] = useState("AfirstSeed")
 	const [xp, SetXp] = useState(0)
-
+	const [treeId, setTreeId] = useState(0)
 
 
 	const { theme } = useContext(AuthContext)
@@ -260,41 +258,28 @@ export default function ForestScreen() {
 	const translateY = useSharedValue(0)
 	let square = 50
 	const handlePressRight = () => {
-		console.log(translateX.value, translateY.value)
-		if (translateX.value + 20 > containerWidth /2 - square) {
-			console.log("out of bounds")
+		if (translateX.value + containerWidth / 10> containerWidth * 0.6 - containerWidth / 5) {
 		} else {
-			translateX.value = withSpring(translateX.value + 20)
-			// console.log(translateX.value, translateY.value)
+			translateX.value = withSpring(translateX.value + containerWidth / 5)
 		}
 	}
 	const handlePressLeft = () => {
-		console.log(translateX.value, translateY.value)
-		if (translateX.value - 20 < - containerWidth/2 + square) {
-			console.log("out of bounds")
+		if (translateX.value - containerWidth / 10 < - containerWidth * 0.6 + containerWidth  / 5) {
 		} else {
-			translateX.value = withSpring(translateX.value - 20)
-			// console.log(translateX.value, translateY.value)
+			translateX.value = withSpring(translateX.value - containerWidth / 5)
 		}
 	}
 	const handlePressUp = () => {
-		console.log(translateX.value, translateY.value)
-		if (translateY.value - 20 < containerHeight/2 + square) {
-			console.log("out of bounds")
+		if (translateY.value - containerHeight  / 10 < - containerHeight * 0.6 + containerHeight / 5) {
 		} else {
-			translateY.value = withSpring(translateY.value - 20)
-			// console.log(translateX.value, translateY.value)
+			translateY.value = withSpring(translateY.value - containerHeight / 5)
 		}
 
 	}
 	const handlePressDown = () => {
-					console.log(translateX.value, translateY.value)
-
-		if (translateY.value + 20 > containerHeight - square) {
-			console.log("out of bounds")
+		if (translateY.value + containerWidth / 10 > containerHeight * 0.5 - containerHeight / 5) {
 		} else {
-			translateY.value = withSpring(translateY.value + 20)
-			// console.log(translateX.value, translateY.value)
+			translateY.value = withSpring(translateY.value + containerHeight / 5)
 		}
 	}
 
@@ -302,6 +287,34 @@ export default function ForestScreen() {
 	const db = getFirestore(FIREBASE_APP)
 	const authState = useContext(AuthContext)
 	const [treesAvailable, setTreesAvailable] = useState<Tree[]>([])
+
+	
+
+	const [treeLocations, setTreeLocations] = useState<TreeLocation[]>([])
+	
+	const dateToday = new Date().getDate()
+	const monthToday = new Date().getMonth() + 1
+	const yearToday = new Date().getFullYear()
+	const todayString = dateToday.toString().padStart(2, "0") + "-" + monthToday.toString().padStart(2, "0") + "-" + yearToday.toString().padStart(2, "0")
+
+	const getTreeLocations = async () => {
+		try {
+			const treesList = await getDocs(collection(db, "users", authState.displayName, "trees", "stats", todayString, "statsToday","trees"))
+			if (!treesList.empty) {
+				const items: TreeLocation[] = treesList.docs.map(doc => {
+					const data = doc.data()
+					return {
+						treeName: data.treeName,
+						positionX: data.positionX,
+						positionY: data.positionY
+					} as TreeLocation
+				})
+				setTreeLocations(items)
+			}
+		} catch (error) {
+			console.log(error)
+		}
+	}
 	const getTrees = async () => {
 		try {
 			const treesList = await getDocs(collection(db, "users", authState.displayName, "trees", "ownedTrees", 'ownedTreesList'))
@@ -324,8 +337,14 @@ export default function ForestScreen() {
 			const listenTrees = onSnapshot(q, (snapshot) => {
 				getTrees()
 			})
+
+			const q2 = query(collection(db, "users", authState.displayName, "trees", "stats", todayString, "statsToday","trees"))
+			const listenTrees2 = onSnapshot(q, (snapshot) => {
+				getTreeLocations()
+			})
 			return () => {
 				listenTrees()
+				listenTrees2()
 			}
 		}
 		catch (error) {
@@ -555,16 +574,30 @@ export default function ForestScreen() {
 					timeFocusedToday: duration,
 				}
 				await setDoc(todayRef, statsInfo)
+				setTreeId(1)
 			} else {
 				await updateDoc(todayRef,
 					{
 						treesPlantedToday: increment(1),
 						timeFocusedToday: increment(duration)
 					})
+				setTreeId(treeId + 1)
 			}
+	
 		} catch (error) {
 			console.log(error)
 		}
+	}
+	const updatePositions = async () => {
+	
+		const treeRef = doc(db, "users", authState.displayName, "trees", "stats", todayString, "statsToday", "trees", "tree" + treeId)
+		await setDoc(treeRef,
+			{
+				positionX: translateX.value,
+				positionY: translateY.value,
+				treeName: choiceTree
+			})
+		console.log("updates\n")
 	}
 	function formatCamelCase(str: string): string {
 		const withoutPrefix = str.slice(1)
@@ -593,7 +626,10 @@ export default function ForestScreen() {
 				{/* display today's trees  */}
 				{!plantIt && (<View>
 					{showForest && (
-						<View>
+						<View  style={{
+							borderWidth: 2, borderColor: "blue",
+							// justifyContent: 'center', alignItems: 'center'
+						}}>
 							<View style={[
 								styles.box,
 								{
@@ -601,7 +637,31 @@ export default function ForestScreen() {
 									transform: [{ rotateX: '60deg' }, { rotateZ: '40deg' }],
 								},
 							]}>
+								{treeLocations.length === 0 ? (<View></View>) : 
+								(treeLocations?.map((tree, key) => (
+									
+										<Image key={key} source={getTreePicture(tree.treeName, -1, -1)}
+											style={{												
+												width: 90, height: 90,
+												justifyContent: "center",
+												alignItems: "center",
+												transform: [
+													// { rotateX: "-10deg" },
+													{ rotateZ: '-40deg' },
+													// {rotateY:'10deg'},
+													{ scale: getPictureSize(tree.treeName) }
+												],
+												position: "absolute",
+												top: tree.positionY + containerWidth/ 5 , //90 * getPictureSize(tree.treeName) - containerHeight / 5,
+												left:tree.positionX + containerHeight/5//- 90 * getPictureSize(tree.treeName)+ containerHeight / 5
+											}}
+											resizeMode="stretch"
+											/>
+									
+							
+								)))}
 							</View>
+							
 							<Button style={[
 								styles.loginButton, {
 									backgroundColor: Colors[currentTheme].addTaskButton
@@ -661,9 +721,7 @@ export default function ForestScreen() {
 																style={{ width: 90, height: 90, justifyContent: "center", alignItems: "center", transform: [{ scale: getPictureSize(tree.name) }] }}
 																resizeMode="stretch"
 															/>
-
 														}
-
 													}))
 												}
 											/>
@@ -718,7 +776,7 @@ export default function ForestScreen() {
 									key={key}
 									isPlaying={isPlaying}
 									duration={parseInt(duration)}
-									colors={['#004777', '#F7B801', '#A30000', '#A30000']}
+									colors={['#088308ff', '#2bad2bff', '#64c464ff', '#77d377ff']}
 									onComplete={
 										() => {
 											completedPlant(parseInt(duration), choiceTree)
@@ -785,12 +843,11 @@ export default function ForestScreen() {
 								const { width, height } = event.nativeEvent.layout
 								setContainerWidth(width)
 								setContainerHeight(height)
-								console.log("Container size:", width, height)
+
 							}}
 								style={[
 								styles.box,
 								{
-									// alignContent: "center", alignSelf: "center",
 									transform: [{ rotateX: '60deg' }, { rotateZ: '40deg' }],
 								},
 									, {
@@ -798,7 +855,15 @@ export default function ForestScreen() {
 										justifyContent: 'center', alignItems: 'center',
 									overflow: 'hidden',}
 							]}>
-								<Animated.View style={[styles.box2, animatedStyles]} />
+								<Animated.View
+									style={[
+										animatedStyles, {
+										height: containerHeight / 5, width: containerWidth  / 5,
+										borderWidth: 2, borderColor: "red",
+										backgroundColor: "rgba(255,0,0,0.3)",
+									}]}
+
+								 />
 
 							</View>
 						</View>
@@ -808,20 +873,28 @@ export default function ForestScreen() {
 							width: 150,
 							height: 150,
 							alignSelf: 'center',
-							backgroundColor: 'lightgrey',
+							// backgroundColor: 'lightgrey',
 							overflow: 'hidden',
 							justifyContent: 'center',
 							alignItems: 'center',
 						}}>
 
-
 							<TouchableOpacity style={{ marginBottom: 20 }} onPress={handlePressUp}>
 								<MaterialCommunityIcons name="arrow-up-thick" size={30} color={Colors[currentTheme].addTask} />
 							</TouchableOpacity>
-							<View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20, width: 100 }}>
+							<View style={{ flexDirection: 'row', justifyContent: 'space-evenly', marginBottom: 20, width: 100 }}>
 								<TouchableOpacity onPress={handlePressLeft}>
 									<MaterialCommunityIcons name="arrow-left-thick" size={30} color={Colors[currentTheme].addTask} />
 								</TouchableOpacity>
+								<TouchableOpacity style={{
+									alignItems: 'center', justifyContent: 'center',
+									
+								}}
+									onPress={() => { setPlantIt(false), updatePositions() }}>
+								<View>
+									<Text style = {{ fontSize:20, alignItems:"center", justifyContent: 'center'}}>Plant!</Text>
+								</View>
+							</TouchableOpacity>
 								<TouchableOpacity onPress={handlePressRight}>
 									<MaterialCommunityIcons name="arrow-right-thick" size={30} color={Colors[currentTheme].addTask} />
 								</TouchableOpacity>
@@ -829,11 +902,7 @@ export default function ForestScreen() {
 							<TouchableOpacity onPress={handlePressDown}>
 								<MaterialCommunityIcons name="arrow-down-thick" size={30} color={Colors[currentTheme].addTask} />
 							</TouchableOpacity>
-							<TouchableOpacity onPress={() => { setPlantIt(false) }}>
-								<View>
-									<Text>Plant it</Text>
-								</View>
-							</TouchableOpacity>
+							
 						</View>
 					</View>)}
 

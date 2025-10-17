@@ -1,8 +1,8 @@
-import { Button, Surface, TextInput, SegmentedButtons } from 'react-native-paper'
+import { Button, Surface, SegmentedButtons } from 'react-native-paper'
 import { FIREBASE_APP } from "../../../firebaseConfig"
 import React, { useState, useRef, useContext, useEffect } from 'react'
 import { AuthContext } from "../../utils/authContext"
-import { View, Text, Modal, Pressable } from 'react-native'
+import { View, Text, Modal, Pressable, TextInput } from 'react-native'
 
 import { ImageBackground } from "expo-image"
 import {
@@ -10,9 +10,10 @@ import {
     query, where, onSnapshot, deleteDoc, updateDoc, increment
 } from 'firebase/firestore'
 import { ScrollView, Swipeable } from "react-native-gesture-handler"
-import { MaterialCommunityIcons } from "@expo/vector-icons"
+import { MaterialCommunityIcons, MaterialIcons} from "@expo/vector-icons"
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context'
+
 
 import styles from '../../utils/styles'
 import images from "../../utils/images"
@@ -243,6 +244,14 @@ export default function TodoScreen() {
             const items: Todo[] = todosSnapshot.docs.map(doc => ({
                 ...doc.data()
             })) as Todo[]
+            items.sort((a, b) => {
+                if (a.priority === b.priority) return 0
+                if (a.priority === "High") return -1
+                if (b.priority === "High") return 1
+                if (a.priority === 'Medium') return -1
+                if(b.priority === 'Medium') return 1
+                return 1
+            })
             setTodos(items)
 
         } catch (error) {
@@ -485,28 +494,38 @@ export default function TodoScreen() {
                         <TextInput
                             style={[styles.input,
                             { backgroundColor: Colors[currentTheme].inputBackgroundColor }]}
-                            mode="flat"
-                            label="title"
+                            placeholder="title"
                             onChangeText={setTitle} />
                         <TextInput
                             style={[styles.input,
                             { backgroundColor: Colors[currentTheme].inputBackgroundColor }]}
-                            mode="flat"
-                            label="description"
+                            placeholder="description"
                             onChangeText={setDescription} />
 
-                        <SegmentedButtons style={{
+                         <SegmentedButtons style={{
                             alignContent: "center",
                             width: "80%",
                             alignSelf: "center",
                             height: 50,
+                            
                         }}
+                            
                             value={priority}
                             onValueChange={setPriority}
+                            theme={{
+                                colors: {
+                                    primary: 'green',
+                                    SecondaryContainer: "black",
+                                    onSecondaryContainer: "green",
+                                    onSurface: "orange",
+                                    borderColor: "red"
+                                }
+                            }}
                             buttons={[
                                 {
                                     value: "Low",
-                                    label: "Low"
+                                    label: "Low",
+                                    checkedColor: "green"
                                 },
 
                                 {
@@ -515,9 +534,13 @@ export default function TodoScreen() {
                                 },
                                 {
                                     value: "High",
-                                    label: "High"
-                                },]}>
-                        </SegmentedButtons>
+                                    label: "High",
+                                    
+                                }]}
+                                    >
+                        </SegmentedButtons> 
+
+                     
                         <Button style={[styles.loginButton, {
                             backgroundColor: Colors[currentTheme].addTaskButton
                         }]}
@@ -548,7 +571,7 @@ export default function TodoScreen() {
                 {!displayAddButtons && (
                     <ScrollView showsVerticalScrollIndicator={false}>
                         {todos.length === 0 ? (
-                            <Text style={styles.text}>No todos</Text>
+                            <Text style={styles.text}>No todos for today!</Text>
                         ) : (
                             todos?.map((todo, key) => (
                                 <Swipeable
@@ -592,18 +615,56 @@ export default function TodoScreen() {
                                                 </Text>
                                             </View>
                                         </View>
-                                        <Text style={styles.cardDescription}>
-                                            {todo.description}
-                                        </Text>
+
+                                        <View style={{
+                                            flexDirection: "row",
+                                            justifyContent: "space-between",
+                                            alignItems: "center",
+                                            marginBottom: 4,
+                                            }}>
+                                            <Text style={styles.cardDescription}>
+                                                {todo.description}    
+                                            </Text>
+                                            {todo.priority === "High" ?
+                                                ( <MaterialIcons
+                                                    name="priority-high"
+                                                    size={30}
+                                                    color={"#c94040ff"}>
+                                                </MaterialIcons>)
+                                                : <View>
+                                                    {todo.priority === "Medium" ? (
+                                                    <MaterialCommunityIcons
+                                                        name="timer"
+                                                        size={30}
+                                                        color={"#eedd46ff"}>
+                                                    </MaterialCommunityIcons>
+                                                    )
+                                                        : <MaterialCommunityIcons
+                                                        name="timer-sand-complete"
+                                                        size={30}
+                                                        color={"#88f05fff"}>
+                                                        </MaterialCommunityIcons>
+                                                    }
+                                                </View> 
+                                            }
+                                        </View>
                                     </Surface>
                                 </Swipeable>
                             )))}
 
                         {/* todos from previous 10 days */}
                         {todosOld.length === 0 ? (
-                            <Text style={styles.text}>
-                                No todos from previous 10 days! Well done
-                            </Text>
+                        <View>
+                            {
+                                todos.length != 0 ? (
+                                    <Text style={styles.text}>
+                                        No todos from previous 10 days! Well done
+                                    </Text>
+                                ) : (
+                                    <View></View>
+                                )
+                            }
+                        </View>
                         ) : (
                             todosOld?.map((todoOld, key) => (
                                 <Swipeable
@@ -664,12 +725,12 @@ export default function TodoScreen() {
                                                 flexDirection: "row"
                                             }}>
                                                 <MaterialCommunityIcons
-                                                    name="calendar-clock"
+                                                    name="history"
                                                     size={20}
                                                     color={"#000000ff"}>
                                                 </MaterialCommunityIcons>
                                                 <Text style={styles.cardDeadline}>
-                                                    Created at: {todoOld.createdAt.replaceAll("-", "/")}
+                                                {todoOld.createdAt.replaceAll("-", "/")}
                                                 </Text>
                                             </View>
                                         </View>

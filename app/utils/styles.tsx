@@ -17,6 +17,7 @@ const styles = StyleSheet.create({
 		marginBottom: 10,
 		textAlign: 'center',
 		alignSelf: 'center',
+		borderRadius:20,
 	},
 	title: {
 		fontSize: 20,
@@ -28,17 +29,11 @@ const styles = StyleSheet.create({
 		fontWeight: "bold",
 		textAlign: "center",
 		fontSize: 20,
-		// color: "#003829",
 	},
 	forgotPasswordText: {
 		fontWeight: "normal",
 		textAlign: "center",
 		fontSize: 15,
-	},
-	colors: {
-		backgroundColor: '#e7fff9',
-		tintColor: '#003829',
-		borderColor: '#004331',
 	},
 	loginButton: {
 		borderRadius: 30,
@@ -69,7 +64,6 @@ const styles = StyleSheet.create({
 		marginBlock: 10,
 		borderWidth: 10,
 		justifyContent: "center",
-		backgroundColor: '#5e936cff',
 	},
 	startText: {
 		fontSize: 15,
@@ -118,11 +112,6 @@ const styles = StyleSheet.create({
 		backgroundColor: "#afca98ff",
 		marginBottom: 18,
 		borderRadius: 18,
-		// shadowColor: "#000",
-		// shadowOffset: { width: 0, height: 2 },
-		// shadowOpacity: 0.08,
-		// shadowRadius: 8,
-		// elevation: 4
 	},
 	cardContent: {
 		padding: 20,
@@ -315,11 +304,11 @@ const styles = StyleSheet.create({
 		fontSize: 14,
 		color: '#555',
 	},
-	box2: {
-		height: 50,
-		width: 50,
-		backgroundColor: '#43266fff',
-	}
+	// box2: {
+	// 	height: 50,
+	// 	width: 50,
+	// 	backgroundColor: '#43266fff',
+	// }
 })
 
 export default styles

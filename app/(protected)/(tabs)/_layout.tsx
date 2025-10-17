@@ -23,8 +23,8 @@ export default function TabsLayout() {
 			const statsRef = doc(db, 'users', authState.displayName, 'trees', 'stats')
             const docSnap = await getDoc(statsRef)
             if (docSnap.exists()) {
-                setStreak(docSnap.data().streak)
-            }
+                setStreak(docSnap.data().streaks)
+			}
 		} catch (error) {
 			console.log(error)
 		}
@@ -50,6 +50,7 @@ export default function TabsLayout() {
 			})
 			return () => {
 				listen()
+				listenXp()
 			}
 		} catch (error) {
 			console.log(error)

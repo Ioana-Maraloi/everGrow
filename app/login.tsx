@@ -1,15 +1,13 @@
-import { View, Text, TouchableOpacity, Image } from "react-native"
+import { View, Text, TouchableOpacity, Image, TextInput } from "react-native"
 import React, { useContext, } from "react"
 import { FIREBASE_AUTH, FIREBASE_APP } from "../firebaseConfig"
 import { AuthContext } from "./utils/authContext"
-import * as AppleAuthentication from 'expo-apple-authentication'
-import { doc, getFirestore, setDoc, collection, getDoc } from 'firebase/firestore'
-import { Divider, Button, TextInput } from 'react-native-paper'
+import { doc, getFirestore, getDoc } from 'firebase/firestore'
+import { Button } from 'react-native-paper'
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context'
 import { navigate } from "expo-router/build/global-state/routing"
 import {
-	getAuth, signInWithEmailAndPassword, sendPasswordResetEmail,
-	signInWithCredential
+	getAuth, signInWithEmailAndPassword, sendPasswordResetEmail
 } from "firebase/auth"
 import styles from './utils/styles'
 import { Colors } from './utils/colors'
@@ -67,15 +65,14 @@ export default function LoginScreen() {
 				<Text style={[styles.title,
 				{ color: Colors[currentTheme].title }]}>Welcome</Text>
 				<TextInput
-					mode="flat"
-					label="Email"
+					// mode="flat"
+					placeholder="Email"
 					placeholderTextColor={Colors[currentTheme].shadowColor}
 					onChangeText={(text) => setEmail(text)}
 					style={[styles.input,
 					{ backgroundColor: Colors[currentTheme].inputBackgroundColor}]}/>
 				<TextInput
-					mode="flat"
-					label="Password"
+					placeholder = "Password"
 					placeholderTextColor={Colors[currentTheme].shadowColor}
 					onChangeText={(text) => setPassword(text)}
 					secureTextEntry={true}
@@ -111,56 +108,7 @@ export default function LoginScreen() {
 					marginVertical: 10,
 					width: "80%"
 				}}>
-					<Divider style={{
-						height: 1,
-						backgroundColor: 'gray',
-						marginVertical: 5,
-						flex: 1
-					}} />
-					<Text style={{
-						marginHorizontal: 10,
-						fontSize: 15,
-						color: Colors[currentTheme].text }}>or</Text>
-					<Divider style={{
-						flex: 1,
-						height: 1,
-						backgroundColor: 'gray'
-					}} />
 				</View>
-
-				<AppleAuthentication.AppleAuthenticationButton
-					buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
-					buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
-					cornerRadius={5}
-					style={styles.loginButtonApple}
-					onPress={async () => {
-						try {
-							const credential = await AppleAuthentication.signInAsync({
-								requestedScopes: [
-									AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
-									AppleAuthentication.AppleAuthenticationScope.EMAIL,
-								],
-							})
-							// authState.email = AppleAuthentication.AppleAuthenticationScope.EMAIL
-							const userRef = doc(db, "users", email.toLocaleLowerCase().split('@')[0])
-							const userSnap = await getDoc(userRef)
-							if (!userSnap.exists()) {
-								console.log("error at getting the user doc.")
-								return
-							}
-							const xp = userSnap.data().xp
-							authState.logIn(email, password, xp)
-							// signed in
-						} catch (error: any) {
-							if (error.code === 'ERR_REQUEST_CANCELED') {
-								// handle that the user canceled the sign-in flow
-							} else {
-								// handle other errors
-								console.error('Apple Sign-In Error:', error)
-							}
-						}
-					}}
-				/>
 			</SafeAreaView>
 		</SafeAreaProvider>
 	)
