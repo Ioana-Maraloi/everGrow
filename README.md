@@ -27,10 +27,10 @@ A gamified productivity mobile app built with **React Native** and **Firebase**.
 <img src = "https://github.com/user-attachments/assets/c7c8ea2a-7e70-4c4d-b9bd-e1b7a84aafa3" width = "300"/>
 
 - **Friends:**
-<img src ="https://github.com/user-attachments/assets/41474606-a00e-4572-ba06-8d28c3dc1a05" width = "300" />
+<img src ="https://github.com/user-attachments/assets/4408556c-017b-494c-b654-37f7212618fa" width = "300" />
 
 - **Virtual Shop:**
-<img src = "https://github.com/user-attachments/assets/a2ad0b9c-bd53-4a4b-b3fd-b4aa725feea6" width = "300" />
+<img src = "https://github.com/user-attachments/assets/a39008cb-988a-4247-8e88-db4110b94d73" width = "300" />
 
 - **Chosing what tree to plant:**
 <img src = "https://github.com/user-attachments/assets/a0289e14-49b8-46c6-80d9-d0ba2a6d03df" width = "300" />
