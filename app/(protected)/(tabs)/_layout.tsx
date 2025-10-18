@@ -86,7 +86,7 @@ export default function TabsLayout() {
 			<Tabs.Screen name="forest" options={{ 
 				headerRight: () => (
 					<View style={styles.moneyDisplay}>
-						<Text style= {styles.streakText}>{xp} </Text>
+						<Text style= {styles.moneyText}>{xp} </Text>
 						<MaterialCommunityIcons
 							name="currency-usd"
 							size={18}
@@ -96,7 +96,7 @@ export default function TabsLayout() {
 				),
 				headerLeft: () => (
 					<View style = {styles.moneyDisplay}>
-						<Text style={styles.moneyText}>{streak}</Text>
+						<Text style={styles.streakText}>{streak}</Text>
 						<MaterialCommunityIcons name = "fire" size={18}
 							color={"#ff9800"}>
 						</MaterialCommunityIcons>

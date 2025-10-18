@@ -311,7 +311,7 @@ export default function Friends() {
                                                 </View>
                                                 
                                                 <View style={styles.moneyDisplay}>
-                                                    <Text style={[styles.streakText]}>{friend.xp} </Text>
+                                                    <Text style={[styles.moneyText]}>{friend.xp} </Text>
 						                    <MaterialCommunityIcons
 							                    name="currency-usd"
 							                    size={18}

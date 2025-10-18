@@ -167,14 +167,15 @@ const styles = StyleSheet.create({
 	streakText: {
 		marginLeft: 6,
 		marginRight: 2,
-		color: "#3f8a1aff",
+		color: "#ff9800",
 		fontWeight: "bold",
 		fontSize: 14,
 	},
 	moneyText: {
 		marginLeft: 6,
 		marginRight: 2,
-		color: "#ff9800",
+				color: "#3f8a1aff",
+
 		fontWeight: "bold",
 		fontSize: 14,
 	},
