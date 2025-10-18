@@ -4,8 +4,7 @@ import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context'
 import { AuthContext } from "../../utils/authContext" 
 import React, { useState, useContext, useEffect } from "react"
 import { FIREBASE_APP } from "../../../firebaseConfig"
-import {
-    collection, doc, getFirestore, getDoc, updateDoc, increment,
+import { collection, doc, getFirestore, getDoc, updateDoc, increment,
     setDoc, getDocs, query, onSnapshot, deleteDoc
 } from 'firebase/firestore'
 import { ImageBackground } from "expo-image"
@@ -109,10 +108,7 @@ export default function Shop() {
     const getTrees = async () => {
             try {
                 const treesList = await getDocs(collection(db, "users", authState.displayName, "trees", "notOwnedTrees", 'notOwnedTreesList'))
-                if (treesList.empty) {
-                    console.log("Nothing to purchase yet")
-                } else {
-                    console.log("not purchased trees:")
+                if (!treesList.empty) {
                     const items: Tree[] = treesList.docs.map(doc => {
                         const data = doc.data()
                         return {
@@ -121,7 +117,6 @@ export default function Shop() {
                         }as Tree
                     })
                     setTreesAvailable(items)
-                    console.log(treesAvailable)
                 }
             } catch (error) {
                 console.log(error)

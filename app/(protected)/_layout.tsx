@@ -39,9 +39,9 @@ export default function ProtectedLayout() {
                     title: "Shop",
                     headerRight: () => (
 					<View style={styles.moneyDisplay}>
-						<Text style= {styles.streakText}>{authState.xp} </Text>
+						<Text style= {styles.moneyText}>{authState.xp} </Text>
 						<MaterialCommunityIcons name = "currency-usd" size={18}
-							color={"black"}>
+							color={"#3f8a1aff"}>
 						</MaterialCommunityIcons>
 					</View>
 				),  
